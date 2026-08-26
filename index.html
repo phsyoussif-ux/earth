@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>مختبر مستكشف المعادن</title>
+<style>
+  :root{
+    --blue:#2b6cb0;
+    --blue-dark:#1a4971;
+    --purple:#6b46c1;
+    --purple-light:#9f7aea;
+    --green:#2f855a;
+    --green-light:#48bb78;
+    --bg1:#eef4fb;
+    --bg2:#f3ecfb;
+    --card-bg:#ffffff;
+    --text:#1a202c;
+    --muted:#5a6472;
+    --danger:#e53e3e;
+    --gold:#d69e2e;
+    --radius:16px;
+    --shadow: 0 8px 24px rgba(43,108,176,0.15);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Tahoma","Arial",sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2) 60%, #eafaf1);
+    min-height:100vh;
+    color:var(--text);
+    direction:rtl;
+    text-align:right;
+  }
+  .app{
+    max-width:900px;
+    margin:0 auto;
+    padding:16px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+  .screen{display:none; animation:fadeIn .5s ease;}
+  .screen.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(12px);} to{opacity:1; transform:translateY(0);}}
+
+  /* ===== Header / progress ===== */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--card-bg);
+    border-radius:var(--radius);
+    padding:10px 16px;
+    box-shadow:var(--shadow);
+    margin-bottom:16px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--blue-dark);}
+  .brand .icon{font-size:24px;}
+  .stats{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
+  .stat{
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    color:#fff; padding:6px 12px; border-radius:999px; font-size:13px; font-weight:bold;
+  }
+  .progress-track{
+    display:flex; gap:6px; margin-top:10px;
+  }
+  .progress-step{
+    flex:1; height:8px; border-radius:6px; background:#dbe6f5; transition:.4s;
+  }
+  .progress-step.done{background:linear-gradient(90deg,var(--green-light),var(--green));}
+  .progress-step.current{background:linear-gradient(90deg,var(--blue),var(--purple-light)); box-shadow:0 0 0 2px rgba(107,70,193,.25);}
+  .stations-labels{
+    display:flex; justify-content:space-between; font-size:11px; color:var(--muted); margin-top:4px;
+  }
+
+  /* ===== Cards / containers ===== */
+  .card{
+    background:var(--card-bg);
+    border-radius:var(--radius);
+    padding:22px;
+    box-shadow:var(--shadow);
+    margin-bottom:16px;
+  }
+  h1{color:var(--blue-dark); margin-top:0;}
+  h2{color:var(--purple); margin-top:0;}
+  h3{color:var(--blue-dark);}
+  p{line-height:1.9; color:var(--text);}
+  .muted{color:var(--muted); font-size:14px;}
+
+  /* buttons */
+  .btn{
+    display:inline-block;
+    border:none; cursor:pointer;
+    padding:12px 22px;
+    border-radius:12px;
+    font-family:inherit;
+    font-size:16px;
+    font-weight:bold;
+    color:#fff;
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    box-shadow:0 6px 14px rgba(107,70,193,.3);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px); box-shadow:0 10px 20px rgba(107,70,193,.4);}
+  .btn:active{transform:translateY(0);}
+  .btn.secondary{
+    background:#fff; color:var(--blue-dark); border:2px solid var(--blue);
+    box-shadow:none;
+  }
+  .btn.green{background:linear-gradient(135deg,var(--green-light),var(--green));}
+  .btn:disabled{opacity:.5; cursor:not-allowed; transform:none;}
+  .btn-row{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px;}
+
+  input[type=text]{
+    font-family:inherit;
+    padding:12px 14px;
+    border-radius:10px;
+    border:2px solid #cbd8ea;
+    font-size:16px;
+    width:100%;
+    max-width:340px;
+  }
+  input[type=text]:focus{outline:none; border-color:var(--purple-light);}
+
+  /* Intro */
+  .intro-hero{
+    text-align:center;
+    padding:20px 10px 8px;
+  }
+  .intro-hero .icon{font-size:60px;}
+  .intro-badges{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin:14px 0;}
+  .pill{background:var(--bg2); color:var(--purple); padding:6px 14px; border-radius:999px; font-size:13px; font-weight:bold;}
+  .instructions{background:var(--bg1); border-radius:12px; padding:16px; margin:16px 0;}
+  .instructions ul{margin:0; padding-inline-start:20px; line-height:2;}
+
+  /* Station1 cards grid */
+  .items-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(150px,1fr));
+    gap:12px;
+    margin:16px 0;
+  }
+  .item-card{
+    background:var(--bg1);
+    border-radius:14px;
+    padding:14px 10px;
+    text-align:center;
+    border:2px solid transparent;
+    transition:.2s;
+  }
+  .item-card .emoji{font-size:34px; display:block; margin-bottom:6px;}
+  .item-card .name{font-weight:bold; margin-bottom:10px; display:block;}
+  .choice-row{display:flex; gap:6px; justify-content:center;}
+  .choice-btn{
+    flex:1;
+    border:2px solid #cbd8ea; background:#fff; border-radius:8px;
+    padding:6px 4px; font-size:12px; cursor:pointer; font-family:inherit; font-weight:bold; color:var(--blue-dark);
+  }
+  .choice-btn:hover{border-color:var(--purple-light);}
+  .item-card.correct{border-color:var(--green); background:#eafaf1;}
+  .item-card.incorrect{border-color:var(--danger); background:#fdecec;}
+  .item-card.answered .choice-btn{pointer-events:none; opacity:.55;}
+  .item-card.answered .choice-btn.selected{opacity:1; box-shadow:0 0 0 2px currentColor;}
+  .explain{
+    font-size:12px; margin-top:8px; color:var(--muted); display:none; line-height:1.6;
+  }
+  .item-card.answered .explain{display:block;}
+
+  /* MCQ */
+  .mcq-options{display:flex; flex-direction:column; gap:10px; margin:14px 0;}
+  .mcq-option{
+    background:#fff; border:2px solid #cbd8ea; border-radius:12px; padding:12px 16px;
+    cursor:pointer; text-align:right; font-size:15px; transition:.15s;
+  }
+  .mcq-option:hover{border-color:var(--purple-light);}
+  .mcq-option.correct{border-color:var(--green); background:#eafaf1; font-weight:bold;}
+  .mcq-option.incorrect{border-color:var(--danger); background:#fdecec;}
+  .mcq-option.disabled{pointer-events:none;}
+  .feedback-box{
+    margin-top:14px; padding:14px; border-radius:12px; display:none; line-height:1.8;
+  }
+  .feedback-box.show{display:block;}
+  .feedback-box.ok{background:#eafaf1; border:2px solid var(--green-light); color:#22543d;}
+  .feedback-box.bad{background:#fdecec; border:2px solid #feb2b2; color:#742a2a;}
+
+  /* Station 2 crystal grid */
+  .ion-toolbar{display:flex; gap:10px; margin:14px 0; flex-wrap:wrap; align-items:center;}
+  .ion-choice{
+    display:flex; align-items:center; gap:8px; padding:8px 14px; border-radius:12px;
+    border:2px solid #cbd8ea; cursor:pointer; background:#fff; font-weight:bold; font-size:14px;
+  }
+  .ion-choice.selected{border-color:var(--purple); background:var(--bg2);}
+  .ion-dot{width:18px; height:18px; border-radius:50%; display:inline-block;}
+  .ion-dot.na{background:#8b95a1; box-shadow:inset 0 -3px 6px rgba(0,0,0,.2);}
+  .ion-dot.cl{background:var(--green-light); box-shadow:inset 0 -3px 6px rgba(0,0,0,.2);}
+  .crystal-grid{
+    display:grid; gap:6px; justify-content:center; margin:20px auto; direction:ltr;
+    width:fit-content;
+  }
+  .crystal-cell{
+    width:44px; height:44px; border-radius:50%;
+    background:#e2e8f0; border:2px dashed #b8c4d6;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:.15s;
+  }
+  .crystal-cell.filled-na{background:#8b95a1; border:2px solid #6b7684; box-shadow:inset 0 -4px 8px rgba(0,0,0,.25); cursor:default;}
+  .crystal-cell.filled-cl{background:var(--green-light); border:2px solid var(--green); box-shadow:inset 0 -4px 8px rgba(0,0,0,.2); cursor:default;}
+  .crystal-cell.shake{animation:shake .35s;}
+  @keyframes shake{
+    0%,100%{transform:translateX(0);} 25%{transform:translateX(-5px);} 75%{transform:translateX(5px);}
+  }
+
+  /* Station3 svg */
+  .svg-wrap{display:flex; justify-content:center; margin:14px 0;}
+  .svg-wrap svg{max-width:100%; height:auto;}
+  .clickable{cursor:pointer; transition:.15s;}
+  .clickable:hover{filter:brightness(1.1);}
+  .target-highlight{animation:pulseTarget 1.2s infinite;}
+  @keyframes pulseTarget{0%,100%{opacity:1;} 50%{opacity:.55;}}
+  .task-banner{
+    background:var(--bg2); border-radius:12px; padding:12px 16px; margin-bottom:10px; font-weight:bold; color:var(--purple);
+    text-align:center;
+  }
+
+  /* Experiment table */
+  table.exp-table{width:100%; border-collapse:collapse; margin:14px 0;}
+  table.exp-table th, table.exp-table td{
+    border:1px solid #cbd8ea; padding:8px; text-align:center; font-size:14px;
+  }
+  table.exp-table th{background:var(--bg1); color:var(--blue-dark);}
+  table.exp-table input{
+    width:60px; padding:6px; border-radius:6px; border:1px solid #cbd8ea; text-align:center; font-family:inherit;
+  }
+  .shape-icon{font-size:40px;}
+
+  /* Celebration */
+  .celebrate{position:relative;}
+  .confetti-piece{
+    position:fixed; top:-20px; font-size:20px; pointer-events:none; z-index:999;
+    animation:fall linear forwards;
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(360deg); opacity:.2; }
+  }
+
+  /* Results */
+  .score-circle{
+    width:160px; height:160px; border-radius:50%;
+    margin:10px auto;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    background:conic-gradient(var(--green-light) calc(var(--pct,0)*1%), #e2e8f0 0);
+    position:relative;
+  }
+  .score-circle::before{
+    content:""; position:absolute; width:120px; height:120px; border-radius:50%; background:#fff;
+  }
+  .score-inner{position:relative; z-index:1; text-align:center;}
+  .score-inner .num{font-size:34px; font-weight:bold; color:var(--blue-dark);}
+  .score-inner .lbl{font-size:12px; color:var(--muted);}
+  .badges-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:16px 0;}
+  .badge{
+    background:linear-gradient(135deg,var(--gold),#f6ad55);
+    color:#fff; padding:10px 16px; border-radius:12px; text-align:center; font-size:13px; font-weight:bold;
+    box-shadow:0 6px 14px rgba(214,158,46,.35);
+    min-width:110px;
+  }
+  .badge .emoji{font-size:26px; display:block;}
+  .achievement-card{
+    border:3px dashed var(--purple-light); border-radius:16px; padding:24px; text-align:center; margin:18px 0;
+    background:linear-gradient(135deg,#fff,var(--bg2));
+  }
+  .achievement-card h2{margin-bottom:4px;}
+  .achievement-card .student-name{font-size:26px; font-weight:bold; color:var(--blue-dark); margin:10px 0;}
+  .achievement-card .score-big{font-size:20px; color:var(--green); font-weight:bold;}
+
+  @media print{
+    body *{visibility:hidden;}
+    #achievementCard, #achievementCard *{visibility:visible;}
+    #achievementCard{position:absolute; top:0; left:0; width:100%;}
+  }
+
+  footer.note{text-align:center; font-size:12px; color:var(--muted); margin:10px 0 20px;}
+
+  @media (max-width:480px){
+    .crystal-cell{width:36px; height:36px;}
+    .score-circle{width:130px; height:130px;}
+    .score-circle::before{width:98px; height:98px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== TOPBAR (hidden on intro) ===================== -->
+  <div class="topbar" id="topbar" style="display:none;">
+    <div class="brand"><span class="icon">🔬</span> مختبر مستكشف المعادن</div>
+    <div class="stats">
+      <div class="stat">⭐ النقاط: <span id="scoreDisplay">0</span></div>
+      <div class="stat">🏅 الشارات: <span id="badgeCountDisplay">0</span></div>
+    </div>
+  </div>
+  <div id="progressWrap" style="display:none;">
+    <div class="progress-track" id="progressTrack"></div>
+    <div class="stations-labels">
+      <span>هل هو معدن؟</span><span>ابنِ البلورة</span><span>محقق البلورات</span><span>تجربة المجسمات</span>
+    </div>
+  </div>
+
+  <!-- ===================== SCREEN: INTRO ===================== -->
+  <section class="screen active" id="screen-intro">
+    <div class="card intro-hero">
+      <span class="icon">💎</span>
+      <h1>مختبر مستكشف المعادن</h1>
+      <p>رحلة تعليمية تفاعلية في عالم المعادن والأنظمة البلورية — علوم الأرض، الصف التاسع</p>
+      <div class="intro-badges">
+        <span class="pill">⏱ 15–20 دقيقة</span>
+        <span class="pill">🎯 4 محطات</span>
+        <span class="pill">🏅 شارات إنجاز</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>تعليمات سريعة</h2>
+      <div class="instructions">
+        <ul>
+          <li>ستمر برحلة من أربع محطات علمية داخل المختبر.</li>
+          <li>في كل محطة ستتعلم فكرة جديدة عن المعادن والبلورات، ثم تُطبّقها بنشاط تفاعلي.</li>
+          <li>اجمع أكبر عدد من النقاط والشارات حتى تصل إلى بطاقة الإنجاز في النهاية.</li>
+          <li>يمكنك اللعب على الحاسوب أو الجوال بسهولة.</li>
+        </ul>
+      </div>
+      <label class="muted" for="studentName">أدخل اسمك قبل البدء:</label><br>
+      <input type="text" id="studentName" placeholder="اكتب اسمك هنا...">
+      <div class="btn-row">
+        <button class="btn" id="startBtn">ابدأ المهمة 🚀</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN: STATION 1 ===================== -->
+  <section class="screen" id="screen-s1">
+    <div class="card">
+      <h2>المحطة الأولى: هل هو معدن؟</h2>
+      <p>صنّف كل مادة ضمن «معدن» أو «ليس معدنًا» بالضغط على الاختيار المناسب تحت كل بطاقة.</p>
+      <div class="items-grid" id="itemsGrid"></div>
+      <div class="btn-row">
+        <button class="btn" id="s1ReviewBtn" disabled>الانتقال إلى سؤال المراجعة</button>
+      </div>
+    </div>
+
+    <div class="card" id="s1ReviewCard" style="display:none;">
+      <h3>سؤال مراجعة 🧠</h3>
+      <p>ما الشروط الأساسية التي يجب أن تتوافر في المادة حتى تسمى معدنًا؟</p>
+      <div class="mcq-options" id="s1ReviewOptions"></div>
+      <div class="feedback-box" id="s1ReviewFeedback"></div>
+      <div class="btn-row">
+        <button class="btn" id="toStation2Btn" style="display:none;">التالي: ابنِ البلورة →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN: STATION 2 ===================== -->
+  <section class="screen" id="screen-s2">
+    <div class="card">
+      <h2>المحطة الثانية: ابنِ البلورة</h2>
+      <p>عند تبخّر مياه البحر المالحة، ترتبط أيونات الصوديوم بأيونات الكلوريد بترتيب منتظم مكوّنة بلورة الهاليت. اختر نوع الأيون، ثم ضعه في الخانة الصحيحة داخل الشبكة بالتناوب.</p>
+      <div class="ion-toolbar">
+        <div class="ion-choice selected" id="chooseNa"><span class="ion-dot na"></span> أيون الصوديوم (Na⁺)</div>
+        <div class="ion-choice" id="chooseCl"><span class="ion-dot cl"></span> أيون الكلوريد (Cl⁻)</div>
+      </div>
+      <div class="crystal-grid" id="crystalGrid"></div>
+      <p class="muted" id="crystalHint">لاحظ التناوب بين اللونين، وابدأ من الخانة العلوية اليمنى.</p>
+      <div class="feedback-box" id="s2BuildFeedback"></div>
+    </div>
+
+    <div class="card" id="s2McqCard" style="display:none;">
+      <h3>سؤال: ما المقصود بعملية التبلور؟</h3>
+      <div class="mcq-options" id="s2McqOptions"></div>
+      <div class="feedback-box" id="s2McqFeedback"></div>
+      <div class="btn-row">
+        <button class="btn" id="toStation3Btn" style="display:none;">التالي: محقق البلورات →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN: STATION 3 ===================== -->
+  <section class="screen" id="screen-s3">
+    <div class="card">
+      <h2>المحطة الثالثة: محقق البلورات</h2>
+      <p>انظر إلى نموذج البلورة المكعبة، واضغط على الجزء الذي يطلبه منك كل سؤال.</p>
+      <div class="task-banner" id="s3TaskBanner"></div>
+      <div class="svg-wrap">
+        <svg id="cubeSvg" viewBox="0 0 320 300" xmlns="http://www.w3.org/2000/svg">
+          <!-- top face -->
+          <polygon id="face-top" class="clickable" points="80,70 200,70 240,110 120,110" fill="#bcd4f0" stroke="#2b6cb0" stroke-width="2"/>
+          <!-- front-left face -->
+          <polygon id="face-left" class="clickable" points="80,70 120,110 120,220 80,180" fill="#9fc4ea" stroke="#2b6cb0" stroke-width="2"/>
+          <!-- front-right face -->
+          <polygon id="face-right" class="clickable" points="120,110 240,110 240,220 120,220" fill="#dbe9fb" stroke="#2b6cb0" stroke-width="2"/>
+          <!-- edge highlight (front-right vertical edge between top-right face and side) -->
+          <line id="edge-main" class="clickable" x1="240" y1="110" x2="240" y2="220" stroke="#6b46c1" stroke-width="6" stroke-linecap="round"/>
+          <!-- vertex / solid angle marker -->
+          <circle id="vertex-main" class="clickable" cx="120" cy="110" r="9" fill="#2f855a" stroke="#fff" stroke-width="2"/>
+          <!-- angle-between-faces marker (arc between left and right faces along shared edge) -->
+          <path id="angle-main" class="clickable" d="M100,140 A26,26 0 0 1 128,150" fill="none" stroke="#d69e2e" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="120" cy="150" r="4" fill="#d69e2e"/>
+        </svg>
+      </div>
+      <p class="muted" id="s3HintText"></p>
+      <div class="feedback-box" id="s3Feedback"></div>
+      <div class="btn-row">
+        <button class="btn" id="toStation4Btn" style="display:none;">التالي: تجربة المجسمات →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN: STATION 4 (experiment page 13) ===================== -->
+  <section class="screen" id="screen-s4">
+    <div class="card">
+      <h2>تجربة: فحص المجسمات البلورية</h2>
+      <p>افحص كل مجسم من المجسمات الثلاثة، ثم أكمل الجدول بعدد الأوجه والحواف والزوايا المجسمة لكل منها.</p>
+      <table class="exp-table">
+        <thead>
+          <tr><th>المجسم</th><th>عدد الأوجه</th><th>عدد الحواف</th><th>عدد الزوايا المجسمة</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="shape-icon">🧊</span><br>مكعب</td>
+            <td><input type="text" data-shape="cube" data-field="faces" maxlength="2"></td>
+            <td><input type="text" data-shape="cube" data-field="edges" maxlength="2"></td>
+            <td><input type="text" data-shape="cube" data-field="vertices" maxlength="2"></td>
+          </tr>
+          <tr>
+            <td><span class="shape-icon">📦</span><br>منشور رباعي</td>
+            <td><input type="text" data-shape="prism" data-field="faces" maxlength="2"></td>
+            <td><input type="text" data-shape="prism" data-field="edges" maxlength="2"></td>
+            <td><input type="text" data-shape="prism" data-field="vertices" maxlength="2"></td>
+          </tr>
+          <tr>
+            <td><span class="shape-icon">🔺</span><br>هرم رباعي</td>
+            <td><input type="text" data-shape="pyramid" data-field="faces" maxlength="2"></td>
+            <td><input type="text" data-shape="pyramid" data-field="edges" maxlength="2"></td>
+            <td><input type="text" data-shape="pyramid" data-field="vertices" maxlength="2"></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="btn-row">
+        <button class="btn" id="checkTableBtn">تحقّق من الجدول</button>
+      </div>
+      <div class="feedback-box" id="s4TableFeedback"></div>
+    </div>
+
+    <div class="card" id="s4InferenceCard" style="display:none;">
+      <h3>أسئلة استنتاج 🧩</h3>
+      <p><strong>1. هل تكون الزوايا الناتجة من تقاطع أوجه البلورة متساوية في الأشكال المختلفة؟</strong></p>
+      <div class="mcq-options" id="s4q1Options"></div>
+      <div class="feedback-box" id="s4q1Feedback"></div>
+
+      <p style="margin-top:20px;"><strong>2. قارن بين عدد الحواف والزوايا المجسمة في المجسمات المختلفة.</strong></p>
+      <div class="mcq-options" id="s4q2Options"></div>
+      <div class="feedback-box" id="s4q2Feedback"></div>
+
+      <div class="btn-row">
+        <button class="btn green" id="toResultsBtn" style="display:none;">عرض النتيجة النهائية 🏁</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SCREEN: RESULTS ===================== -->
+  <section class="screen" id="screen-results">
+    <div class="card" style="text-align:center;">
+      <h1>🎉 أحسنت! انتهت رحلتك في المختبر</h1>
+      <div class="score-circle" id="scoreCircle" style="--pct:0;">
+        <div class="score-inner">
+          <div class="num" id="finalScoreNum">0</div>
+          <div class="lbl">من 100</div>
+        </div>
+      </div>
+      <p id="encourageMsg" class="muted"></p>
+      <div class="badges-row" id="badgesRow"></div>
+    </div>
+
+    <div class="card achievement-card" id="achievementCard">
+      <h2>🏆 بطاقة إنجاز</h2>
+      <div class="muted">مختبر مستكشف المعادن — علوم الأرض</div>
+      <div class="student-name" id="achName">—</div>
+      <div class="score-big">النتيجة: <span id="achScore">0</span> / 100</div>
+      <div class="muted" style="margin-top:8px;">الشارات المكتسبة:</div>
+      <div class="badges-row" id="achBadges"></div>
+    </div>
+
+    <div class="btn-row" style="justify-content:center;">
+      <button class="btn secondary" id="printBtn">🖨️ طباعة بطاقة الإنجاز</button>
+      <button class="btn" id="restartBtn">🔄 إعادة اللعب</button>
+    </div>
+  </section>
+
+  <footer class="note">مختبر مستكشف المعادن — درس المعادن والأنظمة البلورية، علوم الأرض، الصف التاسع</footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ============ STATE ============ */
+  const state = {
+    studentName: "",
+    earned: 0,
+    total: 0,
+    badges: [],
+    currentStation: 0 // 0..3
+  };
+
+  const stationLabels = ["هل هو معدن؟","ابنِ البلورة","محقق البلورات","تجربة المجسمات"];
+
+  function addPoints(possible, gotten){
+    state.total += possible;
+    state.earned += gotten;
+    updateStatsBar();
+  }
+
+  function addBadge(name, emoji){
+    if(state.badges.some(b=>b.name===name)) return;
+    state.badges.push({name, emoji});
+    updateStatsBar();
+    celebrate();
+  }
+
+  function updateStatsBar(){
+    document.getElementById('scoreDisplay').textContent = state.earned;
+    document.getElementById('badgeCountDisplay').textContent = state.badges.length;
+  }
+
+  function showScreen(id){
+    document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function renderProgress(){
+    const track = document.getElementById('progressTrack');
+    track.innerHTML = "";
+    for(let i=0;i<4;i++){
+      const step = document.createElement('div');
+      step.className = 'progress-step';
+      if(i < state.currentStation) step.classList.add('done');
+      else if(i === state.currentStation) step.classList.add('current');
+      track.appendChild(step);
+    }
+  }
+
+  function goStation(index, screenId){
+    state.currentStation = index;
+    renderProgress();
+    showScreen(screenId);
+  }
+
+  /* ============ CELEBRATION (no sound) ============ */
+  function celebrate(){
+    const emojis = ["✨","🎉","💎","⭐","🟢"];
+    for(let i=0;i<16;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti-piece';
+      el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.left = Math.random()*100+'vw';
+      el.style.animationDuration = (1.6+Math.random()*1.2)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(), 3000);
+    }
+  }
+
+  /* ============ INTRO ============ */
+  document.getElementById('startBtn').addEventListener('click', function(){
+    const nameInput = document.getElementById('studentName');
+    state.studentName = nameInput.value.trim() || "المستكشف العلمي";
+    document.getElementById('topbar').style.display = 'flex';
+    document.getElementById('progressWrap').style.display = 'block';
+    buildStation1();
+    buildStation2Grid();
+    buildStation3();
+    goStation(0,'screen-s1');
+  });
+
+  /* ============================================================
+     STATION 1: هل هو معدن؟
+  ============================================================ */
+  const s1Items = [
+    {name:"الذهب", emoji:"🟡", isMineral:true, explain:"معدن: مادة صلبة طبيعية غير عضوية ذات تركيب كيميائي وبناء ذري منتظم."},
+    {name:"النحاس", emoji:"🟠", isMineral:true, explain:"معدن: عنصر طبيعي صلب له بناء بلوري منتظم."},
+    {name:"الكبريت", emoji:"🟡", isMineral:true, explain:"معدن: مادة صلبة طبيعية التكوّن ذات تركيب كيميائي ثابت."},
+    {name:"الماس", emoji:"💎", isMineral:true, explain:"معدن: بلورة صلبة منتظمة البناء الذري تتكوّن طبيعيًا."},
+    {name:"الغرافيت", emoji:"⚫", isMineral:true, explain:"معدن: صلب طبيعي التكوّن بتركيب ذري منتظم."},
+    {name:"الكوارتز", emoji:"🔷", isMineral:true, explain:"معدن: من أكثر المعادن شيوعًا وله بناء بلوري منتظم."},
+    {name:"الهاليت", emoji:"🧂", isMineral:true, explain:"معدن: ينتج من ترتيب أيونات الصوديوم والكلوريد بشكل منتظم."},
+    {name:"الفحم الحجري", emoji:"⬛", isMineral:false, explain:"ليس معدنًا: لأنه يتكوّن أصلاً من مواد عضوية."},
+    {name:"الماء", emoji:"💧", isMineral:false, explain:"ليس معدنًا: لأنه سائل وليس مادة صلبة."},
+    {name:"الزجاج البركاني", emoji:"⚛️", isMineral:false, explain:"ليس معدنًا: لأنه لا يملك ترتيبًا ذريًا داخليًا منتظمًا."}
+  ];
+  let s1Answered = 0;
+
+  function buildStation1(){
+    const grid = document.getElementById('itemsGrid');
+    grid.innerHTML = "";
+    s1Answered = 0;
+    s1Items.forEach((item, idx)=>{
+      const card = document.createElement('div');
+      card.className = 'item-card';
+      card.id = 's1card-'+idx;
+      card.innerHTML = `
+        <span class="emoji">${item.emoji}</span>
+        <span class="name">${item.name}</span>
+        <div class="choice-row">
+          <button class="choice-btn" data-choice="true">معدن</button>
+          <button class="choice-btn" data-choice="false">ليس معدنًا</button>
+        </div>
+        <div class="explain">${item.explain}</div>
+      `;
+      grid.appendChild(card);
+      card.querySelectorAll('.choice-btn').forEach(btn=>{
+        btn.addEventListener('click', ()=>{
+          if(card.classList.contains('answered')) return;
+          const chosen = btn.getAttribute('data-choice') === 'true';
+          const correct = chosen === item.isMineral;
+          card.classList.add('answered', correct ? 'correct':'incorrect');
+          btn.classList.add('selected');
+          addPoints(3, correct?3:0);
+          s1Answered++;
+          if(s1Answered === s1Items.length){
+            document.getElementById('s1ReviewBtn').disabled = false;
+          }
+        });
+      });
+    });
+  }
+
+  document.getElementById('s1ReviewBtn').addEventListener('click', function(){
+    document.getElementById('s1ReviewCard').style.display = 'block';
+    this.parentElement.style.display = 'none';
+    document.getElementById('s1ReviewCard').scrollIntoView({behavior:'smooth'});
+  });
+
+  const s1ReviewOpts = [
+    {t:"أن تكون سائلة عديمة اللون", ok:false},
+    {t:"أن تكون مادة صلبة طبيعية التكوّن غير عضوية ولها تركيب كيميائي محدد وبناء ذري منتظم", ok:true},
+    {t:"أن تكون ناتجة عن نشاط الكائنات الحية فقط", ok:false},
+    {t:"أن تكون صناعية المصدر وذات لون ثابت", ok:false}
+  ];
+  (function renderS1Review(){
+    const box = document.getElementById('s1ReviewOptions');
+    s1ReviewOpts.forEach(opt=>{
+      const el = document.createElement('div');
+      el.className = 'mcq-option';
+      el.textContent = opt.t;
+      el.addEventListener('click', function(){
+        if(box.classList.contains('locked')) return;
+        box.classList.add('locked');
+        document.querySelectorAll('#s1ReviewOptions .mcq-option').forEach(o=>o.classList.add('disabled'));
+        const fb = document.getElementById('s1ReviewFeedback');
+        if(opt.ok){
+          el.classList.add('correct');
+          fb.className = 'feedback-box show ok';
+          fb.textContent = "إجابة صحيحة! المعدن مادة صلبة، طبيعية التكوّن، غير عضوية، ولها تركيب كيميائي محدد وبناء ذري داخلي منتظم.";
+          addPoints(5,5);
+        } else {
+          el.classList.add('incorrect');
+          s1ReviewOpts.filter(o=>o.ok).forEach(o=>{});
+          document.querySelectorAll('#s1ReviewOptions .mcq-option').forEach(o=>{
+            if(o.textContent === s1ReviewOpts.find(x=>x.ok).t) o.classList.add('correct');
+          });
+          fb.className = 'feedback-box show bad';
+          fb.textContent = "الإجابة الصحيحة: المعدن مادة صلبة، طبيعية التكوّن، غير عضوية، ولها تركيب كيميائي محدد وبناء ذري داخلي منتظم.";
+          addPoints(5,0);
+        }
+        if(s1Answered === s1Items.length){
+          const correctCount = document.querySelectorAll('#itemsGrid .item-card.correct').length;
+          if(correctCount === s1Items.length) addBadge("عالم المعادن","🧪");
+        }
+        document.getElementById('toStation2Btn').style.display = 'inline-block';
+      });
+      box.appendChild(el);
+    });
+  })();
+
+  document.getElementById('toStation2Btn').addEventListener('click', function(){
+    goStation(1,'screen-s2');
+  });
+
+  /* ============================================================
+     STATION 2: ابنِ البلورة (Halite build)
+  ============================================================ */
+  const gridSize = 4; // 4x4 checkerboard
+  let selectedIon = 'na';
+  let filledCount = 0;
+  let s2BuildDone = false;
+
+  document.getElementById('chooseNa').addEventListener('click', function(){
+    selectedIon = 'na';
+    this.classList.add('selected');
+    document.getElementById('chooseCl').classList.remove('selected');
+  });
+  document.getElementById('chooseCl').addEventListener('click', function(){
+    selectedIon = 'cl';
+    this.classList.add('selected');
+    document.getElementById('chooseNa').classList.remove('selected');
+  });
+
+  function buildStation2Grid(){
+    const grid = document.getElementById('crystalGrid');
+    grid.style.gridTemplateColumns = `repeat(${gridSize}, 44px)`;
+    grid.innerHTML = "";
+    filledCount = 0;
+    s2BuildDone = false;
+    for(let r=0;r<gridSize;r++){
+      for(let c=0;c<gridSize;c++){
+        const expected = (r+c)%2===0 ? 'na' : 'cl'; // checkerboard alternation
+        const cell = document.createElement('div');
+        cell.className = 'crystal-cell';
+        cell.dataset.expected = expected;
+        cell.addEventListener('click', function(){
+          if(cell.classList.contains('filled-na') || cell.classList.contains('filled-cl')) return;
+          if(selectedIon === expected){
+            cell.classList.add('filled-'+expected);
+            filledCount++;
+            if(filledCount === gridSize*gridSize){
+              finishCrystal();
+            }
+          } else {
+            cell.classList.add('shake');
+            setTimeout(()=>cell.classList.remove('shake'), 350);
+          }
+        });
+        grid.appendChild(cell);
+      }
+    }
+  }
+
+  function finishCrystal(){
+    if(s2BuildDone) return;
+    s2BuildDone = true;
+    addPoints(15,15);
+    const fb = document.getElementById('s2BuildFeedback');
+    fb.className = 'feedback-box show ok';
+    fb.textContent = "أحسنت! عند تبخر مياه البحر المالحة ترتبط أيونات الصوديوم بأيونات الكلوريد بترتيب منتظم، فتتكوّن بلورات الهاليت. وتُسمّى هذه العملية التبلور.";
+    document.getElementById('s2McqCard').style.display = 'block';
+    document.getElementById('s2McqCard').scrollIntoView({behavior:'smooth'});
+  }
+
+  const s2McqOpts = [
+    {t:"تبخر الماء من على سطح البحر فقط دون أي تفاعل", ok:false},
+    {t:"ترتيب الذرات أو الأيونات في بناء منتظم لتكوين بلورة", ok:true},
+    {t:"ذوبان المعدن في الماء", ok:false},
+    {t:"تغيّر لون المعدن بفعل الحرارة", ok:false}
+  ];
+  (function renderS2Mcq(){
+    const box = document.getElementById('s2McqOptions');
+    s2McqOpts.forEach(opt=>{
+      const el = document.createElement('div');
+      el.className = 'mcq-option';
+      el.textContent = opt.t;
+      el.addEventListener('click', function(){
+        if(box.classList.contains('locked')) return;
+        box.classList.add('locked');
+        document.querySelectorAll('#s2McqOptions .mcq-option').forEach(o=>o.classList.add('disabled'));
+        const fb = document.getElementById('s2McqFeedback');
+        if(opt.ok){
+          el.classList.add('correct');
+          fb.className = 'feedback-box show ok';
+          fb.textContent = "صحيح! التبلور هو ترتيب الذرات أو الأيونات في بناء منتظم لتكوين بلورة.";
+          addPoints(5,5);
+          addBadge("صانع البلورات","💠");
+        } else {
+          el.classList.add('incorrect');
+          document.querySelectorAll('#s2McqOptions .mcq-option').forEach(o=>{
+            if(o.textContent === s2McqOpts.find(x=>x.ok).t) o.classList.add('correct');
+          });
+          fb.className = 'feedback-box show bad';
+          fb.textContent = "التبلور هو ترتيب الذرات أو الأيونات في بناء منتظم لتكوين بلورة.";
+          addPoints(5,0);
+        }
+        document.getElementById('toStation3Btn').style.display = 'inline-block';
+      });
+      box.appendChild(el);
+    });
+  })();
+
+  document.getElementById('toStation3Btn').addEventListener('click', function(){
+    goStation(2,'screen-s3');
+  });
+
+  /* ============================================================
+     STATION 3: محقق البلورات
+  ============================================================ */
+  const s3Tasks = [
+    {id:"face-left", label:"انقر على الوجه البلوري: سطح أملس يحيط بالبلورة من الخارج.", hint:"ابحث عن أي سطح مستوٍ من أسطح البلورة الثلاثة الظاهرة."},
+    {id:"edge-main", label:"انقر على الحافة البلورية: الخط الناتج من تقاطع وجهين بلوريين متجاورين.", hint:"الحافة خط أرجواني بارز بين وجهين."},
+    {id:"vertex-main", label:"انقر على الزاوية المجسمة: الزاوية الناتجة من تقاطع ثلاثة أوجه بلورية متجاورة أو أكثر.", hint:"ابحث عن النقطة الخضراء حيث تلتقي عدة أوجه."},
+    {id:"angle-main", label:"انقر على الزاوية بين الوجهين: الزاوية المحصورة بين عمودين مقامين على وجهين متجاورين.", hint:"القوس الذهبي بين الوجهين يمثلها."}
+  ];
+  let s3Index = 0;
+
+  function buildStation3(){
+    s3Index = 0;
+    document.querySelectorAll('#cubeSvg .clickable').forEach(el=>{
+      el.addEventListener('click', onCubeClick);
+    });
+    showS3Task();
+  }
+
+  function showS3Task(){
+    document.querySelectorAll('#cubeSvg .clickable').forEach(el=>el.classList.remove('target-highlight'));
+    document.getElementById('s3Feedback').className = 'feedback-box';
+    document.getElementById('s3HintText').textContent = "";
+    if(s3Index >= s3Tasks.length){
+      document.getElementById('s3TaskBanner').textContent = "أحسنت! لقد أتممت جميع مهام محقق البلورات.";
+      document.getElementById('toStation4Btn').style.display = 'inline-block';
+      return;
+    }
+    document.getElementById('s3TaskBanner').textContent = s3Tasks[s3Index].label;
+  }
+
+  function onCubeClick(e){
+    if(s3Index >= s3Tasks.length) return;
+    const clickedId = e.currentTarget.id;
+    const task = s3Tasks[s3Index];
+    const fb = document.getElementById('s3Feedback');
+    if(clickedId === task.id){
+      fb.className = 'feedback-box show ok';
+      fb.textContent = "إجابة صحيحة! 👏";
+      addPoints(5,5);
+      s3Index++;
+      setTimeout(showS3Task, 900);
+    } else {
+      fb.className = 'feedback-box show bad';
+      fb.textContent = "ليست هذه الإجابة الصحيحة، جرّب مرة أخرى.";
+      document.getElementById('s3HintText').textContent = "💡 تلميح: " + task.hint;
+      document.getElementById(task.id).classList.add('target-highlight');
+    }
+  }
+
+  document.getElementById('toStation4Btn').addEventListener('click', function(){
+    addBadge("المحقق البلوري","🔍");
+    goStation(3,'screen-s4');
+  });
+
+  /* ============================================================
+     STATION 4: تجربة فحص المجسمات (page 13)
+  ============================================================ */
+  const shapeAnswers = {
+    cube:   {faces:6, edges:12, vertices:8},
+    prism:  {faces:6, edges:12, vertices:8},
+    pyramid:{faces:5, edges:8,  vertices:5}
+  };
+  let s4TableChecked = false;
+
+  document.getElementById('checkTableBtn').addEventListener('click', function(){
+    let correctCells = 0;
+    const inputs = document.querySelectorAll('.exp-table input');
+    inputs.forEach(inp=>{
+      const shape = inp.getAttribute('data-shape');
+      const field = inp.getAttribute('data-field');
+      const val = parseInt(inp.value, 10);
+      const correctVal = shapeAnswers[shape][field];
+      if(val === correctVal){
+        inp.style.borderColor = 'var(--green)';
+        inp.style.background = '#eafaf1';
+        correctCells++;
+      } else {
+        inp.style.borderColor = 'var(--danger)';
+        inp.style.background = '#fdecec';
+      }
+    });
+    const fb = document.getElementById('s4TableFeedback');
+    fb.className = 'feedback-box show ' + (correctCells===inputs.length ? 'ok':'bad');
+    fb.innerHTML = `النتيجة: ${correctCells} من ${inputs.length} خانة صحيحة.<br>
+      الإجابات الصحيحة — المكعب: 6 أوجه، 12 حافة، 8 زوايا مجسمة. المنشور الرباعي: 6 أوجه، 12 حافة، 8 زوايا مجسمة. الهرم الرباعي: 5 أوجه، 8 حواف، 5 زوايا مجسمة.`;
+
+    if(!s4TableChecked){
+      s4TableChecked = true;
+      addPoints(inputs.length, correctCells);
+      document.getElementById('s4InferenceCard').style.display = 'block';
+      document.getElementById('s4InferenceCard').scrollIntoView({behavior:'smooth'});
+    }
+  });
+
+  const s4q1Opts = [
+    {t:"نعم، تكون دائمًا متساوية القياس في جميع الأشكال", ok:false},
+    {t:"لا، تختلف قياسات الزوايا باختلاف شكل المجسم البلوري وعدد أوجهه", ok:true}
+  ];
+  const s4q2Opts = [
+    {t:"لا توجد علاقة بين عدد الحواف وعدد الزوايا المجسمة إطلاقًا", ok:false},
+    {t:"كلما زاد عدد الحواف وتقاطعاتها، زاد عدد الزوايا المجسمة الناتجة في المجسم", ok:true}
+  ];
+
+  function renderInferenceQ(containerId, feedbackId, opts, onDone){
+    const box = document.getElementById(containerId);
+    opts.forEach(opt=>{
+      const el = document.createElement('div');
+      el.className = 'mcq-option';
+      el.textContent = opt.t;
+      el.addEventListener('click', function(){
+        if(box.classList.contains('locked')) return;
+        box.classList.add('locked');
+        box.querySelectorAll('.mcq-option').forEach(o=>o.classList.add('disabled'));
+        const fb = document.getElementById(feedbackId);
+        if(opt.ok){
+          el.classList.add('correct');
+          fb.className = 'feedback-box show ok';
+          fb.textContent = "إجابة صحيحة!";
+          addPoints(5,5);
+        } else {
+          el.classList.add('incorrect');
+          box.querySelectorAll('.mcq-option').forEach(o=>{
+            if(o.textContent === opts.find(x=>x.ok).t) o.classList.add('correct');
+          });
+          fb.className = 'feedback-box show bad';
+          fb.textContent = "الإجابة الصحيحة: " + opts.find(x=>x.ok).t;
+          addPoints(5,0);
+        }
+        onDone();
+      });
+      box.appendChild(el);
+    });
+  }
+
+  let q1Done=false, q2Done=false;
+  renderInferenceQ('s4q1Options','s4q1Feedback', s4q1Opts, ()=>{ q1Done=true; checkInferenceDone(); });
+  renderInferenceQ('s4q2Options','s4q2Feedback', s4q2Opts, ()=>{ q2Done=true; checkInferenceDone(); });
+
+  function checkInferenceDone(){
+    if(q1Done && q2Done){
+      addBadge("الباحث الدقيق","🧭");
+      document.getElementById('toResultsBtn').style.display = 'inline-block';
+    }
+  }
+
+  document.getElementById('toResultsBtn').addEventListener('click', function(){
+    showResults();
+  });
+
+  /* ============================================================
+     RESULTS
+  ============================================================ */
+  function showResults(){
+    const pct = state.total > 0 ? Math.round((state.earned/state.total)*100) : 0;
+    document.getElementById('scoreCircle').style.setProperty('--pct', pct);
+    document.getElementById('finalScoreNum').textContent = pct;
+
+    let msg = "";
+    if(pct >= 90) msg = "أداء ممتاز! أنت مستكشف معادن حقيقي 🌟";
+    else if(pct >= 70) msg = "أحسنت! فهمك لعالم المعادن والبلورات جيد جدًا 👏";
+    else if(pct >= 50) msg = "عمل جيد! راجع بعض الأفكار لتثبيت المعلومة أكثر 💪";
+    else msg = "بداية طيبة! يمكنك إعادة اللعب لتحسين نتيجتك 🔁";
+    document.getElementById('encourageMsg').textContent = msg;
+
+    const badgesRow = document.getElementById('badgesRow');
+    const achBadges = document.getElementById('achBadges');
+    badgesRow.innerHTML = "";
+    achBadges.innerHTML = "";
+    if(state.badges.length === 0){
+      badgesRow.innerHTML = '<span class="muted">لم يتم إحراز شارات هذه المرة</span>';
+      achBadges.innerHTML = '<span class="muted">—</span>';
+    } else {
+      state.badges.forEach(b=>{
+        const el = document.createElement('div');
+        el.className = 'badge';
+        el.innerHTML = `<span class="emoji">${b.emoji}</span>${b.name}`;
+        badgesRow.appendChild(el);
+        const el2 = el.cloneNode(true);
+        achBadges.appendChild(el2);
+      });
+    }
+
+    document.getElementById('achName').textContent = state.studentName;
+    document.getElementById('achScore').textContent = pct;
+
+    goStation(4,'screen-results');
+    document.getElementById('progressWrap').style.display = 'none';
+    celebrate();
+  }
+
+  document.getElementById('printBtn').addEventListener('click', function(){
+    window.print();
+  });
+
+  document.getElementById('restartBtn').addEventListener('click', function(){
+    window.location.reload();
+  });
+
+})();
+</script>
+</body>
+</html>
