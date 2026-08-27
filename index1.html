@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>فلاش باك: المعادن والأنظمة البلورية</title>
+<style>
+  :root{
+    --blue:#2b6cb0;
+    --blue-dark:#1a4971;
+    --purple:#6b46c1;
+    --purple-light:#9f7aea;
+    --green:#2f855a;
+    --green-light:#48bb78;
+    --bg1:#eef4fb;
+    --bg2:#f3ecfb;
+    --card-bg:#ffffff;
+    --text:#1a202c;
+    --muted:#5a6472;
+    --danger:#e53e3e;
+    --gold:#d69e2e;
+    --radius:16px;
+    --shadow: 0 8px 24px rgba(43,108,176,0.15);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:"Tahoma","Arial",sans-serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2) 60%, #eafaf1);
+    min-height:100vh;
+    color:var(--text);
+    direction:rtl;
+    text-align:right;
+  }
+  .app{
+    max-width:760px;
+    margin:0 auto;
+    padding:16px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+  }
+
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--card-bg);
+    border-radius:var(--radius);
+    padding:10px 16px;
+    box-shadow:var(--shadow);
+    margin-bottom:16px;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+  .brand{display:flex; align-items:center; gap:8px; font-weight:bold; color:var(--blue-dark); font-size:15px;}
+  .brand .icon{font-size:22px;}
+  .stats{display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .stat{
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    color:#fff; padding:6px 12px; border-radius:999px; font-size:13px; font-weight:bold;
+  }
+
+  .mode-toggle{
+    display:flex; gap:8px; margin-bottom:16px; justify-content:center; flex-wrap:wrap;
+  }
+  .mode-btn{
+    border:2px solid #cbd8ea; background:#fff; color:var(--blue-dark);
+    padding:8px 18px; border-radius:999px; font-family:inherit; font-weight:bold; font-size:14px;
+    cursor:pointer; transition:.15s;
+  }
+  .mode-btn.active{
+    background:linear-gradient(135deg,var(--blue),var(--purple)); color:#fff; border-color:transparent;
+  }
+
+  h1{color:var(--blue-dark); margin:6px 0 2px; text-align:center; font-size:22px;}
+  .subtitle{text-align:center; color:var(--muted); margin-bottom:16px; font-size:13px;}
+
+  /* ===== progress dots ===== */
+  .dots{display:flex; gap:6px; justify-content:center; margin-bottom:14px; flex-wrap:wrap;}
+  .dot{width:10px; height:10px; border-radius:50%; background:#dbe6f5; transition:.2s;}
+  .dot.done{background:var(--green-light);}
+  .dot.current{background:var(--purple); transform:scale(1.3);}
+
+  /* ===== FLASHCARD MODE ===== */
+  #flashArea{display:flex; flex-direction:column; align-items:center;}
+  .card-counter{color:var(--muted); font-size:13px; margin-bottom:10px;}
+  .flip-card-wrap{
+    width:100%; max-width:560px; height:300px; perspective:1400px; margin-bottom:18px;
+  }
+  .flip-card{
+    width:100%; height:100%; position:relative; transform-style:preserve-3d;
+    transition:transform .55s cubic-bezier(.4,.2,.2,1); cursor:pointer;
+  }
+  .flip-card.flipped{transform:rotateY(180deg);}
+  .flip-face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding:26px; text-align:center;
+  }
+  .flip-front{
+    background:linear-gradient(135deg,#ffffff,var(--bg1));
+    border:2px solid #dbe6f5;
+  }
+  .flip-front .tag{
+    background:var(--bg2); color:var(--purple); padding:4px 12px; border-radius:999px;
+    font-size:12px; font-weight:bold; margin-bottom:14px;
+  }
+  .flip-front .qtext{font-size:19px; font-weight:bold; color:var(--blue-dark); line-height:1.7;}
+  .flip-hint{margin-top:16px; font-size:12px; color:var(--muted);}
+  .flip-back{
+    background:linear-gradient(135deg,var(--bg2),#eafaf1);
+    border:2px solid var(--purple-light);
+    transform:rotateY(180deg);
+    overflow-y:auto;
+  }
+  .flip-back .tag{
+    background:var(--green-light); color:#fff; padding:4px 12px; border-radius:999px;
+    font-size:12px; font-weight:bold; margin-bottom:12px;
+  }
+  .flip-back .answer{font-size:17px; font-weight:bold; color:var(--green); margin-bottom:8px; line-height:1.7;}
+  .flip-back .explain{font-size:13px; color:var(--text); line-height:1.8;}
+
+  .nav-row{display:flex; gap:10px; align-items:center; justify-content:center; flex-wrap:wrap;}
+  .nav-btn{
+    border:none; cursor:pointer; padding:10px 20px; border-radius:12px; font-family:inherit;
+    font-weight:bold; font-size:14px; color:#fff;
+    background:linear-gradient(135deg,var(--blue),var(--purple));
+    box-shadow:0 6px 14px rgba(107,70,193,.25);
+    transition:.15s;
+  }
+  .nav-btn:hover{transform:translateY(-2px);}
+  .nav-btn:disabled{opacity:.4; cursor:not-allowed; transform:none;}
+  .nav-btn.flip-btn{background:linear-gradient(135deg,var(--green-light),var(--green));}
+  .nav-btn.secondary{background:#fff; color:var(--blue-dark); border:2px solid var(--blue); box-shadow:none;}
+
+  /* ===== QUIZ MODE ===== */
+  #quizArea{display:none;}
+  .quiz-card{
+    background:var(--card-bg); border-radius:var(--radius); padding:22px; box-shadow:var(--shadow); margin-bottom:14px;
+  }
+  .quiz-card h3{color:var(--blue-dark); margin-top:0; line-height:1.7;}
+  .mcq-options{display:flex; flex-direction:column; gap:10px; margin:14px 0;}
+  .mcq-option{
+    background:#fff; border:2px solid #cbd8ea; border-radius:12px; padding:12px 16px;
+    cursor:pointer; text-align:right; font-size:15px; transition:.15s;
+  }
+  .mcq-option:hover{border-color:var(--purple-light);}
+  .mcq-option.correct{border-color:var(--green); background:#eafaf1; font-weight:bold;}
+  .mcq-option.incorrect{border-color:var(--danger); background:#fdecec;}
+  .mcq-option.disabled{pointer-events:none;}
+  .feedback-box{margin-top:14px; padding:14px; border-radius:12px; display:none; line-height:1.8; font-size:14px;}
+  .feedback-box.show{display:block;}
+  .feedback-box.ok{background:#eafaf1; border:2px solid var(--green-light); color:#22543d;}
+  .feedback-box.bad{background:#fdecec; border:2px solid #feb2b2; color:#742a2a;}
+
+  /* results */
+  #quizResults{display:none; text-align:center;}
+  .score-circle{
+    width:150px; height:150px; border-radius:50%; margin:14px auto;
+    display:flex; align-items:center; justify-content:center; flex-direction:column;
+    background:conic-gradient(var(--green-light) calc(var(--pct,0)*1%), #e2e8f0 0);
+    position:relative;
+  }
+  .score-circle::before{content:""; position:absolute; width:112px; height:112px; border-radius:50%; background:#fff;}
+  .score-inner{position:relative; z-index:1; text-align:center;}
+  .score-inner .num{font-size:30px; font-weight:bold; color:var(--blue-dark);}
+  .score-inner .lbl{font-size:11px; color:var(--muted);}
+
+  .confetti-piece{
+    position:fixed; top:-20px; font-size:20px; pointer-events:none; z-index:999; animation:fall linear forwards;
+  }
+  @keyframes fall{to{ transform:translateY(110vh) rotate(360deg); opacity:.2; }}
+
+  footer.note{text-align:center; font-size:12px; color:var(--muted); margin:14px 0 20px;}
+
+  @media (max-width:480px){
+    .flip-card-wrap{height:340px;}
+    .flip-front .qtext{font-size:16px;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand"><span class="icon">🔁</span> فلاش باك: المعادن والأنظمة البلورية</div>
+    <div class="stats">
+      <div class="stat" id="quizScoreStat" style="display:none;">⭐ النقاط: <span id="quizScoreDisplay">0</span></div>
+    </div>
+  </div>
+
+  <h1>مراجعة سريعة لدرس المعادن والبلورات</h1>
+  <p class="subtitle">علوم الأرض — الصف التاسع — الصفحات 10–13</p>
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="btnFlashMode">🃏 وضع البطاقات</button>
+    <button class="mode-btn" id="btnQuizMode">✅ وضع الاختبار المصحّح</button>
+  </div>
+
+  <!-- ===================== FLASHCARD MODE ===================== -->
+  <div id="flashArea">
+    <div class="dots" id="flashDots"></div>
+    <div class="card-counter" id="cardCounter">البطاقة 1 من 13</div>
+
+    <div class="flip-card-wrap">
+      <div class="flip-card" id="flipCard">
+        <div class="flip-face flip-front">
+          <span class="tag">سؤال</span>
+          <div class="qtext" id="frontText"></div>
+          <div class="flip-hint">اضغط على البطاقة لرؤية الإجابة 👆</div>
+        </div>
+        <div class="flip-face flip-back">
+          <span class="tag">الإجابة</span>
+          <div class="answer" id="backAnswer"></div>
+          <div class="explain" id="backExplain"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button class="nav-btn secondary" id="prevBtn">→ السابق</button>
+      <button class="nav-btn flip-btn" id="flipBtn">قلب البطاقة 🔄</button>
+      <button class="nav-btn" id="nextBtn">التالي ←</button>
+    </div>
+  </div>
+
+  <!-- ===================== QUIZ MODE ===================== -->
+  <div id="quizArea">
+    <div class="dots" id="quizDots"></div>
+    <div class="quiz-card" id="quizQuestionCard">
+      <div class="card-counter" id="quizCounter">السؤال 1 من 13</div>
+      <h3 id="quizPrompt"></h3>
+      <div class="mcq-options" id="quizOptions"></div>
+      <div class="feedback-box" id="quizFeedback"></div>
+      <div class="nav-row" style="margin-top:16px;">
+        <button class="nav-btn secondary" id="quizNextBtn" style="display:none;">السؤال التالي ←</button>
+      </div>
+    </div>
+
+    <div class="quiz-card" id="quizResults">
+      <h3>🎉 انتهى الاختبار!</h3>
+      <div class="score-circle" id="scoreCircle" style="--pct:0;">
+        <div class="score-inner">
+          <div class="num" id="finalPct">0</div>
+          <div class="lbl">من 100</div>
+        </div>
+      </div>
+      <p class="muted" id="quizResultMsg" style="color:var(--muted);"></p>
+      <div class="nav-row">
+        <button class="nav-btn" id="restartQuizBtn">🔄 إعادة الاختبار</button>
+      </div>
+    </div>
+  </div>
+
+  <footer class="note">فلاش باك تعليمي — درس المعادن والأنظمة البلورية، علوم الأرض، الصف التاسع</footer>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+const cards = [
+  {q:"ما تعريف المعدن؟", a:"مادة صلبة، طبيعية التكوّن، غير عضوية، لها تركيب كيميائي محدد وبناء ذري داخلي منتظم.", explain:"هذا هو التعريف العلمي الكامل للمعدن، وتشترط جميع هذه الخصائص معًا حتى تُصنَّف المادة معدنًا.", options:["مادة سائلة عديمة اللون","مادة صلبة، طبيعية التكوّن، غير عضوية، لها تركيب كيميائي محدد وبناء ذري داخلي منتظم","أي مادة صلبة صناعية المصدر","مادة ناتجة عن الكائنات الحية فقط"], correct:1},
+  {q:"أي مما يلي يُعد معدنًا؟", a:"الهاليت", explain:"الهاليت معدن لأنه صلب، طبيعي التكوّن، غير عضوي، وله بناء بلوري منتظم. أما الماء فسائل، والفحم الحجري عضوي المصدر، والزجاج البركاني بلا بناء ذري منتظم.", options:["الماء","الفحم الحجري","الهاليت","الزجاج البركاني"], correct:2},
+  {q:"لماذا لا يُعد الفحم الحجري معدنًا؟", a:"لأنه يتكوّن أصلاً من مواد عضوية.", explain:"شرط عدم العضوية أساسي في تعريف المعدن، والفحم الحجري ناتج عن بقايا نباتية عضوية.", options:["لأنه سائل","لأنه يتكوّن أصلاً من مواد عضوية","لأنه بلا لون","لأنه صناعي المصدر"], correct:1},
+  {q:"لماذا لا يُعد الزجاج البركاني معدنًا؟", a:"لأنه لا يملك ترتيبًا ذريًا داخليًا منتظمًا.", explain:"الزجاج البركاني يتكوّن من تبرّد سريع للصهارة، فلا يُتاح للذرات وقت كافٍ لترتيب نفسها في بناء بلوري منتظم.", options:["لأنه لا يملك ترتيبًا ذريًا داخليًا منتظمًا","لأنه سائل","لأنه عضوي المصدر","لأنه لا يحتوي على أي عناصر"], correct:0},
+  {q:"كيف تتكوّن بلورات الهاليت؟", a:"عند تبخر مياه البحر المالحة، ترتبط أيونات الصوديوم بأيونات الكلوريد بترتيب منتظم.", explain:"هذه العملية توضح كيف ينتج معدن الهاليت (ملح الطعام) طبيعيًا من مياه البحر.", options:["عند تجمد الماء العذب","عند تبخر مياه البحر المالحة وترابط أيونات الصوديوم والكلوريد بترتيب منتظم","عند ذوبان المعادن الأخرى في الماء","عند تعرّض الصخور للرياح"], correct:1},
+  {q:"ما المقصود بعملية التبلور؟", a:"ترتيب الذرات أو الأيونات في بناء منتظم لتكوين بلورة.", explain:"التبلور هو المصطلح العلمي الذي يصف كيف تصطف الذرات أو الأيونات بنمط هندسي منتظم ومتكرر.", options:["تغيّر لون المعدن بفعل الحرارة","ترتيب الذرات أو الأيونات في بناء منتظم لتكوين بلورة","ذوبان المعدن في الماء","تفتت الصخور بفعل التجوية"], correct:1},
+  {q:"ما هو الوجه البلوري؟", a:"سطح أملس يحيط بالبلورة من الخارج.", explain:"الأوجه البلورية هي الأسطح المستوية الظاهرة التي تحدد الشكل الخارجي للبلورة.", options:["سطح أملس يحيط بالبلورة من الخارج","نقطة التقاء ثلاثة أوجه أو أكثر","خط تقاطع وجهين متجاورين","الزاوية بين عمودين على وجهين متجاورين"], correct:0},
+  {q:"ما هي الحافة البلورية؟", a:"خط ينتج من تقاطع وجهين بلوريين متجاورين.", explain:"الحافة تمثل الخط الفاصل الذي يظهر عند التقاء وجهين مستويين في البلورة.", options:["سطح أملس يحيط بالبلورة","خط ينتج من تقاطع وجهين بلوريين متجاورين","نقطة التقاء ثلاثة أوجه","مركز البلورة"], correct:1},
+  {q:"ما المقصود بالزاوية المجسمة في البلورة؟", a:"الزاوية الناتجة من تقاطع ثلاثة أوجه بلورية متجاورة أو أكثر.", explain:"الزاوية المجسمة هي نقطة التقاء عدة أوجه معًا، وتظهر عادة عند رؤوس البلورة.", options:["الزاوية الناتجة من تقاطع ثلاثة أوجه بلورية متجاورة أو أكثر","الزاوية بين عمودين على وجهين متجاورين","خط تقاطع وجهين","سطح البلورة الخارجي"], correct:0},
+  {q:"ما المقصود بالزاوية بين الوجهين؟", a:"الزاوية المحصورة بين العمودين المقامين على وجهين متجاورين في البلورة.", explain:"هذه الزاوية تقاس باستخدام عمودين متعامدين على كل وجه من الوجهين المتجاورين.", options:["الزاوية المحصورة بين العمودين المقامين على وجهين متجاورين في البلورة","خط تقاطع وجهين متجاورين","نقطة التقاء عدة أوجه","سطح البلورة الأملس"], correct:0},
+  {q:"كم عدد الأوجه والحواف والزوايا المجسمة في المكعب؟", a:"6 أوجه، 12 حافة، 8 زوايا مجسمة.", explain:"هذه القيم ثابتة لأي مجسم مكعب الشكل، مهما اختلف حجمه.", options:["6 أوجه، 12 حافة، 8 زوايا مجسمة","5 أوجه، 8 حواف، 5 زوايا مجسمة","4 أوجه، 6 حواف، 4 زوايا مجسمة","8 أوجه، 12 حافة، 6 زوايا مجسمة"], correct:0},
+  {q:"كم عدد الأوجه والحواف والزوايا المجسمة في الهرم الرباعي؟", a:"5 أوجه، 8 حواف، 5 زوايا مجسمة.", explain:"الهرم الرباعي القاعدة يتكون من قاعدة مربعة وأربعة أوجه مثلثة تلتقي عند قمة واحدة.", options:["6 أوجه، 12 حافة، 8 زوايا مجسمة","5 أوجه، 8 حواف، 5 زوايا مجسمة","4 أوجه، 4 حواف، 4 زوايا مجسمة","3 أوجه، 6 حواف، 3 زوايا مجسمة"], correct:1},
+  {q:"هل تكون الزوايا الناتجة من تقاطع أوجه البلورة متساوية في الأشكال المختلفة؟", a:"لا، تختلف باختلاف شكل المجسم البلوري وعدد أوجهه.", explain:"كل نوع من المجسمات البلورية (مكعب، منشور، هرم) له قياسات زوايا مختلفة بحسب عدد أوجهه وترتيبها.", options:["نعم، متساوية دائمًا","لا، تختلف باختلاف شكل المجسم البلوري وعدد أوجهه"], correct:1}
+];
+
+let idx = 0;
+let flipped = false;
+
+/* ============ MODE TOGGLE ============ */
+const btnFlashMode = document.getElementById('btnFlashMode');
+const btnQuizMode = document.getElementById('btnQuizMode');
+const flashArea = document.getElementById('flashArea');
+const quizArea = document.getElementById('quizArea');
+const quizScoreStat = document.getElementById('quizScoreStat');
+
+btnFlashMode.addEventListener('click', ()=>{
+  btnFlashMode.classList.add('active');
+  btnQuizMode.classList.remove('active');
+  flashArea.style.display = 'flex';
+  quizArea.style.display = 'none';
+  quizScoreStat.style.display = 'none';
+});
+btnQuizMode.addEventListener('click', ()=>{
+  btnQuizMode.classList.add('active');
+  btnFlashMode.classList.remove('active');
+  flashArea.style.display = 'none';
+  quizArea.style.display = 'block';
+  quizScoreStat.style.display = 'inline-block';
+  if(!quizStarted){ startQuiz(); }
+});
+
+/* ============ FLASHCARD MODE ============ */
+function renderFlashDots(){
+  const wrap = document.getElementById('flashDots');
+  wrap.innerHTML = "";
+  cards.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i<idx?' done':'') + (i===idx?' current':'');
+    wrap.appendChild(d);
+  });
+}
+
+function renderCard(){
+  const c = cards[idx];
+  document.getElementById('frontText').textContent = c.q;
+  document.getElementById('backAnswer').textContent = c.a;
+  document.getElementById('backExplain').textContent = c.explain;
+  document.getElementById('cardCounter').textContent = `البطاقة ${idx+1} من ${cards.length}`;
+  document.getElementById('prevBtn').disabled = (idx===0);
+  document.getElementById('nextBtn').disabled = (idx===cards.length-1);
+  flipped = false;
+  document.getElementById('flipCard').classList.remove('flipped');
+  renderFlashDots();
+}
+
+document.getElementById('flipCard').addEventListener('click', toggleFlip);
+document.getElementById('flipBtn').addEventListener('click', toggleFlip);
+function toggleFlip(){
+  flipped = !flipped;
+  document.getElementById('flipCard').classList.toggle('flipped', flipped);
+}
+
+document.getElementById('prevBtn').addEventListener('click', ()=>{
+  if(idx>0){ idx--; renderCard(); }
+});
+document.getElementById('nextBtn').addEventListener('click', ()=>{
+  if(idx<cards.length-1){ idx++; renderCard(); }
+});
+
+renderCard();
+
+/* ============ QUIZ MODE ============ */
+let quizStarted = false;
+let quizIdx = 0;
+let quizScore = 0;
+let quizAnswered = false;
+
+function startQuiz(){
+  quizStarted = true;
+  quizIdx = 0;
+  quizScore = 0;
+  document.getElementById('quizResults').style.display = 'none';
+  document.getElementById('quizQuestionCard').style.display = 'block';
+  updateQuizScoreDisplay();
+  renderQuizQuestion();
+}
+
+function updateQuizScoreDisplay(){
+  document.getElementById('quizScoreDisplay').textContent = quizScore;
+}
+
+function renderQuizDots(){
+  const wrap = document.getElementById('quizDots');
+  wrap.innerHTML = "";
+  cards.forEach((_,i)=>{
+    const d = document.createElement('div');
+    d.className = 'dot' + (i<quizIdx?' done':'') + (i===quizIdx?' current':'');
+    wrap.appendChild(d);
+  });
+}
+
+function renderQuizQuestion(){
+  quizAnswered = false;
+  const c = cards[quizIdx];
+  document.getElementById('quizCounter').textContent = `السؤال ${quizIdx+1} من ${cards.length}`;
+  document.getElementById('quizPrompt').textContent = c.q;
+  const optWrap = document.getElementById('quizOptions');
+  optWrap.innerHTML = "";
+  optWrap.classList.remove('locked');
+  c.options.forEach((optText, i)=>{
+    const el = document.createElement('div');
+    el.className = 'mcq-option';
+    el.textContent = optText;
+    el.addEventListener('click', ()=> handleQuizAnswer(i, el));
+    optWrap.appendChild(el);
+  });
+  document.getElementById('quizFeedback').className = 'feedback-box';
+  document.getElementById('quizNextBtn').style.display = 'none';
+  renderQuizDots();
+}
+
+function handleQuizAnswer(chosenIndex, el){
+  if(quizAnswered) return;
+  quizAnswered = true;
+  const c = cards[quizIdx];
+  const optWrap = document.getElementById('quizOptions');
+  optWrap.querySelectorAll('.mcq-option').forEach(o=>o.classList.add('disabled'));
+  const fb = document.getElementById('quizFeedback');
+  if(chosenIndex === c.correct){
+    el.classList.add('correct');
+    fb.className = 'feedback-box show ok';
+    fb.textContent = "إجابة صحيحة! " + c.explain;
+    quizScore += Math.round(100/cards.length);
+  } else {
+    el.classList.add('incorrect');
+    optWrap.children[c.correct].classList.add('correct');
+    fb.className = 'feedback-box show bad';
+    fb.textContent = "الإجابة الصحيحة: " + c.a + " — " + c.explain;
+  }
+  updateQuizScoreDisplay();
+  document.getElementById('quizNextBtn').style.display = 'inline-block';
+  document.getElementById('quizNextBtn').textContent = (quizIdx < cards.length-1) ? "السؤال التالي ←" : "عرض النتيجة 🏁";
+}
+
+document.getElementById('quizNextBtn').addEventListener('click', ()=>{
+  if(quizIdx < cards.length-1){
+    quizIdx++;
+    renderQuizQuestion();
+  } else {
+    finishQuiz();
+  }
+});
+
+function finishQuiz(){
+  document.getElementById('quizQuestionCard').style.display = 'none';
+  document.getElementById('quizResults').style.display = 'block';
+  const pct = Math.min(100, quizScore);
+  document.getElementById('scoreCircle').style.setProperty('--pct', pct);
+  document.getElementById('finalPct').textContent = pct;
+  let msg = "";
+  if(pct>=90) msg = "أداء ممتاز! أنت مستكشف معادن حقيقي 🌟";
+  else if(pct>=70) msg = "أحسنت! فهمك لعالم المعادن والبلورات جيد جدًا 👏";
+  else if(pct>=50) msg = "عمل جيد! راجع البطاقات مرة أخرى لتثبيت المعلومة 💪";
+  else msg = "يمكنك مراجعة البطاقات ثم إعادة الاختبار لتحسين نتيجتك 🔁";
+  document.getElementById('quizResultMsg').textContent = msg;
+  celebrate();
+}
+
+document.getElementById('restartQuizBtn').addEventListener('click', startQuiz);
+
+function celebrate(){
+  const emojis = ["✨","🎉","💎","⭐","🟢"];
+  for(let i=0;i<16;i++){
+    const el = document.createElement('div');
+    el.className = 'confetti-piece';
+    el.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left = Math.random()*100+'vw';
+    el.style.animationDuration = (1.6+Math.random()*1.2)+'s';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(), 3000);
+  }
+}
+
+})();
+</script>
+</body>
+</html>
