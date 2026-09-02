@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مهمة خبير البلورات والمعادن</title>
+<style>
+  :root{
+    --blue:#2563eb;
+    --blue-dark:#1e3a8a;
+    --purple:#7c3aed;
+    --green:#16a34a;
+    --green-dark:#15803d;
+    --bg1:#eef2ff;
+    --bg2:#ecfdf5;
+    --card-bg:#ffffff;
+    --text-dark:#1e293b;
+    --text-mid:#475569;
+    --danger:#dc2626;
+    --radius:16px;
+    --shadow:0 10px 30px rgba(30,58,138,0.12);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family: Tahoma, Arial, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, var(--bg1), var(--bg2) 60%, #f5f3ff);
+    min-height:100vh;
+    color:var(--text-dark);
+    line-height:1.7;
+  }
+  .app{
+    max-width:920px;
+    margin:0 auto;
+    padding:20px 16px 60px;
+  }
+  .screen{display:none;}
+  .screen.active{display:block; animation:fadeIn .5s ease;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);}}
+
+  h1,h2,h3{margin:0 0 8px;}
+  .top-title{
+    text-align:center;
+    font-size:1.9rem;
+    background:linear-gradient(90deg, var(--blue-dark), var(--purple));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    margin-top:10px;
+    margin-bottom:4px;
+  }
+  .subtitle{ text-align:center; color:var(--text-mid); margin-bottom:22px; font-size:1rem;}
+
+  /* Honor section */
+  .honor-section{
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding:22px 18px;
+    margin-bottom:26px;
+    border:1px solid #e0e7ff;
+  }
+  .honor-title{
+    text-align:center;
+    font-size:1.3rem;
+    color:var(--blue-dark);
+    margin-bottom:18px;
+    font-weight:700;
+  }
+  .honor-cards{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .honor-card{
+    flex:1 1 180px;
+    max-width:220px;
+    background:linear-gradient(160deg,#ffffff,#f1f5ff);
+    border:1px solid #dbe4ff;
+    border-radius:14px;
+    padding:18px 12px;
+    text-align:center;
+    opacity:0;
+    transform:translateY(14px) scale(.95);
+    animation:cardIn .55s ease forwards;
+    box-shadow:0 4px 14px rgba(37,99,235,0.08);
+  }
+  .honor-card:nth-child(1){animation-delay:.15s;}
+  .honor-card:nth-child(2){animation-delay:.4s;}
+  .honor-card:nth-child(3){animation-delay:.65s;}
+  @keyframes cardIn{ to{opacity:1; transform:translateY(0) scale(1);} }
+  .honor-medal{font-size:2.1rem; display:block; margin-bottom:6px;}
+  .honor-name{font-weight:700; font-size:1.02rem; color:var(--text-dark);}
+  .honor-class{font-size:.85rem; color:var(--text-mid); margin-top:2px;}
+  .honor-msg{
+    text-align:center;
+    margin-top:18px;
+    font-weight:600;
+    color:var(--purple);
+    opacity:0;
+    animation:cardIn .6s ease forwards;
+    animation-delay:1s;
+  }
+
+  .story-box{
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    color:#fff;
+    border-radius: var(--radius);
+    padding:20px 18px;
+    margin-bottom:20px;
+    box-shadow: var(--shadow);
+    text-align:center;
+    font-size:1.05rem;
+  }
+
+  .name-field{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    margin-bottom:24px;
+  }
+  .name-field label{font-weight:600; color:var(--text-mid);}
+  .name-field input{
+    width:100%;
+    max-width:340px;
+    padding:12px 14px;
+    border-radius:12px;
+    border:2px solid #c7d2fe;
+    font-size:1rem;
+    font-family:inherit;
+    text-align:center;
+    outline:none;
+    transition:border-color .2s;
+  }
+  .name-field input:focus{border-color:var(--blue);}
+
+  .btn{
+    display:inline-block;
+    padding:14px 32px;
+    border-radius:14px;
+    border:none;
+    font-size:1.05rem;
+    font-weight:700;
+    font-family:inherit;
+    cursor:pointer;
+    color:#fff;
+    background:linear-gradient(90deg, var(--blue), var(--purple));
+    box-shadow:0 8px 20px rgba(124,58,237,0.28);
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:hover{transform:translateY(-2px); box-shadow:0 12px 24px rgba(124,58,237,0.35);}
+  .btn:active{transform:translateY(0);}
+  .btn:focus-visible{outline:3px solid #fbbf24; outline-offset:2px;}
+  .btn.secondary{background:linear-gradient(90deg,#64748b,#475569); box-shadow:0 8px 20px rgba(71,85,105,0.25);}
+  .btn.green{background:linear-gradient(90deg, var(--green), var(--green-dark)); box-shadow:0 8px 20px rgba(21,128,61,0.28);}
+  .btn.small{padding:10px 20px; font-size:.92rem;}
+  .btn:disabled{opacity:.5; cursor:not-allowed; transform:none;}
+  .center-btn{text-align:center; margin-top:10px;}
+
+  /* progress bar / header during game */
+  .game-header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:18px;
+    flex-wrap:wrap;
+  }
+  .station-pill{
+    background:var(--card-bg);
+    border-radius:20px;
+    padding:8px 16px;
+    font-weight:700;
+    color:var(--blue-dark);
+    box-shadow:0 4px 12px rgba(30,58,138,0.08);
+    font-size:.95rem;
+  }
+  .score-pill{
+    background:linear-gradient(90deg,var(--green),var(--green-dark));
+    color:#fff;
+    border-radius:20px;
+    padding:8px 16px;
+    font-weight:700;
+    font-size:.95rem;
+  }
+  .progress-track{
+    width:100%;
+    height:12px;
+    background:#e2e8f0;
+    border-radius:8px;
+    overflow:hidden;
+    margin-bottom:24px;
+  }
+  .progress-fill{
+    height:100%;
+    background:linear-gradient(90deg,var(--blue),var(--green));
+    border-radius:8px;
+    width:0%;
+    transition:width .5s ease;
+  }
+
+  .card{
+    background:var(--card-bg);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:22px 20px;
+    margin-bottom:20px;
+    border:1px solid #e2e8f0;
+  }
+  .station-title{
+    font-size:1.35rem;
+    color:var(--blue-dark);
+    margin-bottom:6px;
+    text-align:center;
+  }
+  .station-desc{
+    text-align:center;
+    color:var(--text-mid);
+    margin-bottom:18px;
+    font-size:.95rem;
+  }
+
+  /* Station 1 - cube */
+  .cube-wrap{
+    display:flex;
+    justify-content:center;
+    margin-bottom:16px;
+  }
+  .term-banner{
+    background:#eef2ff;
+    border:2px dashed var(--blue);
+    border-radius:12px;
+    padding:12px 16px;
+    text-align:center;
+    font-weight:700;
+    color:var(--blue-dark);
+    margin-bottom:16px;
+    font-size:1.05rem;
+  }
+  .zone-btn{
+    cursor:pointer;
+    transition: transform .15s ease;
+  }
+  .zone-btn:hover circle, .zone-btn:hover rect{
+    stroke-width:3;
+  }
+  .zone-btn:focus-visible{outline:3px solid #fbbf24;}
+  .feedback-box{
+    border-radius:12px;
+    padding:14px 16px;
+    margin-top:12px;
+    font-weight:600;
+    text-align:center;
+    display:none;
+  }
+  .feedback-box.correct{ background:#dcfce7; color:var(--green-dark); display:block;}
+  .feedback-box.wrong{ background:#fee2e2; color:var(--danger); display:block;}
+  .zone-buttons-alt{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  .zone-alt-btn{
+    padding:10px 18px;
+    border-radius:12px;
+    border:2px solid #c7d2fe;
+    background:#fff;
+    font-family:inherit;
+    font-weight:700;
+    cursor:pointer;
+    color:var(--blue-dark);
+    font-size:.95rem;
+  }
+  .zone-alt-btn:hover{background:#eef2ff;}
+  .zone-alt-btn:focus-visible{outline:3px solid #fbbf24;}
+
+  /* Station 2 - crystal systems */
+  .system-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:16px;
+  }
+  .system-card{
+    border:2px solid #e2e8f0;
+    border-radius:14px;
+    padding:14px;
+    background:#f8fafc;
+  }
+  .system-shape{
+    display:flex;
+    justify-content:center;
+    margin-bottom:8px;
+  }
+  .system-name{
+    text-align:center;
+    font-weight:700;
+    color:var(--blue-dark);
+    margin-bottom:10px;
+    font-size:1.02rem;
+  }
+  .system-select{
+    width:100%;
+    padding:10px;
+    border-radius:10px;
+    border:2px solid #c7d2fe;
+    font-family:inherit;
+    font-size:.9rem;
+    background:#fff;
+    color:var(--text-dark);
+  }
+  .system-explain{
+    margin-top:8px;
+    font-size:.85rem;
+    display:none;
+    border-radius:8px;
+    padding:8px 10px;
+  }
+  .system-explain.correct{ background:#dcfce7; color:var(--green-dark); display:block;}
+  .system-explain.wrong{ background:#fee2e2; color:var(--danger); display:block;}
+
+  /* Station 3 */
+  .mineral-row{
+    display:flex;
+    gap:14px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin-bottom:18px;
+  }
+  .mineral-chip{
+    text-align:center;
+    width:120px;
+  }
+  .mineral-swatch{
+    width:90px;height:90px;border-radius:50%;
+    margin:0 auto 6px;
+    border:3px solid #fff;
+    box-shadow:0 4px 10px rgba(0,0,0,0.15);
+  }
+  .mineral-label{font-size:.85rem; font-weight:700; color:var(--text-dark);}
+  .q-block{
+    background:#f8fafc;
+    border-radius:12px;
+    padding:14px 16px;
+    margin-bottom:14px;
+    border:1px solid #e2e8f0;
+  }
+  .q-text{font-weight:700; margin-bottom:10px;}
+  .q-options{display:flex; gap:10px; flex-wrap:wrap;}
+  .opt-btn{
+    padding:10px 20px;
+    border-radius:10px;
+    border:2px solid #c7d2fe;
+    background:#fff;
+    font-family:inherit;
+    font-weight:700;
+    cursor:pointer;
+    color:var(--blue-dark);
+  }
+  .opt-btn:hover{background:#eef2ff;}
+  .opt-btn.chosen-correct{background:#dcfce7; border-color:var(--green); color:var(--green-dark);}
+  .opt-btn.chosen-wrong{background:#fee2e2; border-color:var(--danger); color:var(--danger);}
+  .opt-btn:disabled{cursor:default;}
+  .q-explain{margin-top:8px; font-size:.9rem; color:var(--text-mid); display:none;}
+  .summary-box{
+    background:linear-gradient(135deg,#f0fdf4,#eef2ff);
+    border-radius:12px;
+    padding:14px 16px;
+    text-align:center;
+    font-weight:600;
+    color:var(--green-dark);
+    margin-top:10px;
+  }
+
+  /* Station 4 - streak */
+  .streak-lab{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:18px;
+  }
+  .plate{
+    width:260px; height:130px;
+    background:#f8fafc;
+    border:4px solid #cbd5e1;
+    border-radius:12px;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .streak-mark{
+    position:absolute;
+    top:50%; right:15%;
+    transform:translateY(-50%);
+    width:0%;
+    height:22px;
+    border-radius:6px;
+    transition:width .6s ease;
+  }
+  .plate-label{position:absolute; bottom:6px; font-size:.75rem; color:#94a3b8;}
+  .mineral-picker{
+    display:flex;
+    gap:16px;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+  .mineral-sample{
+    width:100px;
+    text-align:center;
+    cursor:grab;
+    user-select:none;
+  }
+  .mineral-sample .swatch{
+    width:70px;height:70px;border-radius:14px;
+    margin:0 auto 6px;
+    box-shadow:0 4px 10px rgba(0,0,0,0.18);
+    border:2px solid #fff;
+  }
+  .mineral-sample button{
+    margin-top:6px;
+    padding:6px 12px;
+    border-radius:8px;
+    border:2px solid #c7d2fe;
+    background:#fff;
+    font-family:inherit;
+    font-weight:700;
+    cursor:pointer;
+    font-size:.82rem;
+    color:var(--blue-dark);
+  }
+
+  /* End screen */
+  .achievement-card{
+    background:linear-gradient(135deg,#fff,#f1f5ff);
+    border:3px solid var(--purple);
+    border-radius:20px;
+    padding:30px 24px;
+    text-align:center;
+    box-shadow:var(--shadow);
+    margin-bottom:24px;
+  }
+  .achievement-card h2{
+    color:var(--purple);
+    font-size:1.5rem;
+  }
+  .achieve-score{
+    font-size:3rem;
+    font-weight:800;
+    background:linear-gradient(90deg, var(--blue), var(--green));
+    -webkit-background-clip:text;
+    background-clip:text;
+    color:transparent;
+    margin:10px 0;
+  }
+  .badges-row{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    justify-content:center;
+    margin:18px 0;
+  }
+  .badge{
+    background:#fff;
+    border:2px solid #fbbf24;
+    border-radius:14px;
+    padding:12px 14px;
+    width:130px;
+    text-align:center;
+    box-shadow:0 4px 10px rgba(251,191,36,0.25);
+  }
+  .badge .icon{font-size:1.7rem; display:block; margin-bottom:4px;}
+  .badge .label{font-size:.78rem; font-weight:700; color:var(--text-dark);}
+  .badge.locked{opacity:.35; filter:grayscale(1);}
+  .final-summary{
+    text-align:right;
+    background:#f8fafc;
+    border-radius:12px;
+    padding:16px 18px;
+    margin-bottom:20px;
+    font-size:.95rem;
+  }
+  .final-summary li{margin-bottom:8px;}
+  .end-buttons{
+    display:flex;
+    gap:12px;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+
+  .confetti-piece{
+    position:fixed;
+    top:-20px;
+    width:10px;height:10px;
+    z-index:999;
+    pointer-events:none;
+    border-radius:2px;
+  }
+
+  footer.print-only{display:none;}
+
+  @media print{
+    body *{visibility:hidden;}
+    .achievement-card, .achievement-card *{visibility:visible;}
+    .achievement-card{position:absolute; top:0; right:0; left:0; margin:0; box-shadow:none;}
+    .end-buttons{display:none !important;}
+  }
+
+  @media (max-width:600px){
+    .top-title{font-size:1.5rem;}
+    .honor-cards{flex-direction:column; align-items:center;}
+    .achieve-score{font-size:2.3rem;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important;}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===================== SCREEN 0: INTRO ===================== -->
+  <div class="screen active" id="screen-intro">
+    <h1 class="top-title">مهمة خبير البلورات والمعادن</h1>
+    <p class="subtitle">علوم الأرض – الصف التاسع | التناظر البلوري والأنظمة البلورية</p>
+
+    <div class="honor-section">
+      <div class="honor-title">🌟 نجوم علوم الأرض 🌟</div>
+      <div class="honor-cards">
+        <div class="honor-card">
+          <span class="honor-medal">🥇</span>
+          <div class="honor-name">رواد</div>
+          <div class="honor-class">التاسع ب</div>
+        </div>
+        <div class="honor-card">
+          <span class="honor-medal">🥈</span>
+          <div class="honor-name">زيد نزيه</div>
+          <div class="honor-class">التاسع ج</div>
+        </div>
+        <div class="honor-card">
+          <span class="honor-medal">🥉</span>
+          <div class="honor-name">سيف الخوالدة</div>
+          <div class="honor-class">التاسع أ</div>
+        </div>
+      </div>
+      <div class="honor-msg">مبارك لنجومنا المتميزين، ومن سيكون نجم الحصة القادمة؟</div>
+    </div>
+
+    <div class="story-box">
+      🧭 وصلت إلى مختبر الجيولوجيا، وعليك اجتياز أربع محطات لتصبح خبيرًا في التعرف إلى المعادن.
+    </div>
+
+    <div class="name-field">
+      <label for="studentName">اسم الطالب (اختياري)</label>
+      <input type="text" id="studentName" placeholder="اكتب اسمك هنا">
+    </div>
+
+    <div class="center-btn">
+      <button class="btn" onclick="startMission()">ابدأ المهمة</button>
+    </div>
+  </div>
+
+  <!-- ===================== GAME (stations) ===================== -->
+  <div class="screen" id="screen-game">
+    <div class="game-header">
+      <div class="station-pill" id="stationPill">المحطة ١ من ٤</div>
+      <div class="score-pill" id="scorePill">النقاط: 0</div>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+    <!-- STATION 1 -->
+    <div class="card" id="station1">
+      <div class="station-title">المحطة الأولى: اكتشف التناظر</div>
+      <div class="station-desc">اختر الموضع الصحيح على المكعب البلوري الذي يمثل المصطلح المعروض.</div>
+
+      <div class="term-banner" id="s1-term">مستوى التناظر: مستوى يقسم البلورة إلى نصفين متساويين ومتشابهين، أحدهما صورة مرآة للآخر.</div>
+
+      <div class="cube-wrap">
+        <svg viewBox="0 0 300 260" width="300" height="260" role="img" aria-label="رسم مكعب بلوري">
+          <!-- cube faces (isometric) -->
+          <polygon points="80,90 190,50 260,90 150,130" fill="#93c5fd" stroke="#1e3a8a" stroke-width="2"/> <!-- top -->
+          <polygon points="80,90 150,130 150,220 80,180" fill="#60a5fa" stroke="#1e3a8a" stroke-width="2"/> <!-- left -->
+          <polygon points="150,130 260,90 260,180 150,220" fill="#3b82f6" stroke="#1e3a8a" stroke-width="2"/> <!-- right -->
+
+          <!-- symmetry plane overlay (hidden until revealed) -->
+          <polygon id="reveal-plane" points="115,70 225,70 190,205 80,205" fill="#facc15" fill-opacity="0" stroke="#eab308" stroke-width="0" />
+
+          <!-- symmetry axis (vertical line, hidden until revealed) -->
+          <line id="reveal-axis" x1="170" y1="40" x2="170" y2="230" stroke="#dc2626" stroke-width="0" />
+
+          <!-- center point (hidden until revealed) -->
+          <circle id="reveal-center" cx="170" cy="130" r="0" fill="#111827"/>
+
+          <!-- clickable zones -->
+          <g class="zone-btn" tabindex="0" role="button" aria-label="الموضع الأول: الوجه الأمامي" data-zone="plane" onclick="pickZone('plane')" onkeypress="if(event.key==='Enter')pickZone('plane')">
+            <circle cx="115" cy="150" r="18" fill="#fff" fill-opacity="0.6" stroke="#1e3a8a" stroke-width="2"/>
+            <text x="115" y="156" text-anchor="middle" font-size="16" font-weight="bold" fill="#1e3a8a">١</text>
+          </g>
+          <g class="zone-btn" tabindex="0" role="button" aria-label="الموضع الثاني: أعلى المكعب" data-zone="axis" onclick="pickZone('axis')" onkeypress="if(event.key==='Enter')pickZone('axis')">
+            <circle cx="170" cy="55" r="18" fill="#fff" fill-opacity="0.6" stroke="#1e3a8a" stroke-width="2"/>
+            <text x="170" y="61" text-anchor="middle" font-size="16" font-weight="bold" fill="#1e3a8a">٢</text>
+          </g>
+          <g class="zone-btn" tabindex="0" role="button" aria-label="الموضع الثالث: مركز المكعب" data-zone="center" onclick="pickZone('center')" onkeypress="if(event.key==='Enter')pickZone('center')">
+            <circle cx="170" cy="130" r="18" fill="#fff" fill-opacity="0.6" stroke="#1e3a8a" stroke-width="2"/>
+            <text x="170" y="136" text-anchor="middle" font-size="16" font-weight="bold" fill="#1e3a8a">٣</text>
+          </g>
+        </svg>
+      </div>
+
+      <div class="zone-buttons-alt">
+        <button class="zone-alt-btn" onclick="pickZone('plane')">الموضع ١</button>
+        <button class="zone-alt-btn" onclick="pickZone('axis')">الموضع ٢</button>
+        <button class="zone-alt-btn" onclick="pickZone('center')">الموضع ٣</button>
+      </div>
+
+      <div class="feedback-box" id="s1-feedback"></div>
+      <div class="center-btn" style="margin-top:16px;">
+        <button class="btn green" id="s1-next" style="display:none;" onclick="s1Next()">التالي</button>
+      </div>
+    </div>
+
+    <!-- STATION 2 -->
+    <div class="card" id="station2" style="display:none;">
+      <div class="station-title">المحطة الثانية: صنّف البلورة</div>
+      <div class="station-desc">اختر لكل نظام بلوري الوصف الصحيح لمحاوره ومثاله المعدني.</div>
+      <div class="system-grid" id="systemGrid"></div>
+      <div class="center-btn" style="margin-top:16px;">
+        <button class="btn green" id="s2-next" style="display:none;" onclick="goToStation(3)">إلى المحطة التالية</button>
+      </div>
+    </div>
+
+    <!-- STATION 3 -->
+    <div class="card" id="station3" style="display:none;">
+      <div class="station-title">المحطة الثالثة: هل اللون دليل كافٍ؟</div>
+      <div class="station-desc">تأمل عينات المعادن التالية ثم أجب عن الأسئلة.</div>
+
+      <div class="mineral-row">
+        <div class="mineral-chip">
+          <div class="mineral-swatch" style="background:#22c55e;"></div>
+          <div class="mineral-label">مالاكيت أخضر</div>
+        </div>
+        <div class="mineral-chip">
+          <div class="mineral-swatch" style="background:#facc15;"></div>
+          <div class="mineral-label">كبريت أصفر</div>
+        </div>
+        <div class="mineral-chip">
+          <div class="mineral-swatch" style="background:linear-gradient(135deg,#e5e7eb,#a78bfa,#fca5a5);"></div>
+          <div class="mineral-label">كوارتز (ألوان متعددة)</div>
+        </div>
+        <div class="mineral-chip">
+          <div class="mineral-swatch" style="background:#3f3f46;"></div>
+          <div class="mineral-label">مغنيتيت</div>
+        </div>
+        <div class="mineral-chip">
+          <div class="mineral-swatch" style="background:#52525b;"></div>
+          <div class="mineral-label">غرافيت</div>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-text">١. هل يمكن أن يكون للمعدن الواحد أكثر من لون؟</div>
+        <div class="q-options">
+          <button class="opt-btn" onclick="s3Answer(this,1,true)">نعم</button>
+          <button class="opt-btn" onclick="s3Answer(this,1,false)">لا</button>
+        </div>
+        <div class="q-explain" id="s3-explain-1"></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-text">٢. هل اللون وحده يكفي دائمًا للتعرف إلى المعدن؟</div>
+        <div class="q-options">
+          <button class="opt-btn" onclick="s3Answer(this,2,false)">نعم</button>
+          <button class="opt-btn" onclick="s3Answer(this,2,true)">لا</button>
+        </div>
+        <div class="q-explain" id="s3-explain-2"></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-text">٣. ما سبب الحذر عند فحص لون سطح المعدن؟</div>
+        <div class="q-options">
+          <button class="opt-btn" onclick="s3Answer(this,3,true)">لأن التجوية قد تغيّر لونه أو تؤثر فيه</button>
+          <button class="opt-btn" onclick="s3Answer(this,3,false)">لأن لون المعدن يتغيّر كل يوم بلا سبب</button>
+        </div>
+        <div class="q-explain" id="s3-explain-3"></div>
+      </div>
+
+      <div class="summary-box" id="s3-summary" style="display:none;">
+        اللون من أسهل الخصائص ملاحظة، لكنه ليس دائمًا كافيًا للتمييز بين المعادن.
+      </div>
+
+      <div class="center-btn" style="margin-top:16px;">
+        <button class="btn green" id="s3-next" style="display:none;" onclick="goToStation(4)">إلى المحطة التالية</button>
+      </div>
+    </div>
+
+    <!-- STATION 4 -->
+    <div class="card" id="station4" style="display:none;">
+      <div class="station-title">المحطة الرابعة: مختبر الحكاكة</div>
+      <div class="station-desc">اختر عينة معدنية، ثم اضغط "احك المعدن" لترى لون حكاكتها على اللوح الخزفي.</div>
+
+      <div class="streak-lab">
+        <div class="plate">
+          <div class="streak-mark" id="streakMark"></div>
+          <div class="plate-label">لوح خزفي أبيض غير مصقول</div>
+        </div>
+
+        <div class="mineral-picker">
+          <div class="mineral-sample" draggable="true" ondragstart="dragStart(event,'magnetite')">
+            <div class="swatch" style="background:#3f3f46;"></div>
+            <div class="mineral-label">مغنيتيت</div>
+            <button onclick="streakTest('magnetite')">احك المعدن</button>
+          </div>
+          <div class="mineral-sample" draggable="true" ondragstart="dragStart(event,'hematite')">
+            <div class="swatch" style="background:#7f1d1d;"></div>
+            <div class="mineral-label">هيماتيت</div>
+            <button onclick="streakTest('hematite')">احك المعدن</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="feedback-box" id="s4-streak-feedback" style="margin-top:10px;"></div>
+
+      <div class="q-block" style="margin-top:18px;">
+        <div class="q-text">١. ما الحكاكة؟</div>
+        <div class="q-options">
+          <button class="opt-btn" onclick="s4Answer(this,1,true)">لون مسحوق المعدن الناتج من حكّه بلوح خزفي أبيض غير مصقول</button>
+          <button class="opt-btn" onclick="s4Answer(this,1,false)">اللون الخارجي للمعدن كما يظهر لنا</button>
+        </div>
+        <div class="q-explain" id="s4-explain-1"></div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-text">٢. أي خاصية أدق للتمييز بين معدنين متشابهين في اللون؟</div>
+        <div class="q-options">
+          <button class="opt-btn" onclick="s4Answer(this,2,false)">اللون</button>
+          <button class="opt-btn" onclick="s4Answer(this,2,true)">الحكاكة</button>
+        </div>
+        <div class="q-explain" id="s4-explain-2"></div>
+      </div>
+
+      <div class="summary-box" id="s4-summary" style="display:none;">
+        رائع، فحص الحكاكة يساعدنا على تمييز المعادن التي تبدو متشابهة في لونها الخارجي.
+      </div>
+
+      <div class="center-btn" style="margin-top:16px;">
+        <button class="btn green" id="s4-next" style="display:none;" onclick="showEnd()">إنهاء المهمة</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== END SCREEN ===================== -->
+  <div class="screen" id="screen-end">
+    <div class="achievement-card" id="achievementCard">
+      <div style="font-size:2.4rem;">🏆</div>
+      <h2>بطاقة إنجاز</h2>
+      <div id="endName" style="font-weight:700; font-size:1.1rem; margin-top:4px;"></div>
+      <div class="achieve-score" id="endScore">0/100</div>
+
+      <div class="badges-row" id="badgesRow"></div>
+
+      <div class="final-summary">
+        <ul>
+          <li>لكل بلورة عناصر تناظر: مستوى يقسمها إلى نصفين متطابقين، ومحور تتكرر حوله الأوجه المتشابهة، ومركز تتساوى منه المسافات.</li>
+          <li>تُصنَّف البلورات إلى أنظمة بلورية مختلفة حسب عدد محاورها وتساوي أطوالها والزوايا بينها.</li>
+          <li>لون المعدن سهل الملاحظة لكنه غير كافٍ دائمًا للتعرف إليه، إذ قد يتغيّر بفعل التجوية أو يتكرر في أكثر من معدن.</li>
+          <li>الحكاكة هي لون مسحوق المعدن على لوح خزفي أبيض، وهي خاصية أدق من اللون في تمييز المعادن المتشابهة.</li>
+        </ul>
+      </div>
+
+      <div class="end-buttons">
+        <button class="btn secondary" onclick="restartMission()">إعادة اللعب</button>
+        <button class="btn green" onclick="window.print()">طباعة بطاقة الإنجاز</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ================= STATE ================= */
+let score = 0;
+const maxScore = 100;
+let currentStation = 1;
+let studentName = "";
+
+const badgesEarned = {s1:false, s2:false, s3:false, s4:false};
+
+/* ---------- helpers ---------- */
+function show(el){ el.style.display = 'block'; }
+function hide(el){ el.style.display = 'none'; }
+
+function updateScorePill(){
+  document.getElementById('scorePill').textContent = 'النقاط: ' + Math.round(score);
+}
+function updateProgress(){
+  const pct = ((currentStation-1)/4)*100;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('stationPill').textContent = 'المحطة ' + toArabicNum(currentStation) + ' من ٤';
+}
+function toArabicNum(n){
+  const map = {1:'١',2:'٢',3:'٣',4:'٤'};
+  return map[n] || n;
+}
+
+function startMission(){
+  studentName = document.getElementById('studentName').value.trim();
+  switchScreen('screen-intro','screen-game');
+  updateProgress();
+  updateScorePill();
+}
+
+function switchScreen(fromId,toId){
+  document.getElementById(fromId).classList.remove('active');
+  document.getElementById(toId).classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function goToStation(n){
+  document.getElementById('station'+(n-1)).style.display = 'none';
+  document.getElementById('station'+n).style.display = 'block';
+  currentStation = n;
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+/* ================= STATION 1 : SYMMETRY ================= */
+const s1Terms = [
+  {key:'plane', text:'مستوى التناظر: مستوى يقسم البلورة إلى نصفين متساويين ومتشابهين، أحدهما صورة مرآة للآخر.'},
+  {key:'axis', text:'محور التناظر: خط أو محور يمر في مركز البلورة، وعند تدويرها حوله دورة كاملة تتكرر الأوجه المتشابهة.'},
+  {key:'center', text:'مركز التناظر: نقطة وهمية تقع في وسط البلورة، تبعد مسافات متساوية عن العناصر حولها.'}
+];
+let s1Index = 0;
+let s1Score = 0;
+let s1Locked = false;
+
+function pickZone(zone){
+  if(s1Locked) return;
+  const correct = s1Terms[s1Index].key;
+  const fb = document.getElementById('s1-feedback');
+  if(zone === correct){
+    s1Locked = true;
+    revealSymmetry(zone);
+    fb.className = 'feedback-box correct';
+    fb.textContent = 'إجابة صحيحة! ' + symmetryConfirm(zone);
+    s1Score += 1;
+    score += 25/3;
+    updateScorePill();
+    document.getElementById('s1-next').style.display = 'inline-block';
+  } else {
+    fb.className = 'feedback-box wrong';
+    fb.textContent = 'ليست هذه الإجابة الصحيحة، حاول مرة أخرى.';
+  }
+}
+
+function symmetryConfirm(zone){
+  if(zone==='plane') return 'هذا مستوى التناظر الذي يقسم المكعب إلى نصفين متطابقين.';
+  if(zone==='axis') return 'هذا محور التناظر الذي تدور حوله البلورة.';
+  return 'هذه نقطة مركز التناظر في وسط البلورة.';
+}
+
+function revealSymmetry(zone){
+  if(zone==='plane'){
+    document.getElementById('reveal-plane').setAttribute('fill-opacity','0.45');
+    document.getElementById('reveal-plane').setAttribute('stroke-width','2');
+  } else if(zone==='axis'){
+    document.getElementById('reveal-axis').setAttribute('stroke-width','3');
+  } else if(zone==='center'){
+    document.getElementById('reveal-center').setAttribute('r','7');
+  }
+}
+
+function s1Next(){
+  s1Index++;
+  s1Locked = false;
+  document.getElementById('s1-feedback').className = 'feedback-box';
+  document.getElementById('s1-feedback').textContent = '';
+  document.getElementById('s1-next').style.display = 'none';
+  if(s1Index < s1Terms.length){
+    document.getElementById('s1-term').textContent = s1Terms[s1Index].text;
+  } else {
+    badgesEarned.s1 = true;
+    goToStation(2);
+    buildSystemGrid();
+  }
+}
+
+/* ================= STATION 2 : CRYSTAL SYSTEMS ================= */
+const systems = [
+  {
+    name:'النظام المكعب',
+    desc:'ثلاثة محاور متساوية ومتعامدة؛ مثال: الهاليت والماس.',
+    shapeType:'cube'
+  },
+  {
+    name:'النظام الرباعي',
+    desc:'ثلاثة محاور، اثنان متساويان في الطول والثالث مختلف، وجميعها متعامدة؛ مثال: الكاولينيت.',
+    shapeType:'tetragonal'
+  },
+  {
+    name:'النظام السداسي',
+    desc:'أربعة محاور، ثلاثة أفقية متساوية ورابع رأسي، الزوايا بين المحاور الأفقية 120 درجة، وبين الأفقي والرأسي قائمة؛ مثال: الغرافيت.',
+    shapeType:'hexagonal'
+  },
+  {
+    name:'النظام الثلاثي',
+    desc:'أربعة محاور، ثلاثة متساوية الطول في المستوى الأفقي والزوايا بينها 120 درجة؛ مثال: الكالسيت.',
+    shapeType:'trigonal'
+  },
+  {
+    name:'نظام المعين القائم',
+    desc:'ثلاثة محاور غير متساوية في الطول ومتعامدة؛ مثال: الكبريت.',
+    shapeType:'orthorhombic'
+  },
+  {
+    name:'نظام أحادي الميل',
+    desc:'ثلاثة محاور غير متساوية في الطول، زوجان منها متعامدان؛ مثال: الجبس.',
+    shapeType:'monoclinic'
+  }
+];
+
+function shapeSvg(type){
+  const shapes = {
+    cube: '<polygon points="20,25 55,15 80,25 45,35" fill="#93c5fd" stroke="#1e3a8a" stroke-width="1.5"/><polygon points="20,25 45,35 45,65 20,55" fill="#60a5fa" stroke="#1e3a8a" stroke-width="1.5"/><polygon points="45,35 80,25 80,55 45,65" fill="#3b82f6" stroke="#1e3a8a" stroke-width="1.5"/>',
+    tetragonal: '<polygon points="25,25 50,18 75,25 50,32" fill="#c4b5fd" stroke="#5b21b6" stroke-width="1.5"/><polygon points="25,25 50,32 50,70 25,62" fill="#a78bfa" stroke="#5b21b6" stroke-width="1.5"/><polygon points="50,32 75,25 75,58 50,70" fill="#8b5cf6" stroke="#5b21b6" stroke-width="1.5"/>',
+    hexagonal: '<polygon points="50,10 70,22 70,48 50,60 30,48 30,22" fill="#86efac" stroke="#15803d" stroke-width="1.5"/><line x1="50" y1="10" x2="50" y2="60" stroke="#15803d" stroke-width="1"/>',
+    trigonal: '<polygon points="50,12 68,45 32,45" fill="#fde68a" stroke="#92400e" stroke-width="1.5"/><polygon points="32,45 68,45 50,68" fill="#fbbf24" stroke="#92400e" stroke-width="1.5"/>',
+    orthorhombic: '<polygon points="20,30 60,20 80,30 40,40" fill="#fca5a5" stroke="#991b1b" stroke-width="1.5"/><polygon points="20,30 40,40 40,60 20,50" fill="#f87171" stroke="#991b1b" stroke-width="1.5"/><polygon points="40,40 80,30 80,45 40,60" fill="#ef4444" stroke="#991b1b" stroke-width="1.5"/>',
+    monoclinic: '<polygon points="25,28 62,18 80,32 43,42" fill="#fbcfe8" stroke="#9d174d" stroke-width="1.5"/><polygon points="25,28 43,42 38,66 20,52" fill="#f9a8d4" stroke="#9d174d" stroke-width="1.5"/><polygon points="43,42 80,32 75,54 38,66" fill="#ec4899" stroke="#9d174d" stroke-width="1.5"/>'
+  };
+  return '<svg viewBox="0 0 100 75" width="100" height="75">' + shapes[type] + '</svg>';
+}
+
+let s2Answered = 0;
+function buildSystemGrid(){
+  const grid = document.getElementById('systemGrid');
+  if(grid.dataset.built) return;
+  grid.dataset.built = '1';
+
+  // shuffle descriptions for the select options
+  const shuffledDescs = systems.map(s=>s.desc);
+  shuffledDescs.sort(()=>Math.random()-0.5);
+
+  systems.forEach((sys, idx)=>{
+    const div = document.createElement('div');
+    div.className = 'system-card';
+    div.innerHTML = `
+      <div class="system-shape">${shapeSvg(sys.shapeType)}</div>
+      <div class="system-name">${sys.name}</div>
+      <select class="system-select" id="sysSelect${idx}">
+        <option value="">اختر الوصف الصحيح...</option>
+        ${shuffledDescs.map((d,i)=>`<option value="${d.replace(/"/g,'&quot;')}">${d}</option>`).join('')}
+      </select>
+      <div class="system-explain" id="sysExplain${idx}"></div>
+    `;
+    grid.appendChild(div);
+
+    div.querySelector('select').addEventListener('change', function(){
+      checkSystemAnswer(idx, this.value, sys.desc, sys.name);
+    });
+  });
+}
+
+const s2Locked = {};
+function checkSystemAnswer(idx, chosen, correctDesc, sysName){
+  if(s2Locked[idx]) return;
+  const explainEl = document.getElementById('sysExplain'+idx);
+  if(chosen === correctDesc){
+    explainEl.className = 'system-explain correct';
+    explainEl.textContent = 'صحيح! هذا هو وصف محاور ' + sysName + ' الصحيح.';
+    s2Locked[idx] = true;
+    score += 25/6;
+    updateScorePill();
+    s2Answered++;
+  } else {
+    explainEl.className = 'system-explain wrong';
+    explainEl.textContent = 'غير صحيح، هذا الوصف يخص نظامًا بلوريًا آخر. حاول اختيار وصف مختلف.';
+  }
+  if(s2Answered === systems.length){
+    badgesEarned.s2 = true;
+    document.getElementById('s2-next').style.display = 'inline-block';
+  }
+}
+
+/* ================= STATION 3 : COLOR ================= */
+let s3Correct = 0;
+function s3Answer(btn, qNum, isCorrect){
+  const group = btn.parentElement;
+  const buttons = group.querySelectorAll('button');
+  buttons.forEach(b=>b.disabled = true);
+  const explainEl = document.getElementById('s3-explain-'+qNum);
+  explainEl.style.display = 'block';
+
+  if(isCorrect){
+    btn.classList.add('chosen-correct');
+    score += 25/3;
+    s3Correct++;
+  } else {
+    btn.classList.add('chosen-wrong');
+  }
+
+  if(qNum===1) explainEl.textContent = isCorrect ? 'صحيح، مثل الكوارتز الذي يظهر بألوان متعددة.' : 'الإجابة الصحيحة: نعم، مثل الكوارتز الذي يظهر بألوان متعددة.';
+  if(qNum===2) explainEl.textContent = isCorrect ? 'صحيح، اللون وحده لا يكفي دائمًا للتعرف إلى المعدن.' : 'الإجابة الصحيحة: لا، اللون وحده لا يكفي دائمًا.';
+  if(qNum===3) explainEl.textContent = isCorrect ? 'صحيح، لأن التجوية قد تغيّر لون سطح المعدن أو تؤثر فيه.' : 'الإجابة الصحيحة: لأن التجوية قد تغيّر لون سطح المعدن أو تؤثر فيه.';
+
+  updateScorePill();
+
+  if(document.querySelectorAll('#station3 .q-explain[style*="block"]').length === 3){
+    document.getElementById('s3-summary').style.display = 'block';
+    badgesEarned.s3 = true;
+    document.getElementById('s3-next').style.display = 'inline-block';
+  }
+}
+
+/* ================= STATION 4 : STREAK ================= */
+function dragStart(ev, mineral){
+  ev.dataTransfer.setData('text/plain', mineral);
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  const plate = document.querySelector('.plate');
+  if(plate){
+    plate.addEventListener('dragover', e=>e.preventDefault());
+    plate.addEventListener('drop', e=>{
+      e.preventDefault();
+      const mineral = e.dataTransfer.getData('text/plain');
+      if(mineral) streakTest(mineral);
+    });
+  }
+});
+
+let streakDone = {magnetite:false, hematite:false};
+function streakTest(mineral){
+  const mark = document.getElementById('streakMark');
+  const fb = document.getElementById('s4-streak-feedback');
+  if(mineral === 'magnetite'){
+    mark.style.background = '#111827';
+    mark.style.width = '70%';
+    fb.className = 'feedback-box correct';
+    fb.textContent = 'حكاكة المغنيتيت: داكنة إلى سوداء.';
+  } else {
+    mark.style.background = '#7f1d1d';
+    mark.style.width = '70%';
+    fb.className = 'feedback-box correct';
+    fb.textContent = 'حكاكة الهيماتيت: بنية محمرة.';
+  }
+  streakDone[mineral] = true;
+}
+
+let s4Correct = 0;
+function s4Answer(btn, qNum, isCorrect){
+  const group = btn.parentElement;
+  const buttons = group.querySelectorAll('button');
+  buttons.forEach(b=>b.disabled = true);
+  const explainEl = document.getElementById('s4-explain-'+qNum);
+  explainEl.style.display = 'block';
+
+  if(isCorrect){
+    btn.classList.add('chosen-correct');
+    score += 12.5;
+    s4Correct++;
+  } else {
+    btn.classList.add('chosen-wrong');
+  }
+
+  if(qNum===1) explainEl.textContent = isCorrect ? 'صحيح، الحكاكة هي لون مسحوق المعدن الناتج من حكّه بلوح خزفي أبيض غير مصقول.' : 'الإجابة الصحيحة: الحكاكة هي لون مسحوق المعدن الناتج من حكّه بلوح خزفي أبيض غير مصقول.';
+  if(qNum===2) explainEl.textContent = isCorrect ? 'صحيح، الحكاكة أدق من اللون في تمييز المعادن المتشابهة.' : 'الإجابة الصحيحة: الحكاكة هي الخاصية الأدق للتمييز بين معدنين متشابهين في اللون.';
+
+  updateScorePill();
+
+  if(document.querySelectorAll('#station4 .q-explain[style*="block"]').length === 2){
+    document.getElementById('s4-summary').style.display = 'block';
+    badgesEarned.s4 = true;
+    document.getElementById('s4-next').style.display = 'inline-block';
+  }
+}
+
+/* ================= END SCREEN ================= */
+function showEnd(){
+  switchScreen('screen-game','screen-end');
+  const finalScore = Math.min(100, Math.round(score));
+  document.getElementById('endScore').textContent = finalScore + '/100';
+  document.getElementById('endName').textContent = studentName ? ('الطالب: ' + studentName) : 'خبير المعادن';
+
+  const badgeDefs = [
+    {key:'s1', icon:'💎', label:'خبير التناظر'},
+    {key:'s2', icon:'🧊', label:'مصنّف البلورات'},
+    {key:'s3', icon:'🎨', label:'محقق الألوان'},
+    {key:'s4', icon:'⚗️', label:'عالم الحكاكة'}
+  ];
+  const row = document.getElementById('badgesRow');
+  row.innerHTML = '';
+  badgeDefs.forEach(b=>{
+    const earned = badgesEarned[b.key];
+    const div = document.createElement('div');
+    div.className = 'badge' + (earned ? '' : ' locked');
+    div.innerHTML = `<span class="icon">${b.icon}</span><span class="label">${b.label}</span>`;
+    row.appendChild(div);
+  });
+
+  if(finalScore >= 60) launchConfetti();
+}
+
+function launchConfetti(){
+  const colors = ['#2563eb','#7c3aed','#16a34a','#facc15','#f97316'];
+  for(let i=0;i<50;i++){
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random()*100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random()*colors.length)];
+    piece.style.animation = `confettiFall ${1.8+Math.random()*1.5}s ease-in forwards`;
+    piece.style.transform = `rotate(${Math.random()*360}deg)`;
+    document.body.appendChild(piece);
+    setTimeout(()=>piece.remove(), 3500);
+  }
+}
+const styleTag = document.createElement('style');
+styleTag.textContent = `@keyframes confettiFall{ to{ top:105vh; transform:rotate(720deg);} }`;
+document.head.appendChild(styleTag);
+
+function restartMission(){
+  score = 0;
+  currentStation = 1;
+  s1Index = 0; s1Score = 0; s1Locked = false;
+  s2Answered = 0;
+  Object.keys(s2Locked).forEach(k=>delete s2Locked[k]);
+  s3Correct = 0;
+  s4Correct = 0;
+  streakDone = {magnetite:false, hematite:false};
+  Object.keys(badgesEarned).forEach(k=>badgesEarned[k]=false);
+
+  // reset station 1
+  document.getElementById('s1-term').textContent = s1Terms[0].text;
+  document.getElementById('s1-feedback').className = 'feedback-box';
+  document.getElementById('s1-feedback').textContent = '';
+  document.getElementById('s1-next').style.display = 'none';
+  document.getElementById('reveal-plane').setAttribute('fill-opacity','0');
+  document.getElementById('reveal-plane').setAttribute('stroke-width','0');
+  document.getElementById('reveal-axis').setAttribute('stroke-width','0');
+  document.getElementById('reveal-center').setAttribute('r','0');
+
+  // reset station 2
+  const grid = document.getElementById('systemGrid');
+  grid.innerHTML = '';
+  grid.dataset.built = '';
+
+  // reset station 3
+  document.querySelectorAll('#station3 .opt-btn').forEach(b=>{
+    b.disabled = false;
+    b.classList.remove('chosen-correct','chosen-wrong');
+  });
+  document.querySelectorAll('#station3 .q-explain').forEach(e=>{ e.style.display='none'; e.textContent=''; });
+  document.getElementById('s3-summary').style.display = 'none';
+  document.getElementById('s3-next').style.display = 'none';
+
+  // reset station 4
+  document.querySelectorAll('#station4 .opt-btn').forEach(b=>{
+    b.disabled = false;
+    b.classList.remove('chosen-correct','chosen-wrong');
+  });
+  document.querySelectorAll('#station4 .q-explain').forEach(e=>{ e.style.display='none'; e.textContent=''; });
+  document.getElementById('s4-summary').style.display = 'none';
+  document.getElementById('s4-next').style.display = 'none';
+  document.getElementById('streakMark').style.width = '0%';
+  document.getElementById('s4-streak-feedback').className = 'feedback-box';
+  document.getElementById('s4-streak-feedback').textContent = '';
+
+  document.getElementById('station1').style.display = 'block';
+  document.getElementById('station2').style.display = 'none';
+  document.getElementById('station3').style.display = 'none';
+  document.getElementById('station4').style.display = 'none';
+
+  document.getElementById('studentName').value = '';
+  switchScreen('screen-end','screen-intro');
+  updateScorePill();
+}
+</script>
+</body>
+</html>
