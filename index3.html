@@ -1,0 +1,1523 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>مختبر تصنيف المعادن</title>
+<style>
+/* ============================================================
+   مختبر تصنيف المعادن — التصميم
+   ============================================================ */
+:root{
+  --bg:#0c1210;
+  --bg-2:#0f1613;
+  --panel:#161f1b;
+  --panel-2:#1d2823;
+  --panel-3:#233129;
+  --border:#2b3a33;
+  --border-soft:#22302a;
+  --text:#eef1ea;
+  --text-dim:#a9bab1;
+  --text-faint:#75887f;
+  --gold:#cfa04a;
+  --gold-soft:#8a723c;
+  --gold-glow:rgba(207,160,74,.18);
+  --malachite:#33a884;
+  --malachite-soft:#1f4d3d;
+  --rust:#c1602f;
+  --rust-soft:#4a2a1c;
+  --amethyst:#9678c4;
+  --radius:14px;
+  --radius-sm:8px;
+  font-size:16px;
+}
+*{box-sizing:border-box;}
+html,body{height:100%;}
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(207,160,74,.05), transparent 45%),
+    radial-gradient(circle at 85% 100%, rgba(51,168,132,.06), transparent 50%),
+    var(--bg);
+  color:var(--text);
+  font-family:Tahoma,"Segoe UI","Geeza Pro","Noto Naskh Arabic",Arial,sans-serif;
+  min-height:100vh;
+  -webkit-tap-highlight-color:transparent;
+  overflow-x:hidden;
+}
+#app{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:18px 14px 40px;
+}
+.wrap{
+  width:100%;
+  max-width:780px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+}
+::selection{background:var(--gold-glow);}
+
+/* ---------- عناصر مشتركة ---------- */
+.card{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:0 10px 30px -14px rgba(0,0,0,.6);
+}
+.eyebrow{
+  color:var(--gold);
+  font-size:.8rem;
+  letter-spacing:.5px;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin-bottom:6px;
+}
+h1,h2,h3{margin:0 0 8px;font-weight:bold;}
+h1{font-size:1.9rem;}
+h2{font-size:1.35rem;}
+h3{font-size:1.05rem;color:var(--text);}
+p{line-height:1.9;color:var(--text-dim);margin:0 0 10px;}
+.muted{color:var(--text-faint);font-size:.88rem;}
+
+.btn{
+  appearance:none;
+  border:1px solid var(--border);
+  background:var(--panel-3);
+  color:var(--text);
+  font-family:inherit;
+  font-size:.95rem;
+  font-weight:bold;
+  padding:12px 20px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:transform .12s ease, background .15s ease, border-color .15s ease;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  justify-content:center;
+}
+.btn:hover{border-color:var(--gold-soft);}
+.btn:active{transform:scale(.97);}
+.btn-primary{
+  background:linear-gradient(180deg,#dcb35c,var(--gold));
+  color:#20160a;
+  border-color:transparent;
+}
+.btn-primary:hover{filter:brightness(1.06);}
+.btn-ghost{background:transparent;}
+.btn-hint{
+  background:transparent;
+  border:1px dashed var(--border);
+  color:var(--text-dim);
+  font-size:.85rem;
+  padding:8px 14px;
+}
+.btn-hint:hover{border-color:var(--amethyst);color:var(--amethyst);}
+.btn:disabled{opacity:.4;cursor:default;transform:none;}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+
+.icon{width:1em;height:1em;flex:none;}
+
+/* ---------- شريط علوي ---------- */
+.topbar{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px 16px;
+}
+.topbar-stat{display:flex;flex-direction:column;gap:2px;min-width:64px;}
+.topbar-stat .val{font-weight:bold;font-size:1.05rem;color:var(--gold);}
+.topbar-stat .lbl{font-size:.68rem;color:var(--text-faint);}
+.topbar-rank{
+  flex:1;
+  text-align:center;
+  font-size:.82rem;
+  color:var(--text-dim);
+  border-right:1px solid var(--border-soft);
+  border-left:1px solid var(--border-soft);
+  padding:0 10px;
+}
+.topbar-rank b{color:var(--malachite);display:block;font-size:.92rem;}
+.progress-outer{
+  height:6px;width:100%;background:var(--bg-2);
+  border-radius:4px;overflow:hidden;margin-top:8px;
+}
+.progress-inner{
+  height:100%;background:linear-gradient(90deg,var(--gold-soft),var(--gold));
+  width:0%;transition:width .4s ease;
+}
+
+/* ---------- شاشة البداية ---------- */
+.start-screen{
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+  gap:22px;padding-top:6vh;
+}
+.crystal-hero{width:120px;height:120px;}
+.start-title{font-size:2.1rem;}
+.start-sub{font-size:1.02rem;max-width:480px;}
+.start-card{width:100%;text-align:right;}
+.rule-preview{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  flex-wrap:wrap;margin:16px 0;color:var(--text-dim);font-size:.9rem;
+}
+.rule-preview .node{
+  background:var(--panel-3);border:1px solid var(--border);
+  border-radius:8px;padding:8px 12px;font-weight:bold;color:var(--text);
+}
+.rule-preview .arrow{color:var(--gold);font-size:1.1rem;}
+
+/* ---------- خريطة المراحل ---------- */
+.stage-grid{display:flex;flex-direction:column;gap:12px;}
+.stage-btn{
+  display:flex;align-items:center;gap:14px;
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:12px;padding:14px 16px;cursor:pointer;text-align:right;
+  transition:border-color .15s, background .15s;
+}
+.stage-btn:hover{border-color:var(--gold-soft);background:var(--panel-2);}
+.stage-num{
+  width:40px;height:40px;border-radius:50%;
+  background:var(--panel-3);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:bold;color:var(--gold);flex:none;
+}
+.stage-btn.done .stage-num{background:var(--malachite-soft);color:#bdf3dd;border-color:var(--malachite);}
+.stage-info{flex:1;}
+.stage-info h3{margin:0 0 2px;}
+.stage-info span{font-size:.82rem;color:var(--text-faint);}
+.stage-check{color:var(--malachite);font-size:1.3rem;flex:none;}
+
+/* ---------- شاشة السؤال ---------- */
+.strategy-banner{
+  display:flex;align-items:center;gap:10px;
+  background:var(--bg-2);border:1px solid var(--border-soft);
+  border-radius:10px;padding:8px 12px;margin-bottom:14px;
+  font-size:.8rem;color:var(--text-faint);
+}
+.strategy-banner b{color:var(--gold);}
+.prompt{font-size:1.08rem;color:var(--text);margin-bottom:16px;line-height:1.9;}
+.formula-stage{
+  display:flex;justify-content:center;align-items:center;
+  background:var(--bg-2);border:1px solid var(--border-soft);
+  border-radius:12px;padding:26px 16px;margin-bottom:18px;
+}
+.formula-big{
+  font-size:2.4rem;font-weight:bold;letter-spacing:1px;color:var(--text);
+  direction:ltr;unicode-bidi:isolate;
+}
+.formula-big sub{font-size:.55em;}
+.formula-big sup{font-size:.55em;}
+.mineral-name-tag{
+  text-align:center;color:var(--text-faint);font-size:.85rem;margin-top:-8px;margin-bottom:16px;
+}
+
+.choices{display:flex;flex-wrap:wrap;gap:10px;}
+.chip{
+  flex:1 1 150px;
+  background:var(--panel-3);border:1px solid var(--border);
+  border-radius:10px;padding:13px 14px;cursor:pointer;
+  font-size:.95rem;text-align:center;color:var(--text);
+  transition:transform .1s, border-color .15s, background .15s;
+}
+.chip:hover{border-color:var(--gold-soft);}
+.chip:active{transform:scale(.97);}
+.chip.selected{border-color:var(--gold);background:var(--gold-glow);}
+.chip.correct{border-color:var(--malachite);background:var(--malachite-soft);color:#d8fbee;animation:pop .3s ease;}
+.chip.wrong{border-color:var(--rust);background:var(--rust-soft);color:#ffd9c7;animation:shake .35s ease;}
+.chip.disabled{opacity:.45;pointer-events:none;}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.06)}100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+.feedback{
+  margin-top:16px;border-radius:10px;padding:14px 16px;font-size:.92rem;line-height:1.8;
+  display:none;border:1px solid transparent;
+}
+.feedback.show{display:block;animation:fadein .25s ease;}
+.feedback.ok{background:var(--malachite-soft);border-color:var(--malachite);color:#dcfff1;}
+.feedback.bad{background:var(--rust-soft);border-color:var(--rust);color:#ffe3d3;}
+.feedback.hint{background:rgba(150,120,196,.12);border-color:var(--amethyst);color:#e6dbff;}
+@keyframes fadein{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* ---------- سحب وإفلات ---------- */
+.drag-zone-title{font-size:.85rem;color:var(--text-faint);margin-bottom:8px;}
+.drag-pool{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px;min-height:52px;}
+.drag-item{
+  background:var(--panel-3);border:1px solid var(--gold-soft);
+  border-radius:10px;padding:10px 16px;font-weight:bold;
+  cursor:grab;user-select:none;touch-action:none;
+  direction:ltr;font-size:1.02rem;color:var(--text);
+  position:relative;z-index:5;
+}
+.drag-item.placed{opacity:0;pointer-events:none;}
+.drag-item.picked{outline:2px solid var(--gold);}
+.drag-item.dragging{
+  position:fixed;z-index:200;pointer-events:none;
+  box-shadow:0 12px 24px -8px rgba(0,0,0,.6);
+}
+.bucket-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+@media(max-width:480px){.bucket-grid{grid-template-columns:1fr;}}
+.bucket{
+  border:2px dashed var(--border);border-radius:12px;
+  padding:12px;min-height:74px;text-align:center;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  transition:border-color .15s, background .15s;
+}
+.bucket .lbl{font-weight:bold;font-size:.9rem;}
+.bucket .ion{font-size:.72rem;color:var(--text-faint);}
+.bucket.hover{border-color:var(--gold);background:var(--gold-glow);}
+.bucket.filled{border-style:solid;border-color:var(--malachite);background:var(--malachite-soft);}
+.bucket.wrongflash{border-color:var(--rust);background:var(--rust-soft);}
+.bucket .filled-item{font-weight:bold;color:#d8fbee;direction:ltr;font-size:.95rem;}
+
+/* ---------- ترتيب الخطوات ---------- */
+.order-pool,.order-answer{display:flex;flex-direction:column;gap:8px;}
+.order-answer{margin-top:12px;min-height:20px;}
+.order-item{
+  background:var(--panel-3);border:1px solid var(--border);
+  border-radius:8px;padding:11px 14px;cursor:pointer;font-size:.92rem;
+  display:flex;align-items:center;gap:10px;
+}
+.order-item .num{
+  width:24px;height:24px;border-radius:50%;background:var(--bg-2);
+  display:flex;align-items:center;justify-content:center;font-size:.75rem;color:var(--gold);flex:none;
+}
+.order-item.used{opacity:.3;pointer-events:none;}
+.order-answer .order-item{border-color:var(--gold-soft);}
+
+/* ---------- صح / خطأ بالسحب ---------- */
+.tf-statement{
+  background:var(--panel-3);border:1px solid var(--gold-soft);border-radius:12px;
+  padding:16px;text-align:center;font-size:1rem;margin-bottom:16px;
+  cursor:grab;touch-action:none;user-select:none;position:relative;z-index:5;
+}
+.tf-statement.dragging{position:fixed;z-index:200;pointer-events:none;box-shadow:0 12px 24px -8px rgba(0,0,0,.6);}
+.tf-statement.placed{opacity:0;}
+.tf-zones{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.tf-zone{
+  border:2px dashed var(--border);border-radius:12px;padding:20px 10px;
+  text-align:center;font-weight:bold;font-size:1.05rem;color:var(--text-dim);
+  transition:border-color .15s, background .15s;
+}
+.tf-zone.true{}
+.tf-zone.false{}
+.tf-zone.hover{border-color:var(--gold);background:var(--gold-glow);}
+.tf-zone.correctzone{border-color:var(--malachite);background:var(--malachite-soft);color:#d8fbee;border-style:solid;}
+.tf-zone.wrongzone{border-color:var(--rust);background:var(--rust-soft);color:#ffd9c7;border-style:solid;}
+
+/* ---------- تحدي السرعة ---------- */
+.timer-outer{height:8px;background:var(--bg-2);border-radius:5px;overflow:hidden;margin-bottom:14px;}
+.timer-inner{height:100%;background:linear-gradient(90deg,var(--malachite),var(--gold));width:100%;transition:width 1s linear;}
+.combo-badge{
+  display:inline-flex;align-items:center;gap:4px;background:var(--amethyst);color:#fff;
+  border-radius:20px;padding:3px 10px;font-size:.75rem;font-weight:bold;margin-inline-start:8px;
+  animation:pop .3s ease;
+}
+
+/* ---------- تثبيت القاعدة ---------- */
+.rule-flow{display:flex;flex-direction:column;align-items:center;gap:6px;margin:22px 0;}
+.rule-box{
+  background:var(--panel-3);border:1px solid var(--gold);border-radius:12px;
+  padding:14px 26px;font-weight:bold;font-size:1.05rem;min-width:220px;text-align:center;
+}
+.rule-flow .down{color:var(--gold);font-size:1.3rem;}
+
+/* ---------- خاتمة ---------- */
+.end-screen{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;}
+.end-rank{
+  background:linear-gradient(180deg,var(--panel-2),var(--panel));
+  border:1px solid var(--gold);border-radius:16px;padding:26px;width:100%;
+}
+.end-rank .big-rank{font-size:1.7rem;color:var(--gold);font-weight:bold;margin-bottom:4px;}
+.end-rank .score-line{font-size:1rem;color:var(--text-dim);}
+.stat-row{display:flex;justify-content:center;gap:22px;margin-top:14px;flex-wrap:wrap;}
+.stat-mini{text-align:center;}
+.stat-mini .n{font-size:1.3rem;font-weight:bold;color:var(--malachite);}
+.stat-mini .l{font-size:.72rem;color:var(--text-faint);}
+
+footer.credit{margin-top:24px;text-align:center;color:var(--text-faint);font-size:.72rem;line-height:1.8;}
+
+@media(max-width:480px){
+  h1{font-size:1.5rem;}
+  .formula-big{font-size:1.9rem;}
+  .card{padding:16px;}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ================================================================
+   1) مصدر المحتوى العلمي
+   كل البيانات هنا مأخوذة حصراً من الدرس الثاني "مجموعات المعادن"
+   (صفحات 25–28 من كتاب علوم الأرض، الصف التاسع).
+   يمكن تعديل/إضافة عناصر هنا بسهولة دون لمس بقية الكود.
+   ================================================================ */
+
+// مجموعات المعادن الثماني كما وردت في الكتاب
+const GROUPS = {
+  silicates:  { name:"السيليكات",   ion:"SiO₄⁴⁻ (سيليكا رباعية الأوجه)" },
+  carbonates: { name:"الكربونات",   ion:"CO₃²⁻" },
+  oxides:     { name:"الأكاسيد",     ion:"O²⁻" },
+  halides:    { name:"الهاليدات",    ion:"أيون هالوجيني (⁻Cl أو ⁻F)" },
+  sulphates:  { name:"الكبريتات",    ion:"SO₄²⁻" },
+  sulfides:   { name:"الكبريتيدات",  ion:"S²⁻" },
+  phosphates: { name:"الفوسفات",     ion:"PO₄³⁻" },
+  native:     { name:"المعادن أحادية العنصر", ion:"لا يوجد أيون سالب (عنصر واحد فقط)" }
+};
+
+// المعادن الواردة صراحةً في نص الدرس بصيغها الكيميائية
+const M = {
+  dolomite: { name:"الدولوميت", formula:"CaMg(CO₃)₂", group:"carbonates", ion:"CO₃²⁻" },
+  malachite:{ name:"الملاكيت",  formula:"Cu₂CO₃(OH)₂", group:"carbonates", ion:"CO₃²⁻" },
+  calcite:  { name:"الكالسيت",  formula:"CaCO₃", group:"carbonates", ion:"CO₃²⁻" },
+  hematite: { name:"الهيماتيت", formula:"Fe₂O₃", group:"oxides", ion:"O²⁻" },
+  magnetite:{ name:"الماغنتيت", formula:"Fe₃O₄", group:"oxides", ion:"O²⁻" },
+  halite:   { name:"الهاليت",   formula:"NaCl", group:"halides", ion:"Cl⁻" },
+  fluorite: { name:"الفلوريت",  formula:"CaF₂", group:"halides", ion:"F⁻" },
+  gypsum:   { name:"الجبس",     formula:"CaSO₄·2H₂O", group:"sulphates", ion:"SO₄²⁻" },
+  barite:   { name:"الباريت",   formula:"BaSO₄", group:"sulphates", ion:"SO₄²⁻" },
+  pyrite:   { name:"البيريت",   formula:"FeS₂", group:"sulfides", ion:"S²⁻" },
+  galena:   { name:"الغالينا",  formula:"PbS", group:"sulfides", ion:"S²⁻" },
+  apatite:  { name:"الأباتيت",  formula:"Ca₅(PO₄)₃(F,Cl,OH)", group:"phosphates", ion:"PO₄³⁻" },
+  gold:     { name:"الذهب",     formula:"Au", group:"native", ion:"—" },
+  silver:   { name:"الفضة",     formula:"Ag", group:"native", ion:"—" }
+};
+
+function groupName(id){ return GROUPS[id].name; }
+
+/* ================================================================
+   2) حالة اللعبة
+   ================================================================ */
+const State = {
+  screen:"start",
+  score:0,
+  combo:0,
+  maxCombo:0,
+  stepsDone:0,
+  totalSteps:23,
+  stagesDone:{1:false,2:false,3:false,4:false,5:false},
+  currentStage:null,
+  currentStepIndex:0
+};
+
+function rankInfo(){
+  if(State.score >= 181) return {name:"خبير تصنيف المعادن", cls:"gold"};
+  if(State.score >= 91)  return {name:"محلل معادن", cls:"malachite"};
+  return {name:"متدرب في مختبر المعادن", cls:"text"};
+}
+
+/* ================================================================
+   3) أدوات مساعدة عامة
+   ================================================================ */
+const app = document.getElementById('app');
+function el(tag, cls, html){
+  const e = document.createElement(tag);
+  if(cls) e.className = cls;
+  if(html !== undefined) e.innerHTML = html;
+  return e;
+}
+function shuffle(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]]=[a[j],a[i]];
+  }
+  return a;
+}
+function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
+
+function addScore(points){
+  State.score += points;
+  State.combo += 1;
+  if(State.combo > State.maxCombo) State.maxCombo = State.combo;
+}
+function breakCombo(){ State.combo = 0; }
+function stepCompleted(){ State.stepsDone = Math.min(State.stepsDone+1, State.totalSteps); }
+
+const ICONS = {
+  flask:'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 2h6M10 2v6l-5.5 9.5A2 2 0 0 0 6.2 21h11.6a2 2 0 0 0 1.7-3.5L14 8V2"/></svg>',
+  crystal:'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h12l4 6-10 12L2 9z"/><path d="M2 9h20M9 3l-2 6 5 12 5-12-2-6"/></svg>',
+  check:'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg>',
+  cross:'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6 6 18M6 6l12 12"/></svg>',
+  bulb:'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18h6M10 22h4M12 2a6 6 0 0 0-4 10.5c.6.6 1 1.4 1 2.5h6c0-1.1.4-1.9 1-2.5A6 6 0 0 0 12 2Z"/></svg>',
+  magnet:'<svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3v9a6 6 0 0 0 12 0V3M6 3h4M14 3h4M6 8h4M14 8h4"/></svg>'
+};
+
+function topbarHTML(){
+  const r = rankInfo();
+  const pct = Math.round((State.stepsDone/State.totalSteps)*100);
+  return `
+  <div class="topbar-wrap">
+    <div class="topbar">
+      <div class="topbar-stat"><span class="val">${State.score}</span><span class="lbl">النقاط</span></div>
+      <div class="topbar-rank"><b>${r.name}</b>مستوى الإتقان الحالي</div>
+      <div class="topbar-stat"><span class="val">${State.combo}×</span><span class="lbl">سلسلة صحيحة</span></div>
+    </div>
+    <div class="progress-outer"><div class="progress-inner" style="width:${pct}%"></div></div>
+  </div>`;
+}
+function refreshTopbar(){
+  const holder = document.getElementById('topbar-holder');
+  if(holder){ holder.innerHTML = topbarHTML(); }
+}
+
+/* ================================================================
+   4) محرك السحب المُبسّط (يعمل بالفأرة واللمس معاً)
+   ================================================================ */
+function makeDraggable(itemEl, opts){
+  // opts: { getDropTargets: fn()->[el], onDrop: fn(dropEl, itemEl), onTap: fn(itemEl) }
+  // ملاحظة: نكتشف "النقر البسيط" داخل معالج المؤشر نفسه (بدل مستمع click منفصل)
+  // لأن preventDefault() في pointerdown قد يمنع حدث click اللاحق في بعض المتصفحات، خصوصاً باللمس.
+  let startX, startY, offX, offY, origParent, placeholder, dragging=false;
+
+  itemEl.addEventListener('pointerdown', (e)=>{
+    if(itemEl.classList.contains('placed')) return;
+    e.preventDefault();
+    const rect = itemEl.getBoundingClientRect();
+    startX = e.clientX; startY = e.clientY;
+    offX = e.clientX - rect.left; offY = e.clientY - rect.top;
+
+    function onMove(ev){
+      if(!dragging){
+        if(Math.abs(ev.clientX-startX) < 6 && Math.abs(ev.clientY-startY) < 6) return;
+        dragging = true;
+        placeholder = el('div', itemEl.className+' placed');
+        placeholder.style.visibility='hidden';
+        // نحافظ على أبعاد العنصر الأصلي في المكان الفارغ كي لا ينزاح تخطيط الصفحة أثناء السحب
+        placeholder.style.width = rect.width+'px';
+        placeholder.style.height = rect.height+'px';
+        placeholder.style.boxSizing = 'border-box';
+        itemEl.parentNode.insertBefore(placeholder, itemEl);
+        origParent = itemEl.parentNode;
+        document.body.appendChild(itemEl);
+        itemEl.classList.add('dragging');
+        itemEl.style.width = rect.width+'px';
+      }
+      itemEl.style.left = (ev.clientX-offX)+'px';
+      itemEl.style.top = (ev.clientY-offY)+'px';
+      itemEl.style.position='fixed';
+      // highlight hover target
+      const targets = opts.getDropTargets();
+      let hovered = null;
+      itemEl.style.pointerEvents='none';
+      const under = document.elementFromPoint(ev.clientX, ev.clientY);
+      itemEl.style.pointerEvents='';
+      targets.forEach(t=>{
+        if(under && (t===under || t.contains(under))){ hovered=t; }
+      });
+      targets.forEach(t=>t.classList.toggle('hover', t===hovered));
+    }
+    function onUp(ev){
+      document.removeEventListener('pointermove', onMove);
+      document.removeEventListener('pointerup', onUp);
+      if(!dragging){
+        if(opts.onTap) opts.onTap(itemEl);
+        return;
+      }
+      itemEl.classList.remove('dragging');
+      const targets = opts.getDropTargets();
+      itemEl.style.pointerEvents='none';
+      const under = document.elementFromPoint(ev.clientX, ev.clientY);
+      itemEl.style.pointerEvents='';
+      let dropped = null;
+      targets.forEach(t=>{
+        t.classList.remove('hover');
+        if(under && (t===under || t.contains(under))) dropped=t;
+      });
+      itemEl.style.position=''; itemEl.style.left=''; itemEl.style.top=''; itemEl.style.width='';
+      if(placeholder && placeholder.parentNode) placeholder.parentNode.removeChild(placeholder);
+      if(dropped){
+        opts.onDrop(dropped, itemEl);
+        // إن لم يُستهلك العنصر (لم يوضع بنجاح)، أعده إلى مكانه الأصلي
+        if(!itemEl.classList.contains('placed') && itemEl.parentNode !== origParent){
+          origParent.appendChild(itemEl);
+        }
+      } else {
+        origParent.appendChild(itemEl);
+      }
+      dragging = false;
+    }
+    document.addEventListener('pointermove', onMove);
+    document.addEventListener('pointerup', onUp);
+  });
+}
+
+/* ================================================================
+   5) لوحة التغذية الراجعة العامة
+   ================================================================ */
+function feedbackBox(container){
+  const box = el('div','feedback');
+  container.appendChild(box);
+  return {
+    ok(text){ box.className='feedback show ok'; box.innerHTML = `${ICONS.check} <strong>أحسنت!</strong> ${text}`; },
+    bad(text){ box.className='feedback show bad'; box.innerHTML = `${ICONS.cross} ${text}`; },
+    hint(text){ box.className='feedback show hint'; box.innerHTML = `${ICONS.bulb} <strong>تلميح:</strong> ${text}`; },
+    clear(){ box.className='feedback'; box.innerHTML=''; }
+  };
+}
+
+/* ================================================================
+   6) الشاشات
+   ================================================================ */
+function render(node){
+  clear(app);
+  app.appendChild(node);
+  window.scrollTo(0,0);
+}
+
+// ---------- شاشة البداية ----------
+function screenStart(){
+  const wrap = el('div','wrap');
+  const s = el('div','start-screen');
+  s.innerHTML = `
+    <svg class="crystal-hero" viewBox="0 0 100 100" fill="none">
+      <polygon points="50,6 90,38 74,94 26,94 10,38" fill="#1d2823" stroke="#cfa04a" stroke-width="2"/>
+      <polygon points="50,6 74,94 26,94" fill="#233129" stroke="#8a723c" stroke-width="1"/>
+      <line x1="10" y1="38" x2="90" y2="38" stroke="#33a884" stroke-width="1"/>
+    </svg>
+    <div class="eyebrow">${ICONS.flask} مختبر علوم الأرض · الدرس الثاني</div>
+    <h1 class="start-title">مختبر تصنيف المعادن</h1>
+    <p class="start-sub">هل تستطيع اكتشاف مجموعة المعدن من الأيون السالب؟</p>
+  `;
+  const card = el('div','card start-card');
+  card.innerHTML = `
+    <h3>${ICONS.magnet} فكرة المهمة</h3>
+    <p>أنت اليوم محلّل معادن في المختبر. مهمتك أن تصنّف عيّنات معدنية إلى مجموعاتها الصحيحة، بالاعتماد على القاعدة نفسها التي يستخدمها العلماء:</p>
+    <div class="rule-preview">
+      <span class="node">الأيون السالب</span><span class="arrow">←</span>
+      <span class="node">نوع الأيون</span><span class="arrow">←</span>
+      <span class="node">مجموعة المعدن</span>
+    </div>
+    <p class="muted">المهمة مقسّمة إلى خمس مراحل قصيرة، يمكن لمعلّمك فتح أي مرحلة منها في أي وقت أثناء الشرح.</p>
+  `;
+  const btnRow = el('div','btn-row');
+  const startBtn = el('button','btn btn-primary','ابدأ المهمة');
+  startBtn.onclick = ()=>{ State.screen='map'; render(screenMap()); };
+  btnRow.appendChild(startBtn);
+  card.appendChild(btnRow);
+
+  wrap.appendChild(s);
+  wrap.appendChild(card);
+  const foot = el('footer','credit','محتوى الدرس: مجموعات المعادن — كتاب علوم الأرض، الصف التاسع (صفحات 25–28)');
+  wrap.appendChild(foot);
+  return wrap;
+}
+
+// ---------- خريطة المراحل ----------
+const STAGE_META = [
+  {id:1, title:"اكتشف القاعدة", desc:"كيف نحدد مجموعة المعدن؟", icon:ICONS.bulb},
+  {id:2, title:"صنّف المعادن", desc:"طبّق القاعدة على صيغ حقيقية", icon:ICONS.crystal},
+  {id:3, title:"المختبر", desc:"سحب وإفلات · مطابقة · كشف الأيون", icon:ICONS.flask},
+  {id:4, title:"اكتشف الخطأ", desc:"صحّح أخطاء عالم صغير", icon:ICONS.magnet},
+  {id:5, title:"التحدي النهائي", desc:"مزيج شامل وسريع", icon:ICONS.check}
+];
+
+function screenMap(){
+  const wrap = el('div','wrap');
+  const topbarHolder = el('div');
+  topbarHolder.id='topbar-holder';
+  topbarHolder.innerHTML = topbarHTML();
+  wrap.appendChild(topbarHolder);
+
+  const head = el('div','card');
+  head.innerHTML = `<div class="eyebrow">${ICONS.flask} خريطة المختبر</div><h2>اختر مرحلة للبدء</h2><p class="muted">يمكنك فتح أي مرحلة الآن، ولا يشترط الترتيب.</p>`;
+  wrap.appendChild(head);
+
+  const grid = el('div','stage-grid');
+  STAGE_META.forEach(sm=>{
+    const done = State.stagesDone[sm.id];
+    const b = el('div','stage-btn'+(done?' done':''));
+    b.innerHTML = `
+      <div class="stage-num">${sm.id}</div>
+      <div class="stage-info"><h3>${sm.title}</h3><span>${sm.desc}</span></div>
+      ${done? `<div class="stage-check">${ICONS.check}</div>` : ''}
+    `;
+    b.onclick = ()=>{ startStage(sm.id); };
+    grid.appendChild(b);
+  });
+  wrap.appendChild(grid);
+
+  if(Object.values(State.stagesDone).every(Boolean)){
+    const finalCard = el('div','card');
+    finalCard.style.borderColor='var(--gold)';
+    finalCard.innerHTML = `<div class="eyebrow">${ICONS.check} كل المراحل مكتملة</div><h2>ثبّت القاعدة</h2><p>أنهيت كل مراحل المختبر! افتح الخطوة الأخيرة لتثبيت القاعدة وخوض التحدي الختامي.</p>`;
+    const btn = el('button','btn btn-primary','اذهب إلى ثبّت القاعدة');
+    btn.onclick = ()=>{ render(screenFinalRule()); };
+    finalCard.appendChild(btn);
+    wrap.appendChild(finalCard);
+  }
+
+  return wrap;
+}
+
+/* ================================================================
+   7) تعريف المراحل (خطوات كل مرحلة)
+   ================================================================ */
+
+function formulaHTML(f){ return `<span class="formula-big">${f}</span>`; }
+
+// ---- المرحلة 1: اكتشف القاعدة ----
+const stage1Steps = [
+  {
+    type:"ionpick",
+    strategy:"لاحظ الصيغة، وحاول أن تحدد أي جزء منها هو الأيون السالب.",
+    prompt:"أمامك صيغة معدن الغالينا. أشّر إلى الأيون السالب الذي سنعتمد عليه في التصنيف.",
+    formula:"PbS", mineralName:"الغالينا",
+    options:[
+      {id:"Pb", label:"Pb (الرصاص)", correct:false},
+      {id:"S",  label:"S (الكبريت)", correct:true}
+    ],
+    wrongHint:"العنصر الفلزي الموجب يتكرر في مجموعات كثيرة، لذلك لا نعتمد عليه. ابحث عن الجزء الآخر.",
+    correctText:"الأيون السالب هو الذي نعتمد عليه لتحديد مجموعة المعدن. هنا: S²⁻ ← أيون الكبريتيد ← فيُصنَّف معدن الغالينا PbS ضمن مجموعة الكبريتيدات."
+  },
+  {
+    type:"ionpick",
+    strategy:"القاعدة نفسها: الأيون السالب هو الفيصل، وليس الأيون الموجب.",
+    prompt:"والآن أمامك صيغة معدن الكالسيت. أشّر إلى الأيون السالب.",
+    formula:"CaCO₃", mineralName:"الكالسيت",
+    options:[
+      {id:"Ca", label:"Ca (الكالسيوم)", correct:false},
+      {id:"CO3", label:"CO₃ (الكربونات)", correct:true}
+    ],
+    wrongHint:"تذكّر: الأيون الموجب (Ca²⁺) قد يتكرر في أكثر من مجموعة معدنية، فهو ليس المعتمد في التصنيف.",
+    correctText:"صحيح! CO₃²⁻ هو أيون الكربونات، ولذلك يُصنَّف الكالسيت ضمن مجموعة الكربونات."
+  },
+  {
+    type:"mcq",
+    strategy:"فكّر فيما لاحظته في السؤالين السابقين.",
+    prompt:"لماذا لا نعتمد على العنصر الفلزي (الأيون الموجب) عند تصنيف المعدن؟",
+    options:[
+      {id:"a", label:"لأن الأيون الموجب نفسه قد يظهر في أكثر من مجموعة، فهو لا يميّز المجموعة", correct:true},
+      {id:"b", label:"لأن الأيون الموجب غير موجود أصلاً في تركيب المعادن", correct:false},
+      {id:"c", label:"لأن العلماء اتفقوا على تجاهله عشوائيًا دون سبب علمي", correct:false}
+    ],
+    wrongHint:"قارن بين مثالي PbS و CaCO₃: هل تكرر نفس الأيون الموجب في مجموعتين مختلفتين من قبل في أمثلة الكتاب؟",
+    correctText:"بالضبط! الأيون الموجب مثل Ca²⁺ يظهر في الكربونات والكبريتات والهاليدات معًا، أما الأيون السالب فهو الثابت الذي يحدد هوية المجموعة."
+  }
+];
+
+// ---- المرحلة 2: صنّف المعادن (تحديد المجموعة) ----
+function groupChoiceOptions(correctId, poolIds){
+  const pool = shuffle(poolIds.filter(id=>id!==correctId)).slice(0,3);
+  const all = shuffle([correctId, ...pool]);
+  return all.map(id=>({id, label:groupName(id), correct:id===correctId}));
+}
+const groupPool = ["carbonates","oxides","halides","sulphates","sulfides","phosphates","native","silicates"];
+
+const stage2Items = ["hematite","halite","barite","pyrite","apatite"].map(key=>{
+  const m = M[key];
+  return {
+    type:"classify",
+    strategy:"انظر إلى الأيون السالب ← حدّد نوعه ← حدّد مجموعة المعدن.",
+    prompt:`ما مجموعة معدن ${m.name}؟`,
+    formula:m.formula, mineralName:m.name,
+    options:groupChoiceOptions(m.group, groupPool),
+    wrongHint:`ابحث في الصيغة عن الأيون السالب أولاً، ثم اربطه بالمجموعة المناسبة له (تذكّر أيونات: CO₃²⁻، O²⁻، أيون هالوجيني، SO₄²⁻، S²⁻، PO₄³⁻).`,
+    correctText:`الأيون السالب في ${m.formula} هو ${m.ion}، ولذلك يُصنَّف ${m.name} ضمن مجموعة ${groupName(m.group)}.`
+  };
+});
+
+// ---- المرحلة 3: المختبر ----
+const dragMinerals = ["dolomite","magnetite","fluorite","gypsum"];
+const dragBuckets = ["carbonates","oxides","halides","sulphates"];
+
+const fragmentStep = {
+  type:"ionpick",
+  strategy:"الملاكيت صيغته مركّبة قليلًا، لكن القاعدة نفسها.",
+  prompt:"أمامك أجزاء صيغة معدن الملاكيت. اضغط على الجزء الذي يمثّل الأيون السالب المعتمد في التصنيف.",
+  formula:"Cu₂CO₃(OH)₂", mineralName:"الملاكيت",
+  options:[
+    {id:"Cu2", label:"Cu₂", correct:false},
+    {id:"CO3", label:"CO₃", correct:true},
+    {id:"OH2", label:"(OH)₂", correct:false}
+  ],
+  wrongHint:"ابحث عن الجزء الذي يطابق أحد الأيونات السالبة المعروفة التي درسناها (مثل أيون الكربونات).",
+  correctText:"CO₃²⁻ هو أيون الكربونات، ولهذا يُصنَّف الملاكيت ضمن مجموعة الكربونات مثل الكالسيت والدولوميت."
+};
+
+const triadItems = ["gold","galena","gypsum"].map(k=>M[k]);
+
+// ---- المرحلة 4: اكتشف الخطأ ----
+const stage4Steps = [
+  {
+    type:"mcq",
+    strategy:"عالم صغير حلّ هذا السؤال، لكنه أخطأ في مكان ما.",
+    prompt:"قال أحد الطلاب: «معدن الغالينا PbS يُصنَّف ضمن مجموعة الأكاسيد». أين الخطأ في هذا الحل؟",
+    options:[
+      {id:"a", label:"الصيغة الكيميائية PbS نفسها خاطئة", correct:false},
+      {id:"b", label:"الأيون السالب المعتمد خاطئ؛ الصحيح S²⁻ (كبريتيد) وليس O²⁻ (أكسيد)", correct:true},
+      {id:"c", label:"لا يوجد أي خطأ في هذا الحل", correct:false}
+    ],
+    wrongHint:"ما هو الأيون السالب الفعلي في PbS؟ راجع المرحلة الأولى إن احتجت.",
+    correctText:"الأيون السالب في PbS هو S²⁻ (أيون الكبريتيد)، وليس أكسجين O²⁻، لذلك الغالينا من مجموعة الكبريتيدات لا الأكاسيد."
+  },
+  {
+    type:"mcq",
+    strategy:"تذكّر: بعض المعادن لا تحتوي على أيون سالب من الأساس.",
+    prompt:"قال طالب آخر: «الذهب Au يُصنَّف بالاعتماد على أيون سالب اسمه Au⁻». أين الخطأ؟",
+    options:[
+      {id:"a", label:"لا يوجد أيون سالب أصلًا؛ الذهب معدن أحادي العنصر يتكوّن من عنصر واحد فقط", correct:true},
+      {id:"b", label:"الرمز الكيميائي للذهب خاطئ", correct:false},
+      {id:"c", label:"الذهب يُصنَّف حسب الأيون الموجب لا السالب", correct:false}
+    ],
+    wrongHint:"كم عنصرًا يدخل في تركيب معدن الذهب؟",
+    correctText:"معادن مثل الذهب Au والفضة Ag تتكون من عنصر واحد فقط، ولهذا تُصنَّف ضمن مجموعة المعادن أحادية العنصر، دون الحاجة إلى أيون سالب."
+  },
+  {
+    type:"truefalse",
+    strategy:"اسحب العبارة إلى الإجابة الصحيحة: صحيح أم خطأ.",
+    statement:"يمكن تحديد مجموعة المعدن بالنظر إلى العنصر الفلزي (الموجب) فقط.",
+    isTrue:false,
+    explainCorrect:"العنصر الموجب يتكرر في أكثر من مجموعة، فلا يكفي وحده لتحديد المجموعة؛ الأيون السالب هو الفيصل.",
+    explainWrong:"تذكّر ما اكتشفته في المرحلة الأولى: الأيون الموجب مثل Ca²⁺ يظهر في مجموعات متعددة."
+  },
+  {
+    type:"order",
+    strategy:"رتّب خطوات التصنيف بالترتيب الصحيح، بالنقر عليها.",
+    prompt:"رتّب خطوات تصنيف المعدن بالضغط عليها بالترتيب الصحيح:",
+    items:[
+      {id:"a", label:"تحديد الأيون السالب في صيغة المعدن"},
+      {id:"b", label:"تحديد نوع هذا الأيون السالب"},
+      {id:"c", label:"تحديد مجموعة المعدن المطابقة لهذا الأيون"}
+    ],
+    correctOrder:["a","b","c"],
+    correctText:"هذا هو الترتيب المنطقي: أولاً نحدد الأيون السالب، ثم نوعه، ثم نحدد المجموعة بناءً عليه."
+  }
+];
+
+// ---- المرحلة 5: التحدي النهائي ----
+const stage5Pool = ["dolomite","hematite","fluorite","pyrite","apatite"].map(key=>{
+  const m = M[key];
+  return {
+    type:"speed",
+    prompt:`تحدي سريع: ما مجموعة معدن ${m.name}؟`,
+    formula:m.formula, mineralName:m.name,
+    options:groupChoiceOptions(m.group, groupPool),
+    wrongHint:`الأيون السالب في ${m.formula} هو ${m.ion}.`,
+    correctText:`${m.formula} ← الأيون السالب ${m.ion} ← مجموعة ${groupName(m.group)}.`
+  };
+});
+
+// ---- الشاشة الختامية: ثبّت القاعدة ----
+const finalReasonItems = ["dolomite","magnetite","apatite"].map(k=>M[k]);
+
+/* ================================================================
+   8) عارض الخطوات العام
+   ================================================================ */
+function startStage(stageId){
+  State.currentStage = stageId;
+  State.currentStepIndex = 0;
+  render(screenStageIntro(stageId));
+}
+
+function stageStepsFor(stageId){
+  if(stageId===1) return stage1Steps;
+  if(stageId===2) return stage2Items;
+  if(stageId===3) return ["dragclassify","fragment","triad"]; // معالجة خاصة أدناه
+  if(stageId===4) return stage4Steps;
+  if(stageId===5) return stage5Pool;
+}
+
+function screenStageIntro(stageId){
+  const meta = STAGE_META[stageId-1];
+  const wrap = el('div','wrap');
+  const topbarHolder = el('div'); topbarHolder.id='topbar-holder'; topbarHolder.innerHTML = topbarHTML();
+  wrap.appendChild(topbarHolder);
+
+  const card = el('div','card');
+  const intros = {
+    1:"سنكتشف معًا القاعدة التي يعتمدها علماء المعادن لتصنيف أي معدن إلى مجموعته.",
+    2:"طبّق القاعدة الآن مباشرة على صيغ معادن حقيقية من الدرس.",
+    3:"في المختبر ستستخدم السحب والإفلات، وكشف الأيون السالب، والمطابقة.",
+    4:"عالم صغير أخطأ في بعض الحلول — دورك أن تكتشف الخطأ وتصححه.",
+    5:"تحدٍ أخير سريع وشامل يجمع كل ما تعلمته."
+  };
+  card.innerHTML = `<div class="eyebrow">${meta.icon} المرحلة ${stageId}</div><h2>${meta.title}</h2><p>${intros[stageId]}</p>`;
+  const btnRow = el('div','btn-row');
+  const back = el('button','btn btn-ghost','⟵ خريطة المختبر');
+  back.onclick = ()=>{ render(screenMap()); };
+  const start = el('button','btn btn-primary','ابدأ');
+  start.onclick = ()=>{ render(screenStep(stageId, 0)); };
+  btnRow.appendChild(start); btnRow.appendChild(back);
+  card.appendChild(btnRow);
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function stageDone(stageId){
+  State.stagesDone[stageId] = true;
+  const wrap = el('div','wrap');
+  const topbarHolder = el('div'); topbarHolder.id='topbar-holder'; topbarHolder.innerHTML = topbarHTML();
+  wrap.appendChild(topbarHolder);
+  const card = el('div','card');
+  card.style.textAlign='center';
+  card.innerHTML = `<div class="eyebrow">${ICONS.check} أحسنت</div><h2>أكملت مرحلة «${STAGE_META[stageId-1].title}»</h2><p>نقاطك الحالية: <strong style="color:var(--gold)">${State.score}</strong></p>`;
+  const btnRow = el('div','btn-row'); btnRow.style.justifyContent='center';
+  const btn = el('button','btn btn-primary','العودة إلى خريطة المختبر');
+  btn.onclick = ()=>{ render(screenMap()); };
+  btnRow.appendChild(btn);
+  card.appendChild(btnRow);
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function screenStep(stageId, stepIndex){
+  if(stageId===3){
+    if(stepIndex < 3) return screenStage3(stepIndex);
+    return stageDone(3);
+  }
+  const steps = stageStepsFor(stageId);
+  if(stepIndex >= steps.length){
+    return stageDone(stageId);
+  }
+  const step = steps[stepIndex];
+  const wrap = el('div','wrap');
+  const topbarHolder = el('div'); topbarHolder.id='topbar-holder'; topbarHolder.innerHTML = topbarHTML();
+  wrap.appendChild(topbarHolder);
+
+  const card = el('div','card');
+  const meta = STAGE_META[stageId-1];
+  card.innerHTML = `<div class="eyebrow">${meta.icon} ${meta.title} · خطوة ${stepIndex+1} من ${steps.length}</div>`;
+
+  if(step.type==="speed"){
+    buildSpeedStep(card, step, ()=>advance(stageId, stepIndex));
+  } else if(step.type==="truefalse"){
+    buildTrueFalseStep(card, step, ()=>advance(stageId, stepIndex));
+  } else if(step.type==="order"){
+    buildOrderStep(card, step, ()=>advance(stageId, stepIndex));
+  } else {
+    buildChoiceStep(card, step, ()=>advance(stageId, stepIndex));
+  }
+
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function advance(stageId, stepIndex){
+  refreshTopbar();
+  State.currentStepIndex = stepIndex+1;
+  render(screenStep(stageId, stepIndex+1));
+}
+
+/* ---------- بناء سؤال اختيار (mcq / ionpick / classify) ---------- */
+function buildChoiceStep(card, step, onNext){
+  if(step.strategy){
+    const banner = el('div','strategy-banner', `${ICONS.magnet}<span><b>الاستراتيجية:</b> ${step.strategy}</span>`);
+    card.appendChild(banner);
+  }
+  card.appendChild(el('div','prompt', step.prompt));
+
+  if(step.formula){
+    const fs = el('div','formula-stage', formulaHTML(step.formula));
+    card.appendChild(fs);
+    if(step.mineralName) card.appendChild(el('div','mineral-name-tag', `معدن ${step.mineralName}`));
+  }
+
+  const choices = el('div','choices');
+  let answered = false, attempts = 0;
+  const opts = shuffle(step.options);
+  const fb = null;
+  const fbHolder = el('div');
+  const fbc = feedbackBox(fbHolder);
+
+  opts.forEach(opt=>{
+    const chip = el('div','chip', opt.label);
+    chip.onclick = ()=>{
+      if(answered) return;
+      if(opt.correct){
+        answered = true;
+        chip.classList.add('correct');
+        addScore(attempts>0 ? 5 : 10);
+        stepCompleted();
+        fbc.ok(step.correctText);
+        Array.from(choices.children).forEach(c=>c.classList.add('disabled'));
+        showNextBtn(card, onNext);
+      } else {
+        attempts++;
+        breakCombo();
+        chip.classList.add('wrong');
+        setTimeout(()=>chip.classList.remove('wrong'), 400);
+        fbc.bad(step.wrongHint || "حاول مرة أخرى.");
+      }
+      refreshTopbar();
+    };
+    choices.appendChild(chip);
+  });
+  card.appendChild(choices);
+  card.appendChild(fbHolder);
+
+  const hintRow = el('div','btn-row');
+  const hintBtn = el('button','btn btn-hint', `${ICONS.bulb} تلميح`);
+  hintBtn.onclick = ()=>{ fbc.hint(step.wrongHint || "راجع الأيون السالب في الصيغة."); hintBtn.disabled=true; };
+  hintRow.appendChild(hintBtn);
+  card.appendChild(hintRow);
+}
+
+function showNextBtn(card, onNext){
+  const row = el('div','btn-row');
+  const btn = el('button','btn btn-primary','التالي ←');
+  btn.onclick = onNext;
+  row.appendChild(btn);
+  card.appendChild(row);
+}
+
+/* ---------- بناء سؤال السرعة ---------- */
+function buildSpeedStep(card, step, onNext){
+  card.appendChild(el('div','prompt', step.prompt));
+  const timerOuter = el('div','timer-outer');
+  const timerInner = el('div','timer-inner');
+  timerOuter.appendChild(timerInner);
+  card.appendChild(timerOuter);
+
+  if(step.formula){
+    const fs = el('div','formula-stage', formulaHTML(step.formula));
+    card.appendChild(fs);
+    if(step.mineralName) card.appendChild(el('div','mineral-name-tag', `معدن ${step.mineralName}`));
+  }
+
+  const choices = el('div','choices');
+  let answered=false, timeLeft=20, fastBonus=true;
+  const timer = setInterval(()=>{
+    timeLeft--;
+    timerInner.style.width = Math.max(0,(timeLeft/20)*100)+'%';
+    if(timeLeft <= 10) fastBonus=false;
+    if(timeLeft<=0){ clearInterval(timer); }
+  },1000);
+
+  const opts = shuffle(step.options);
+  const fbHolder = el('div');
+  const fbc = feedbackBox(fbHolder);
+
+  opts.forEach(opt=>{
+    const chip = el('div','chip', opt.label);
+    chip.onclick = ()=>{
+      if(answered) return;
+      answered = true;
+      clearInterval(timer);
+      if(opt.correct){
+        chip.classList.add('correct');
+        const pts = fastBonus ? 15 : 10;
+        addScore(pts);
+        stepCompleted();
+        let bonusTxt = fastBonus ? ` <span class="combo-badge">سرعة ⚡ +5</span>` : '';
+        fbc.ok(step.correctText + bonusTxt);
+      } else {
+        breakCombo();
+        chip.classList.add('wrong');
+        addScore(0);
+        stepCompleted();
+        fbc.bad(step.wrongHint + " — " + step.correctText);
+      }
+      Array.from(choices.children).forEach(c=>c.classList.add('disabled'));
+      refreshTopbar();
+      showNextBtn(card, onNext);
+    };
+    choices.appendChild(chip);
+  });
+  card.appendChild(choices);
+  card.appendChild(fbHolder);
+}
+
+/* ---------- بناء صح/خطأ بالسحب ---------- */
+function buildTrueFalseStep(card, step, onNext){
+  const banner = el('div','strategy-banner', `${ICONS.magnet}<span><b>الاستراتيجية:</b> ${step.strategy}</span>`);
+  card.appendChild(banner);
+  card.appendChild(el('div','prompt','اسحب العبارة إلى الإجابة الصحيحة، أو اضغط عليها ثم اضغط على الإجابة.'));
+
+  const statement = el('div','tf-statement', step.statement);
+  card.appendChild(statement);
+
+  const zones = el('div','tf-zones');
+  const trueZone = el('div','tf-zone true','✓ صحيح');
+  const falseZone = el('div','tf-zone false','✗ خطأ');
+  zones.appendChild(trueZone); zones.appendChild(falseZone);
+  card.appendChild(zones);
+
+  const fbHolder = el('div');
+  const fbc = feedbackBox(fbHolder);
+  card.appendChild(fbHolder);
+
+  let answered = false, attempts = 0, selectedByTap = false;
+
+  function resolve(chosenTrue, targetZoneEl){
+    if(answered) return;
+    const correct = (chosenTrue === step.isTrue);
+    if(correct){
+      answered = true;
+      targetZoneEl.classList.add('correctzone');
+      statement.classList.add('placed');
+      addScore(attempts>0?5:10);
+      stepCompleted();
+      fbc.ok(step.explainCorrect);
+      refreshTopbar();
+      showNextBtn(card, onNext);
+    } else {
+      attempts++;
+      breakCombo();
+      targetZoneEl.classList.add('wrongzone');
+      setTimeout(()=>targetZoneEl.classList.remove('wrongzone'), 500);
+      fbc.bad(step.explainWrong);
+      refreshTopbar();
+    }
+  }
+
+  // دعم اللمس: اضغط العبارة ثم اضغط الإجابة
+  [ [trueZone,true], [falseZone,false] ].forEach(([zoneEl, val])=>{
+    zoneEl.addEventListener('click', ()=>{
+      if(!selectedByTap || answered) return;
+      resolve(val, zoneEl);
+    });
+  });
+
+  // السحب الحقيقي + النقر البسيط (fallback) عبر نفس المعالج
+  makeDraggable(statement, {
+    getDropTargets: ()=> [trueZone, falseZone],
+    onDrop: (dropEl)=>{ resolve(dropEl===trueZone, dropEl); },
+    onTap: ()=>{
+      if(answered) return;
+      selectedByTap = !selectedByTap;
+      statement.style.borderColor = selectedByTap ? 'var(--malachite)' : 'var(--gold-soft)';
+    }
+  });
+}
+
+/* ---------- بناء ترتيب الخطوات (نقر بالتسلسل) ---------- */
+function buildOrderStep(card, step, onNext){
+  const banner = el('div','strategy-banner', `${ICONS.magnet}<span><b>الاستراتيجية:</b> ${step.strategy}</span>`);
+  card.appendChild(banner);
+  card.appendChild(el('div','prompt', step.prompt));
+
+  const pool = el('div','order-pool');
+  const answer = el('div','order-answer');
+  card.appendChild(pool);
+  card.appendChild(answer);
+
+  const fbHolder = el('div');
+  const fbc = feedbackBox(fbHolder);
+  card.appendChild(fbHolder);
+
+  let chosen = [];
+  const items = shuffle(step.items);
+
+  function renderPool(){
+    clear(pool);
+    items.forEach(it=>{
+      const row = el('div','order-item'+(chosen.includes(it.id)?' used':''));
+      row.innerHTML = `<span class="num">?</span><span>${it.label}</span>`;
+      row.onclick = ()=>{
+        if(chosen.includes(it.id) || chosen.length>=step.items.length) return;
+        chosen.push(it.id);
+        renderAll();
+      };
+      pool.appendChild(row);
+    });
+  }
+  function renderAnswer(){
+    clear(answer);
+    chosen.forEach((id,idx)=>{
+      const it = step.items.find(i=>i.id===id);
+      const row = el('div','order-item');
+      row.innerHTML = `<span class="num">${idx+1}</span><span>${it.label}</span>`;
+      answer.appendChild(row);
+    });
+  }
+  function renderAll(){ renderPool(); renderAnswer(); checkComplete(); }
+
+  function checkComplete(){
+    if(chosen.length === step.items.length){
+      const correct = chosen.every((id,idx)=>id===step.correctOrder[idx]);
+      if(correct){
+        addScore(10);
+        stepCompleted();
+        fbc.ok(step.correctText);
+        showNextBtn(card, onNext);
+      } else {
+        breakCombo();
+        fbc.bad("الترتيب غير صحيح. راجع الخطوات واضغط «إعادة الترتيب» للمحاولة مجددًا.");
+        const retryRow = el('div','btn-row');
+        const retryBtn = el('button','btn btn-ghost','↺ إعادة الترتيب');
+        retryBtn.onclick = ()=>{ chosen=[]; fbc.clear(); retryRow.remove(); renderAll(); };
+        retryRow.appendChild(retryBtn);
+        card.insertBefore(retryRow, fbHolder.nextSibling);
+      }
+      refreshTopbar();
+    }
+  }
+  renderAll();
+}
+
+/* ---------- المرحلة 3: المختبر (سحب/كشف/مطابقة) ---------- */
+function screenStage3(subIndex){
+  const wrap = el('div','wrap');
+  const topbarHolder = el('div'); topbarHolder.id='topbar-holder'; topbarHolder.innerHTML = topbarHTML();
+  wrap.appendChild(topbarHolder);
+
+  if(subIndex===0){
+    const card = el('div','card');
+    card.innerHTML = `<div class="eyebrow">${ICONS.flask} المختبر · جزء 1 من 3</div>`;
+    buildDragClassify(card, ()=>{ refreshTopbar(); render(screenStage3(1)); });
+    wrap.appendChild(card);
+    return wrap;
+  }
+  if(subIndex===1){
+    const card = el('div','card');
+    card.innerHTML = `<div class="eyebrow">${ICONS.flask} المختبر · جزء 2 من 3</div>`;
+    buildChoiceStep(card, fragmentStep, ()=>{ refreshTopbar(); render(screenStage3(2)); });
+    wrap.appendChild(card);
+    return wrap;
+  }
+  if(subIndex===2){
+    const card = el('div','card');
+    card.innerHTML = `<div class="eyebrow">${ICONS.flask} المختبر · جزء 3 من 3</div>`;
+    buildTriad(card, ()=>{ refreshTopbar(); render(screenStep(3, 3)); });
+    wrap.appendChild(card);
+    return wrap;
+  }
+  return null;
+}
+
+function buildDragClassify(card, onNext){
+  card.appendChild(el('div','prompt','اسحب كل صيغة معدن إلى المجموعة الصحيحة (أو اضغط على الصيغة ثم اضغط على المجموعة).'));
+  card.appendChild(el('div','drag-zone-title','الصيغ المطلوب تصنيفها:'));
+
+  const pool = el('div','drag-pool');
+  const bucketGrid = el('div','bucket-grid');
+  const fbHolder = el('div');
+  const fbc = feedbackBox(fbHolder);
+
+  let placedCount = 0;
+  let pickedItem = null;
+
+  function pickItem(d){
+    if(d.classList.contains('placed')) return;
+    Array.from(pool.children).forEach(c=>c.classList.remove('picked'));
+    if(pickedItem===d){ pickedItem=null; return; }
+    pickedItem = d;
+    d.classList.add('picked');
+  }
+
+  const items = dragMinerals.map(key=>{
+    const m = M[key];
+    const d = el('div','drag-item', m.formula);
+    d.dataset.key = key;
+    pool.appendChild(d);
+    return d;
+  });
+
+  const buckets = dragBuckets.map(gid=>{
+    const b = el('div','bucket');
+    b.dataset.group = gid;
+    b.innerHTML = `<span class="lbl">${groupName(gid)}</span><span class="ion">${GROUPS[gid].ion}</span>`;
+    b.onclick = ()=>{
+      if(!pickedItem) return;
+      handleDrop(b, pickedItem);
+      pickedItem = null;
+    };
+    bucketGrid.appendChild(b);
+    return b;
+  });
+
+  card.appendChild(pool);
+
+  function handleDrop(bucketEl, itemEl){
+    const key = itemEl.dataset.key;
+    const m = M[key];
+    if(bucketEl.dataset.group === m.group){
+      itemEl.classList.add('placed');
+      bucketEl.classList.add('filled');
+      bucketEl.innerHTML = `<span class="lbl">${groupName(m.group)}</span><span class="filled-item">${m.formula} ✓</span>`;
+      placedCount++;
+      addScore(10);
+      stepCompleted();
+      fbc.ok(`${m.formula} (${m.name}) ← الأيون السالب ${m.ion} ← مجموعة ${groupName(m.group)}.`);
+      refreshTopbar();
+      if(placedCount === items.length){
+        showNextBtn(card, onNext);
+      }
+    } else {
+      breakCombo();
+      bucketEl.classList.add('wrongflash');
+      setTimeout(()=>bucketEl.classList.remove('wrongflash'), 450);
+      fbc.bad(`${m.formula} لا تنتمي لهذه المجموعة. تذكّر: أيونها السالب هو ${m.ion}.`);
+      refreshTopbar();
+    }
+  }
+
+  items.forEach(itemEl=>{
+    makeDraggable(itemEl, {
+      getDropTargets: ()=> buckets,
+      onDrop: (dropEl, dragEl)=>{ handleDrop(dropEl, dragEl); },
+      onTap: (tappedEl)=> pickItem(tappedEl)
+    });
+  });
+
+  card.appendChild(bucketGrid);
+  card.appendChild(fbHolder);
+}
+
+function buildTriad(card, onNext){
+  card.appendChild(el('div','prompt','لكل صيغة، اختر أيونها السالب، ثم اختر مجموعتها، لتكوين الثلاثية الصحيحة.'));
+
+  let idx = 0;
+  const holder = el('div');
+  card.appendChild(holder);
+
+  function renderMineralWizard(){
+    clear(holder);
+    if(idx >= triadItems.length){
+      addScore(0); // نقاط أُعطيت أثناء كل خطوة فرعية
+      showNextBtn(card, onNext);
+      return;
+    }
+    const m = triadItems[idx];
+    const chainRow = el('div','rule-preview');
+    chainRow.innerHTML = `<span class="node">${m.formula}</span><span class="arrow">←</span><span class="node" id="triad-ion-slot">؟</span><span class="arrow">←</span><span class="node" id="triad-group-slot">؟</span>`;
+    holder.appendChild(chainRow);
+    holder.appendChild(el('div','mineral-name-tag', `معدن ${m.name}`));
+
+    const ionPrompt = el('div','prompt', 'اختر الأيون السالب الصحيح لهذا المعدن:');
+    holder.appendChild(ionPrompt);
+    const ionChoices = el('div','choices');
+    const ionPool = shuffle([...new Set(Object.values(M).map(x=>x.ion))]).filter((v,i,a)=>a.indexOf(v)===i);
+    let ionOptions = shuffle([m.ion, ...shuffle(ionPool.filter(i=>i!==m.ion)).slice(0,2)]);
+    const fbHolder1 = el('div'); const fbc1 = feedbackBox(fbHolder1);
+    let ionAnswered = false;
+    ionOptions.forEach(ionVal=>{
+      const chip = el('div','chip', ionVal);
+      chip.onclick = ()=>{
+        if(ionAnswered) return;
+        if(ionVal === m.ion){
+          ionAnswered = true;
+          chip.classList.add('correct');
+          document.getElementById('triad-ion-slot').textContent = ionVal;
+          addScore(5); stepCompleted(); refreshTopbar();
+          Array.from(ionChoices.children).forEach(c=>c.classList.add('disabled'));
+          showGroupStep();
+        } else {
+          breakCombo(); refreshTopbar();
+          chip.classList.add('wrong');
+          setTimeout(()=>chip.classList.remove('wrong'),400);
+          fbc1.bad('ليس هذا الأيون. راجع تركيب الصيغة جيدًا.');
+        }
+      };
+      ionChoices.appendChild(chip);
+    });
+    holder.appendChild(ionChoices);
+    holder.appendChild(fbHolder1);
+
+    const groupHolder = el('div');
+    holder.appendChild(groupHolder);
+
+    function showGroupStep(){
+      const groupPrompt = el('div','prompt','والآن اختر مجموعة هذا المعدن:');
+      groupHolder.appendChild(groupPrompt);
+      const groupChoices = el('div','choices');
+      const opts = groupChoiceOptions(m.group, groupPool);
+      const fbHolder2 = el('div'); const fbc2 = feedbackBox(fbHolder2);
+      let done=false;
+      opts.forEach(opt=>{
+        const chip = el('div','chip', opt.label);
+        chip.onclick = ()=>{
+          if(done) return;
+          if(opt.correct){
+            done = true;
+            chip.classList.add('correct');
+            document.getElementById('triad-group-slot').textContent = opt.label;
+            addScore(5); stepCompleted(); refreshTopbar();
+            fbc2.ok(`الثلاثية مكتملة: ${m.formula} ← ${m.ion} ← ${groupName(m.group)}.`);
+            Array.from(groupChoices.children).forEach(c=>c.classList.add('disabled'));
+            const nextRow = el('div','btn-row');
+            const nextBtn = el('button','btn btn-primary','التالي ←');
+            nextBtn.onclick = ()=>{ idx++; renderMineralWizard(); };
+            nextRow.appendChild(nextBtn);
+            groupHolder.appendChild(nextRow);
+          } else {
+            breakCombo(); refreshTopbar();
+            chip.classList.add('wrong');
+            setTimeout(()=>chip.classList.remove('wrong'),400);
+            fbc2.bad(`تذكّر أن أيونها السالب هو ${m.ion}.`);
+          }
+        };
+        groupChoices.appendChild(chip);
+      });
+      groupHolder.appendChild(groupChoices);
+      groupHolder.appendChild(fbHolder2);
+    }
+  }
+  renderMineralWizard();
+}
+
+/* ================================================================
+   9) ثبّت القاعدة + التحدي الختامي + شاشة النهاية
+   ================================================================ */
+function screenFinalRule(){
+  const wrap = el('div','wrap');
+  const topbarHolder = el('div'); topbarHolder.id='topbar-holder'; topbarHolder.innerHTML = topbarHTML();
+  wrap.appendChild(topbarHolder);
+
+  const card = el('div','card');
+  card.innerHTML = `<div class="eyebrow">${ICONS.check} تثبيت القاعدة</div><h2>القاعدة الأساسية في تصنيف المعادن</h2>`;
+  const flow = el('div','rule-flow');
+  flow.innerHTML = `
+    <div class="rule-box">الأيون السالب</div>
+    <div class="down">↓</div>
+    <div class="rule-box">نوع الأيون</div>
+    <div class="down">↓</div>
+    <div class="rule-box">مجموعة المعدن</div>
+  `;
+  card.appendChild(flow);
+  card.appendChild(el('p','','والآن، ثلاثة تحديات أخيرة سريعة لتثبيت القاعدة.'));
+  const btnRow = el('div','btn-row');
+  const btn = el('button','btn btn-primary','ابدأ التحدي الأخير');
+  btn.onclick = ()=>{ render(screenFinalChallenge(0)); };
+  btnRow.appendChild(btn);
+  card.appendChild(btnRow);
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function screenFinalChallenge(idx){
+  const wrap = el('div','wrap');
+  const topbarHolder = el('div'); topbarHolder.id='topbar-holder'; topbarHolder.innerHTML = topbarHTML();
+  wrap.appendChild(topbarHolder);
+
+  if(idx >= finalReasonItems.length){
+    return screenEnd();
+  }
+  const m = finalReasonItems[idx];
+  const card = el('div','card');
+  card.innerHTML = `<div class="eyebrow">${ICONS.check} التحدي الختامي · ${idx+1} من ${finalReasonItems.length}</div>`;
+  card.appendChild(el('div','prompt', `أمامك صيغة معدن ${m.name}. ما مجموعته؟ ولماذا؟`));
+  card.appendChild(el('div','formula-stage', formulaHTML(m.formula)));
+
+  const groupPrompt = el('div','prompt','أولًا: اختر المجموعة الصحيحة');
+  card.appendChild(groupPrompt);
+  const groupChoices = el('div','choices');
+  const gopts = groupChoiceOptions(m.group, groupPool);
+  const fbHolder1 = el('div'); const fbc1 = feedbackBox(fbHolder1);
+  let stepDone1=false;
+  const whyHolder = el('div');
+
+  gopts.forEach(opt=>{
+    const chip = el('div','chip', opt.label);
+    chip.onclick = ()=>{
+      if(stepDone1) return;
+      if(opt.correct){
+        stepDone1=true;
+        chip.classList.add('correct');
+        addScore(10); stepCompleted(); refreshTopbar();
+        Array.from(groupChoices.children).forEach(c=>c.classList.add('disabled'));
+        fbc1.ok('صحيح! والآن، ما السبب؟');
+        renderWhy();
+      } else {
+        breakCombo(); refreshTopbar();
+        chip.classList.add('wrong');
+        setTimeout(()=>chip.classList.remove('wrong'),400);
+        fbc1.bad('راجع الأيون السالب في الصيغة جيدًا.');
+      }
+    };
+    groupChoices.appendChild(chip);
+  });
+  card.appendChild(groupChoices);
+  card.appendChild(fbHolder1);
+  card.appendChild(whyHolder);
+
+  function renderWhy(){
+    const p = el('div','prompt', 'لماذا صُنِّف هذا المعدن ضمن هذه المجموعة؟');
+    whyHolder.appendChild(p);
+    const choices = el('div','choices');
+    const correctReason = `لأن أيونه السالب هو ${m.ion}`;
+    const distractors = shuffle(Object.values(M).map(x=>`لأن أيونه السالب هو ${x.ion}`).filter(r=>r!==correctReason));
+    const options = shuffle([correctReason, ...new Set(distractors)].filter((v,i,a)=>a.indexOf(v)===i).slice(0,3));
+    if(!options.includes(correctReason)) options[0]=correctReason;
+    const fbHolder2 = el('div'); const fbc2 = feedbackBox(fbHolder2);
+    let done2=false;
+    options.forEach(txt=>{
+      const chip = el('div','chip', txt);
+      chip.onclick = ()=>{
+        if(done2) return;
+        if(txt===correctReason){
+          done2=true;
+          chip.classList.add('correct');
+          addScore(10); stepCompleted(); refreshTopbar();
+          fbc2.ok(`تمام! ${m.formula} ← ${m.ion} ← مجموعة ${groupName(m.group)}.`);
+          Array.from(choices.children).forEach(c=>c.classList.add('disabled'));
+          const row = el('div','btn-row');
+          const btn = el('button','btn btn-primary','التالي ←');
+          btn.onclick = ()=>{ render(screenFinalChallenge(idx+1)); };
+          row.appendChild(btn);
+          whyHolder.appendChild(row);
+        } else {
+          breakCombo(); refreshTopbar();
+          chip.classList.add('wrong');
+          setTimeout(()=>chip.classList.remove('wrong'),400);
+          fbc2.bad('هذا أيون معدن آخر. حاول مرة أخرى.');
+        }
+      };
+      choices.appendChild(chip);
+    });
+    whyHolder.appendChild(choices);
+    whyHolder.appendChild(fbHolder2);
+  }
+
+  wrap.appendChild(card);
+  return wrap;
+}
+
+function screenEnd(){
+  const wrap = el('div','wrap');
+  const s = el('div','end-screen');
+  const r = rankInfo();
+  s.innerHTML = `
+    <div class="eyebrow">${ICONS.crystal} انتهت المهمة</div>
+    <h1>أحسنت أيها المحلل!</h1>
+    <div class="end-rank">
+      <div class="big-rank">${r.name}</div>
+      <div class="score-line">مجموع النقاط: ${State.score}</div>
+      <div class="stat-row">
+        <div class="stat-mini"><div class="n">${State.maxCombo}×</div><div class="l">أطول سلسلة صحيحة</div></div>
+        <div class="stat-mini"><div class="n">${State.stepsDone}</div><div class="l">تحديًا أُنجز</div></div>
+      </div>
+    </div>
+  `;
+  const btnRow = el('div','btn-row');
+  const restart = el('button','btn btn-primary','↺ إعادة اللعبة');
+  restart.onclick = ()=>{ resetGame(); render(screenStart()); };
+  const map = el('button','btn btn-ghost','خريطة المختبر');
+  map.onclick = ()=>{ render(screenMap()); };
+  btnRow.appendChild(restart); btnRow.appendChild(map);
+  s.appendChild(btnRow);
+  wrap.appendChild(s);
+  return wrap;
+}
+
+function resetGame(){
+  State.score=0; State.combo=0; State.maxCombo=0; State.stepsDone=0;
+  State.stagesDone={1:false,2:false,3:false,4:false,5:false};
+  State.currentStage=null; State.currentStepIndex=0;
+}
+
+/* ================================================================
+   10) التشغيل
+   ================================================================ */
+render(screenStart());
+
+})();
+</script>
+</body>
+</html>
