@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>تحدّي علماء المعادن</title>
+<style>
+:root{--bg:#15171a;--c2:#202327;--c3:#2b2f34;--g:#d4a63a;--cu:#b87333;--t:#ecebe6;--m:#9aa0a6;--ok:#4caf7a;--no:#d6584b}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 20% 0,#262a30,var(--bg));color:var(--t);font-family:Tahoma,Arial,sans-serif;font-size:clamp(16px,1.5vw,24px);min-height:100vh;padding-bottom:150px}
+header{display:flex;gap:10px;align-items:center;padding:10px 18px;background:#0e1012;border-bottom:2px solid var(--cu);flex-wrap:wrap}
+header b{color:var(--g);font-size:1.2em}header .sp{flex:1}
+main{max-width:1250px;margin:0 auto;padding:16px}
+h1,h2{color:var(--g);margin:.3em 0}
+.card{background:linear-gradient(160deg,var(--c3),var(--c2));border:1px solid #444;border-top:3px solid var(--cu);border-radius:14px;padding:18px;margin:12px 0}
+button,.b{font:inherit;background:var(--c3);color:var(--t);border:1px solid #666;border-radius:9px;padding:8px 14px;cursor:pointer}
+button:hover:not(:disabled){border-color:var(--g)}button:disabled{opacity:.35;cursor:not-allowed}
+.g{background:linear-gradient(var(--g),var(--cu));color:#161616;border:0;font-weight:bold}
+.d{border-color:var(--no);color:#ffb4ab}.on{outline:3px solid var(--g)}
+input{font:inherit;background:#101214;color:var(--t);border:1px solid #666;border-radius:8px;padding:8px;width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.teams{display:flex;gap:10px;flex-wrap:wrap}
+.tm{flex:1;min-width:150px;background:var(--c2);border:2px solid #444;border-radius:12px;padding:8px 12px;text-align:center}
+.tm.turn{border-color:var(--g);box-shadow:0 0 14px #d4a63a66}
+.tm .s{font-size:2em;font-weight:bold;color:var(--g)}
+.qt{font-size:1.6em;line-height:1.7}
+.opt{background:#14161a;border:2px solid #555;border-radius:12px;padding:12px 16px;margin:8px 0;font-size:1.3em}
+.opt.ok{border-color:var(--ok);background:#1d3a2b}
+.tbl{border-collapse:collapse;margin:10px 0}.tbl td{border:1px solid #666;padding:6px 16px;text-align:center}.tbl tr:first-child{background:#3a3226;color:var(--g)}
+#tm{font-size:4.6em;line-height:1;font-weight:bold;color:var(--g);font-variant-numeric:tabular-nums}#tm.lo{color:var(--no)}
+.alert{background:var(--no);color:#fff;font-size:1.8em;text-align:center;border-radius:12px;padding:10px;animation:p 1s infinite}
+@keyframes p{50%{opacity:.55}}
+.ex{border-right:5px solid var(--g);background:#191b1f;padding:10px 14px;margin-top:10px;border-radius:8px}
+.ctl{position:fixed;bottom:0;left:0;right:0;background:#0e1012ee;border-top:2px solid var(--cu);padding:8px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center;z-index:5}
+.sc{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:6px 0;border-bottom:1px solid #3a3a3a}
+.sc span:first-child{min-width:120px;font-weight:bold}
+table.r{width:100%;border-collapse:collapse}table.r td,table.r th{border-bottom:1px solid #444;padding:8px;text-align:center}
+#toast{position:fixed;top:14px;left:50%;transform:translateX(-50%);background:var(--g);color:#111;padding:10px 20px;border-radius:10px;font-weight:bold;display:none;z-index:9}
+.tag{font-size:.7em;background:#3a3226;color:var(--g);border-radius:6px;padding:2px 8px;margin-left:4px}
+.cf{position:fixed;top:-20px;width:10px;height:14px;animation:f 3s linear forwards;z-index:8}
+@keyframes f{to{transform:translateY(110vh) rotate(540deg)}}
+.turnb{text-align:center;font-size:2.6em;color:var(--t);background:linear-gradient(90deg,#3a3226,#2b2f34,#3a3226);border:2px solid var(--g);border-radius:14px;padding:8px;margin:10px 0}.turnb b{color:var(--g);font-size:1.25em}
+#ov{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;z-index:20}.mb{background:var(--c2);border:2px solid var(--g);border-radius:14px;padding:22px;max-width:480px;text-align:center;font-size:1.2em}.mb p{margin-top:0}
+.menu{position:absolute;bottom:100%;right:10px;background:#0e1012;border:2px solid var(--cu);border-radius:10px;padding:8px;display:flex;flex-direction:column;gap:6px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important}}
+@media print{.no-print,.ctl,header{display:none!important}body{background:#fff;color:#000}.card{background:#fff;border:1px solid #000}h1,h2{color:#000}}
+</style></head><body>
+<header class="no-print"><b>🏆 تحدّي علماء المعادن</b><span id="rn"></span><span class="sp"></span>
+<button onclick="go2('board')">لوحة النتائج</button><button onclick="go2('review')">مراجعة المعلم</button><button id="snd" onclick="S.mute=!S.mute;save();render()"></button></header>
+<main id="app"></main><div id="toast"></div><div id="ov"></div>
+<script>
+const RN=['انطلاقة العلماء','المحقق الجيولوجي','فكّر كعالِم','المواجهة الكبرى','السؤال الفاصل'];
+const BASE=[100,200,200,300,300],RT=[8,10,10,9,3];
+const DN=['فريق الذهب','فريق الماس','فريق الكوارتز','فريق الياقوت'];
+const TOP=['مفهوم المعدن','الخصائص الفيزيائية','القساوة ومقياس موس','الأنظمة البلورية','مجموعات المعادن','الصخور والمعادن'];
+/* ===== بنك الأسئلة (بنية مستقلة سهلة التعديل) =====
+ r: الجولة (0-3) و4 للفاصل | t: الموضوع | q: السؤال | o: الخيارات (دون o = سؤال تعليل مفتوح يقيّمه المعلم)
+ a: رقم الإجابة الصحيحة (أو نص الإجابة النموذجية) | e: التفسير | l: الصعوبة | k: المهارة | p: الصفحة | tb: جدول اختياري */
+const M=(r,t,q,o,a,e,l,k,p,tb)=>({r,t,q,o,a,e,l,k,p,tb});
+const O=(r,t,q,a,l,k,p)=>({r,t,q,a,e:a,l,k,p});
+const Q=[
+M(0,TOP[0],'أيّ المواد الآتية يُعدّ معدنًا؟',['الماء','الفحم الحجري','الزجاج البركاني','الكوارتز'],3,'الماء سائل، والفحم الحجري من أصل عضوي، والزجاج البركاني ليس له ترتيب ذري داخلي منتظم؛ أما الكوارتز فمادة صلبة نقية غير عضوية ببناء ذري منتظم.','سهل','فهم','ص10'),
+M(0,TOP[0],'ما اسم الأجسام الصلبة ذات الأشكال الهندسية المحاطة بسطوح ملساء، وتتكوّن من ذرات أو أيونات مرتبة بانتظام؟',['البلورات','الصخور','الخامات','الفلزات'],0,'تسمى البلورات (Crystals)، وتنشأ بعملية التبلور.','سهل','تذكر','ص11'),
+M(0,TOP[1],'ما الخاصية التي تعني لون مسحوق المعدن؟',['البريق','الحكاكة','القساوة','الانفصام'],1,'الحكاكة هي لون مسحوق المعدن الذي يظهر عند حكّه على لوح حكاكة خزفي أبيض غير مصقول.','سهل','تذكر','ص18'),
+M(0,TOP[2],'أيّ المعادن الآتية يقع في أعلى مقياس موس (الدرجة 10)؟',['الكوارتز','الكورندوم','الماس','التوباز'],2,'الماس درجة 10، والكورندوم 9، والتوباز 8، والكوارتز 7.','سهل','تذكر','ص21'),
+M(0,TOP[4],'أيّ مجموعات المعادن تشكّل أكثر من 90% من معادن القشرة الأرضية؟',['الكربونات','السيليكات','الكبريتيدات','الأكاسيد'],1,'تشكل مجموعة السيليكات أكثر من 90% من معادن القشرة الأرضية.','متوسط','تذكر','ص25'),
+M(0,TOP[4],'ينتمي معدن الهاليت (NaCl) إلى مجموعة:',['الهاليدات','الكبريتات','الفوسفات','الكربونات'],0,'الهاليدات تتكون من اتحاد أحد أيونات الهالوجينات (كالكلور والفلور) مع أيون موجب كالصوديوم أو الكالسيوم.','متوسط','تصنيف','ص27'),
+M(1,TOP[2],'معدن مجهول يخدش الكالسيت ويخدشه الفلوريت. أيّ قيمة قساوة تناسبه على مقياس موس؟',['2','3.5','5','7'],1,'الكالسيت (3) والفلوريت (4)، فقساوة المعدن بينهما: 3.5.','متوسط','استنتاج','ص21'),
+M(1,TOP[2],'عيّنة لا يخدشها ظفر الإصبع (2.5) لكن تخدشها العملة النحاسية (3.5). أيّ معدن في الجدول ينطبق عليه ذلك؟',['التلك','الجبس','الكالسيت','الفلوريت'],2,'قساوتها أكبر من 2.5 وأقل من 3.5، فهي الكالسيت (3).','متوسط','تحليل','ص21–22',[['المعدن','القساوة'],['التلك','1'],['الجبس','2'],['الكالسيت','3'],['الفلوريت','4']]),
+M(1,TOP[1],'عيّنتان سوداوان: الماغنيتيت والغرافيت. لماذا لا يكفي اللون وحده للتمييز بينهما؟',['لأن المعادن لا تمتلك لونًا','لأن المعادن قد تتشابه ألوانها فنحتاج إلى خصائص أخرى كالحكاكة والقساوة','لأن اللون يتغير بتغيّر القساوة','لأن اللون خاصية كيميائية'],1,'قد تتشابه المعادن في ألوانها، وقد يكون للمعدن الواحد أكثر من لون، لذا يُستعان بخصائص أخرى.','متوسط','تحليل','ص17'),
+M(1,TOP[1],'عند الطرق على عيّنة انكسرت عشوائيًا بسطح محاري ولم تظهر سطوح انفصام. ما الخاصية التي ظهرت؟',['الانفصام','المكسر','الحكاكة','البريق'],1,'المكسر: شكل سطح الكسر الناتج عن تكسّر المعدن عشوائيًا (كما في الكوارتز) عندما لا توجد مستويات انفصام.','متوسط','تحليل','ص20'),
+M(1,TOP[1],'أيّ ما يأتي ينفصم في اتجاه واحد منتجًا صفائح رقيقة ومستوية؟',['الكالسيت','المايكا','الكوارتز','الزجاج البركاني'],1,'تنفصم المايكا في اتجاه واحد؛ أما الكالسيت ففي ثلاثة اتجاهات غير متعامدة، والكوارتز له مكسر.','متوسط','تحليل','ص20'),
+M(1,TOP[5],'يبيّن الجدول إنتاج العالم عام 2019م (مليون طن). أيّ معدن كان إنتاجه الأكبر؟',['المالكيت','الفلسبار','الأباتيت','الهيماتيت والماغنتيت'],3,'إنتاجهما 3040 مليون طن، وهما من خامات الحديد.','متوسط','تحليل','ص32',[['المعدن','الإنتاج'],['المالكيت','20.7'],['الفلسبار','31.856'],['الأباتيت','226'],['الهيماتيت والماغنتيت','3040']]),
+O(2,TOP[2],'صحّح العبارة وفسّر: «يمكن استخدام لوح الحكاكة لتحديد قساوة معدن الكورندوم».','العبارة غير صحيحة: قساوة لوح الحكاكة نحو 6.5–7 بينما قساوة الكورندوم 9، فهو أصلب من اللوح ولا يتحوّل إلى مسحوق عليه.','متقدم','تفسير','ص21–22'),
+M(2,TOP[4],'أيّ ثنائي (معدن—مجموعة) صحيح؟',['الكالسيت—أكاسيد','البيريت—كبريتات','الكوارتز—هاليدات','الكالسيت—كربونات'],3,'الكالسيت كربونات، والبيريت كبريتيدات، والكوارتز سيليكات.','متوسط','تصنيف','ص26–28'),
+M(2,TOP[4],'تحتوي الكبريتات والكبريتيدات على الكبريت، ومع ذلك تُصنَّفان في مجموعتين مختلفتين. لماذا؟',['لاختلاف الأيون السالب: SO₄²⁻ في الكبريتات وS²⁻ في الكبريتيدات','لاختلاف لون معادن المجموعتين','لاختلاف القساوة بين المجموعتين','لأن الكبريتيدات لا تحتوي الكبريت'],0,'تُصنَّف المعادن بحسب الأيون السالب في تركيبها الكيميائي.','متقدم','تفسير','ص27–28'),
+M(2,TOP[4],'المعادن أحادية العنصر (كالذهب والفضة) نادرة في الطبيعة. أيّ تفسير يوافق الكتاب؟',['لأنها لا تتكوّن إلا في الماء','لأن معظمها يتفاعل بسهولة مع الأكسجين فيوجد متحدًا بعناصر أخرى','لأن بناءها الذري غير منتظم','لأنها أقل قساوة من الجبس دائمًا'],1,'معظم هذه المعادن سهل التفاعل مع الأكسجين، لذلك ندر وجودها منفردة.','متقدم','استنتاج','ص28'),
+M(2,TOP[3],'أيّ ثنائي (معدن—نظام بلوري) غير صحيح؟',['الجبس—أحادي الميل','الغرافيت—سداسي','الكالسيت—ثلاثي','الهاليت—سداسي'],3,'الهاليت يتبع النظام المكعب (ثلاثة محاور متساوية ومتعامدة).','متوسط','مقارنة','ص15–16'),
+M(2,TOP[5],'أيّ الصخور الآتية يتكوّن من أكثر من معدن؟',['الصخر الجيري','الدونيت','الغرانيت','لا شيء منها'],2,'الغرانيت من الفلسبار والكوارتز والمايكا؛ الصخر الجيري من الكالسيت، والدونيت من الأوليفين.','متوسط','مقارنة','ص29'),
+M(3,TOP[4],'الكالسيت والدولوميت من مجموعة الكربونات. ما الخاصية الكيميائية المشتركة بينهما؟',['يحتويان أيون الكربونات CO₃²⁻','يحتويان أيون الكبريتات','يتكوّنان من عنصر واحد','يحتويان أيون الكلوريد'],0,'تحتوي معادن الكربونات أيون الكربونات سالب الشحنة متحدًا بأيون موجب.','متوسط','استنتاج','ص26'),
+O(3,TOP[0],'فسّر: لماذا لا يُعدّ كلٌّ من الماء والزجاج البركاني معدنًا؟','الماء سائل وليس مادة صلبة، والزجاج البركاني ليس له ترتيب ذري داخلي منتظم؛ والمعدن مادة صلبة ذات بناء ذري داخلي منتظم.','متقدم','تفسير','ص10'),
+M(3,TOP[2],'عيّنة لا يخدشها الظفر (2.5)، وتخدش الفلوريت (4)، ولا تخدش الزجاج (5.5). أيّ معدن في مقياس موس يناسبها؟',['الجبس','الكالسيت','الأباتيت','الكوارتز'],2,'قساوتها بين 4 و5.5 وهي الأباتيت (5)؛ أما الكوارتز (7) فيخدش الزجاج.','متقدم','استنتاج','ص21–22'),
+M(3,TOP[4],'ما الصيغة الصحيحة لهرم السيليكا (رباعي الأوجه) الذي تتكوّن منه السيليكات؟',['SiO₄⁴⁻','Si₂O₄⁴⁻','SiO₃²⁻','Si₄O₃⁻'],0,'ترتبط أربع ذرات أكسجين بذرة سيليكون مركزية بروابط تساهمية.','متقدم','تذكر','ص25'),
+O(3,TOP[2],'كيف تحدّد قساوة معدن مجهول باستخدام مقياس موس؟','نخدشه بمعادن أو مواد معلومة القساوة (ويُجرَّب العكس أيضًا)، فتقع قساوته بين أعلى مادة خدشها وأدنى مادة خدشته.','متقدم','تحليل','ص20–22'),
+M(3,TOP[4],'يُستخرج البوتاس في الأردن من معدن السيلفيت (KCl). إلى أيّ مجموعة يُصنَّف؟',['الكبريتات','الهاليدات','الأكاسيد','الفوسفات'],1,'يحتوي أيون الكلوريد (من الهالوجينات) متحدًا بأيون البوتاسيوم، فهو هاليد.','متقدم','تصنيف','ص27،31'),
+M(4,TOP[2],'كم معدنًا يحتويه مقياس موس؟',['6','8','10','12'],2,'يحتوي عشرة معادن مرتبة من التلك (1) إلى الماس (10).','فاصل','تذكر','ص20'),
+M(4,TOP[2],'ما قساوة نصل السكين الفولاذي حسب الجدول (2)؟',['2.5','3.5','5.5','6.5'],3,'قساوته 6.5 على مقياس موس.','فاصل','تذكر','ص22')
+].map((q,i)=>(q.id=i+1,q));
+const L=r=>Q.filter(q=>q.r==r);
+/* ===== الحالة ===== */
+let st=true;try{localStorage.setItem('_t',1)}catch(e){st=false}
+const fresh=(n)=>({ph:'open',n:2,names:['','','',''],tm:30,r:0,i:0,sh:0,rv:0,ex:0,aw:{},adj:[0,0,0,0],shown:{},sk:{},left:30,run:0,end:0,ended:0,tbn:0,mute:0,bk:'open',...(n||{})});
+let S=fresh();
+const save=()=>{if(st)try{localStorage.setItem('mc9',JSON.stringify({...S,run:0}))}catch(e){}};
+const saved=()=>{try{return JSON.parse(localStorage.getItem('mc9'))}catch(e){return null}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nm=i=>(S.names[i]||'').trim()||DN[i];
+const cur=()=>L(S.r)[S.i];const bs=()=>BASE[S.r];
+const sc=t=>{let s=S.adj[t]||0;for(const id in S.aw){const a=S.aw[id][t];if(a)s+=(a.c||0)+(a.b||0)-(a.p||0)}return s};
+const cc=t=>Object.values(S.aw).filter(x=>x[t]&&x[t].c).length;
+const bn=t=>Object.values(S.aw).reduce((s,x)=>s+((x[t]&&x[t].b)||0),0);
+const pn=t=>Object.values(S.aw).reduce((s,x)=>s+((x[t]&&x[t].p)||0),0);
+const T=()=>[...Array(S.n).keys()];
+const rank=()=>T().sort((a,b)=>sc(b)-sc(a));
+const tied=()=>{const m=Math.max(...T().map(sc));return T().filter(t=>sc(t)==m)};
+function toast(m){const e=document.getElementById('toast');e.textContent=m;e.style.display='block';clearTimeout(toast.h);toast.h=setTimeout(()=>e.style.display='none',3200)}
+let ac;function beep(f,d){if(S.mute)return;try{ac=ac||new(window.AudioContext||window.webkitAudioContext)();if(ac.state=='suspended')ac.resume();const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;g.gain.value=.3;o.connect(g);g.connect(ac.destination);o.start();o.stop(ac.currentTime+d)}catch(e){}}
+/* ===== المؤقت ===== */
+const fmt=s=>{s=Math.ceil(s);return Math.floor(s/60)+':'+String(s%60).padStart(2,'0')};
+let lastSec=-1;
+setInterval(()=>{if(!S.run)return;S.left=Math.max(0,(S.end-Date.now())/1000);const e=document.getElementById('tm');if(e){e.textContent=fmt(S.left);e.className=S.left<=5?'lo':''}
+ const sec=Math.ceil(S.left);if(sec!==lastSec){lastSec=sec;if(S.left>0)beep(sec<=5?900:520,sec<=5?.2:.06)}
+ if(S.left<=0){S.run=0;S.ended=1;[0,350,700].forEach(d=>setTimeout(()=>beep(300,.3),d));save();render()}},200);
+function tglT(){if(S.run){S.run=0;save();return render()}
+ if(!S.sh){S.sh=1;S.shown[cur().id]=1}if(S.left<=0)S.left=S.tm;S.ended=0;S.end=Date.now()+S.left*1000;S.run=1;lastSec=-1;beep(660,.15);save();render()}
+function resetT(){S.run=0;S.left=S.tm;S.ended=0;save();render()}
+function ask(msg,ok,inp){const o=document.getElementById('ov');o.innerHTML='<div class="mb"><p>'+msg+'</p>'+(inp?'<input id="mi" type="number" placeholder="مثال: 50 أو -50"><br><br>':'')+'<div class="row" style="justify-content:center"><button class="g" id="my">تأكيد</button><button id="mn">إلغاء</button></div></div>';o.style.display='flex';
+ document.getElementById('mn').onclick=()=>o.style.display='none';
+ document.getElementById('my').onclick=()=>{const v=inp?parseInt(document.getElementById('mi').value):0;o.style.display='none';ok(v)}}
+/* ===== التنقل ===== */
+function go2(p){if(p&&S.ph==p){S.ph=S.bk}else if(S.ph=='board'||S.ph=='review'){S.ph=p||S.bk}else{S.bk=S.ph;if(p)S.ph=p}render()}
+function setQ(){const q=cur();S.sh=S.shown[q.id]?1:0;S.rv=0;S.ex=0;S.ended=0;S.run=0;S.left=S.tm;save()}
+function goQ(i){S.i=i;setQ();render()}
+function showQ(){S.sh=1;S.shown[cur().id]=1;save();render()}
+function nx(){S.i<L(S.r).length-1?goQ(S.i+1):toast('هذا آخر سؤال في الجولة — اضغط «إنهاء الجولة»')}
+function pv(){S.i>0?goQ(S.i-1):toast('هذا أول سؤال في الجولة')}
+function skip(){ask('تخطي هذا السؤال؟',()=>{S.sk[cur().id]=1;toast('تم تخطي السؤال');S.i<L(S.r).length-1?goQ(S.i+1):(save(),render())})}
+function redo(){S.sh=0;S.rv=0;S.ex=0;resetT();toast('أُعيد السؤال')}
+function endRound(){ask('إنهاء الجولة وعرض الملخص؟',()=>{S.run=0;S.ph='sum';save();render()})}
+function nextRound(){
+ if(S.r<3){S.r++;S.i=0;S.ph='q';setQ();return render()}
+ if(tied().length>1&&S.tbn<2){S.ph='tie';save();return render()}
+ S.ph='final';save();render();confetti()}
+function startTie(){S.r=4;S.i=Math.min(S.tbn,1);S.tbn++;S.ph='q';setQ();render()}
+function endAll(){ask('إنهاء المسابقة وعرض النتائج النهائية؟',()=>{S.run=0;S.ph=(tied().length>1&&S.tbn<2)?'tie':'final';save();render();if(S.ph=='final')confetti()})}
+/* ===== النقاط ===== */
+function mark(t,k){const q=cur();S.aw[q.id]=S.aw[q.id]||{};const a=S.aw[q.id][t]=S.aw[q.id][t]||{};
+ const amt=k=='c'?bs():bs()/2,lab={c:'الإجابة الصحيحة',b:'نقاط التعليل',p:'الخصم'}[k];
+ if(a[k])ask('إلغاء '+lab+' ('+a[k]+' نقطة) لـ '+esc(nm(t))+'؟',()=>{toast('أُلغي '+lab+' — '+nm(t));delete a[k];save();render()});
+ else ask('تأكيد '+lab+' ('+amt+' نقطة) لـ '+esc(nm(t))+'؟',()=>{a[k]=amt;toast((k=='p'?'خُصم ':'أُضيف ')+amt+' نقطة — '+nm(t));beep(k=='p'?200:660,.25);save();render()})}
+function adj(t){ask('تعديل يدوي لنقاط '+esc(nm(t))+' (موجب للإضافة، سالب للخصم):',d=>{if(!d)return toast('لم يُدخل رقم');S.adj[t]=(S.adj[t]||0)+d;toast('تعديل يدوي: '+nm(t)+' '+(d>0?'+':'')+d);save();render()},1)}
+/* ===== الإعداد والحفظ ===== */
+function newGame(){const k={names:S.names,n:S.n,tm:S.tm};S=fresh({...k,ph:'setup'});save();render()}
+function restore(){const x=saved();if(!x)return toast('لا توجد حالة محفوظة');S={...fresh(),...x,run:0};render();toast('استُعيدت آخر حالة محفوظة')}
+function clearSave(){ask('مسح الحالة المحفوظة؟',()=>{try{localStorage.removeItem('mc9')}catch(e){}toast('مُسحت الحالة المحفوظة');render()})}
+function csv(){let s='\ufeffالترتيب,الفريق,النقاط,الإجابات الصحيحة,نقاط التعليل,الخصومات\n';rank().forEach((t,j)=>{s+=[j+1,'"'+nm(t).replace(/"/g,'""')+'"',sc(t),cc(t),bn(t),pn(t)].join(',')+'\n'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([s],{type:'text/csv;charset=utf-8'}));a.download='mineral_challenge_results.csv';a.click()}
+function confetti(){if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;for(let i=0;i<40;i++){const d=document.createElement('div');d.className='cf';d.style.left=Math.random()*100+'vw';d.style.background=['#d4a63a','#b87333','#ecebe6'][i%3];d.style.animationDelay=Math.random()*1.2+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),4800)}}
+/* ===== العرض ===== */
+const strip=()=>'<div class="teams no-print">'+T().map(t=>`<div class="tm ${S.ph=='q'&&(S.i+S.r)%S.n==t?'turn':''}"><div>${esc(nm(t))}${S.ph=='q'&&(S.i+S.r)%S.n==t?' 🎯':''}</div><div class="s">${sc(t)}</div></div>`).join('')+'</div>';
+function render(){
+ document.getElementById('snd').textContent=S.mute?'🔇':'🔊';
+ const p=S.ph,A=document.getElementById('app');document.getElementById('rn').textContent=['q','sum'].includes(p)?'الجولة: '+RN[S.r]:'';
+ let h='';
+ if(p=='open')h=`<div class="card" style="text-align:center"><svg width="110" height="110" viewBox="0 0 100 100"><polygon points="50,6 90,28 90,72 50,94 10,72 10,28" fill="#2b2f34" stroke="#d4a63a" stroke-width="3"/><polygon points="50,6 90,28 50,50 10,28" fill="#b87333"/><polygon points="50,50 90,28 90,72 50,94" fill="#d4a63a" opacity=".8"/></svg>
+ <h1 style="font-size:2.6em">تحدّي علماء المعادن</h1><p>مسابقة علوم الأرض والبيئة — الصف التاسع · الوحدة الأولى: المعادن</p><p>المدة المقترحة: نحو 42 دقيقة · أربع جولات</p>
+ <div class="row" style="justify-content:center"><button class="g" onclick="newGame()">▶ مسابقة جديدة</button><button onclick="restore()" ${saved()?'':'disabled'}>استعادة آخر حالة</button><button class="d" onclick="clearSave()">مسح المحفوظ</button></div>
+ ${st?'':'<p style="color:#ffb4ab">تنبيه: الحفظ المحلي غير متاح هنا، وقد لا يُحفظ التقدم بعد إغلاق الصفحة.</p>'}</div>`;
+ else if(p=='setup')h=`<div class="card"><h2>إعداد الفرق</h2><div class="row">عدد الفرق: ${[2,3,4].map(n=>`<button class="${S.n==n?'g':''}" onclick="S.n=${n};save();render()">${n}</button>`).join('')}
+ زمن السؤال: ${[20,30,45].map(n=>`<button class="${S.tm==n?'g':''}" onclick="S.tm=${n};S.left=${n};save();render()">${n} ث</button>`).join('')}</div>
+ <div class="row" style="margin-top:12px">${T().map(t=>`<div style="flex:1;min-width:200px"><input maxlength="30" placeholder="${DN[t]}" value="${esc(S.names[t])}" oninput="S.names[${t}]=this.value;save()"></div>`).join('')}</div></div>
+ <div class="card"><h2>الخطة الزمنية المقترحة</h2><table class="r"><tr><th>الجولة</th><th>الأسئلة</th><th>النقاط</th><th>الدقائق</th></tr>
+ ${[0,1,2,3].map(r=>`<tr><td>${RN[r]}</td><td>${L(r).length}</td><td>${BASE[r]}</td><td>${RT[r]}</td></tr>`).join('')}<tr><td>الافتتاح + النتائج</td><td>—</td><td>—</td><td>5</td></tr></table>
+ <div class="row" style="margin-top:12px"><button class="g" onclick="S.ph='rules';save();render()">التالي: القواعد ◀</button></div></div>`;
+ else if(p=='rules')h=`<div class="card"><h2>قواعد المسابقة</h2><ul style="line-height:2"><li>المعلم هو المتحكم الوحيد: يُظهر السؤال، ويشغّل المؤقت، ويؤكد النقاط.</li>
+ <li>نقاط الإجابة الصحيحة: ${BASE.slice(0,4).join(' / ')} للجولات الأربع.</li><li>نقاط إضافية (نصف نقاط الجولة) للتعليل العلمي الصحيح.</li><li>لا خصم تلقائي؛ المعلم يقرر.</li><li>عند انتهاء الوقت يتوقف المؤقت وينتظر قرار المعلم.</li><li>التعادل يُحسم بسؤال فاصل.</li></ul>
+ <p>الفرق: ${T().map(t=>'<span class="tag">'+esc(nm(t))+'</span>').join('')}</p>
+ <button onclick="S.ph='setup';render()">▶ رجوع</button> <button class="g" onclick="S.r=0;S.i=0;S.ph='q';setQ();render()">ابدأ الجولة الأولى</button></div>`;
+ else if(p=='q')h=qView();
+ else if(p=='board')h=`<div class="card"><h2>لوحة النتائج</h2>${boardT()}<button class="g" onclick="go2()">متابعة</button></div>`;
+ else if(p=='sum'){const ids=L(S.r);h=`<div class="card"><h2>ملخص الجولة: ${RN[S.r]}</h2><p>عُرض ${ids.filter(q=>S.shown[q.id]).length} من ${ids.length} أسئلة · تم تخطي ${ids.filter(q=>S.sk[q.id]).length}</p>${boardT()}
+ <button class="g" onclick="nextRound()">${S.r<3?'الانتقال إلى الجولة التالية ◀':'إعلان النتيجة ◀'}</button> <button onclick="S.ph='q';render()">▶ العودة للأسئلة</button></div>`}
+ else if(p=='tie')h=`<div class="card" style="text-align:center"><h2>تعادل!</h2><p>الفرق المتعادلة: ${tied().map(t=>'<span class="tag">'+esc(nm(t))+'</span>').join('')} بـ ${sc(tied()[0])} نقطة</p>
+ <button class="g" onclick="startTie()">عرض السؤال الفاصل</button> <button onclick="S.ph='final';save();render()">إنهاء بالتعادل</button></div>`;
+ else if(p=='final')h=finalV();
+ else if(p=='review')h=`<div class="card"><h2>مراجعة الأسئلة والإجابات (للمعلم)</h2><button class="g no-print" onclick="go2()">رجوع</button>${Q.map(q=>`<div class="card"><span class="tag">${RN[q.r]}</span><span class="tag">${q.l}</span><span class="tag">${q.k}</span><span class="tag">${q.p}</span><p>${q.id}. ${q.q}</p>${q.o?q.o.map((o,i)=>`<div>${i==q.a?'✅':'◻'} ${o}</div>`).join(''):'<div>✅ '+q.a+'</div>'}<div class="ex">${q.e}</div></div>`).join('')}</div>`;
+ A.innerHTML=h;
+ if(p=='q')document.body.insertAdjacentHTML('beforeend','');
+}
+function boardT(){return '<table class="r"><tr><th>الترتيب</th><th>الفريق</th><th>النقاط</th><th>إجابات صحيحة</th></tr>'+rank().map((t,j)=>`<tr><td>${j+1}</td><td>${esc(nm(t))}</td><td style="font-size:1.6em;color:var(--g)">${sc(t)}</td><td>${cc(t)}</td></tr>`).join('')+'</table>'}
+function qView(){const q=cur(),n=L(S.r).length,op=!q.o,bon=S.r>=2||op,tt=(S.i+S.r)%S.n;
+ let h=strip()+`<div class="turnb">الدور على: <b>${esc(nm(tt))}</b></div><div class="card"><div class="row"><span class="tag">سؤال ${S.i+1} / ${n}</span><span class="tag">${q.l}</span><span class="tag">${q.k}</span><span class="tag">${bs()} نقطة</span><span style="flex:1"></span><span id="tm" class="${S.left<=5?'lo':''}">${fmt(S.left)}</span></div>
+ ${S.ended?'<div class="alert">⏰ انتهى الوقت — القرار للمعلم</div>':''}`;
+ if(!S.sh)h+='<p class="qt" style="text-align:center;color:var(--m)">اضغط «إظهار السؤال» للبدء</p>';
+ else{h+=`<p class="qt">${q.q}</p>`;
+  if(q.tb)h+='<table class="tbl">'+q.tb.map(r=>'<tr>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</table>';
+  if(q.o)h+=q.o.map((o,i)=>`<div class="opt ${S.rv&&i==q.a?'ok':''}">${'أبجد'[i]}) ${o}</div>`).join('');
+  else if(!S.rv)h+='<p style="color:var(--m)">سؤال تعليل — يقيّم المعلم الإجابة شفهيًا.</p>';
+  if(S.rv&&op)h+=`<div class="opt ok">الإجابة النموذجية: ${q.a}</div>`;
+  if(S.ex)h+=`<div class="ex">💡 ${q.e} <span class="tag">${q.p}</span></div>`}
+ h+='</div>';
+ if(S.sh)h+='<div class="card no-print"><b>احتساب النقاط (بتأكيد المعلم)</b>'+T().map(t=>{const a=(S.aw[q.id]||{})[t]||{};return `<div class="sc"><span>${esc(nm(t))}: ${sc(t)}</span>
+ <button class="${a.c?'on':''}" onclick="mark(${t},'c')">✔ صحيحة ${a.c?'(مسجّلة)':'+'+bs()}</button>
+ <button class="${a.b?'on':''}" onclick="mark(${t},'b')" ${bon?'':'disabled'}>★ تعليل +${bs()/2}</button>
+ <button onclick="adj(${t})">± تعديل</button></div>`}).join('')+'</div>';
+ const m=f=>`onclick="S.mn=0;${f}"`;
+ h+=`<div class="ctl no-print">${S.mn?`<div class="menu"><button ${m('pv()')}>▶ السؤال السابق</button><button ${m('skip()')}>تخطي السؤال</button><button ${m('redo()')}>إعادة السؤال</button><button ${m('resetT()')}>↺ ضبط المؤقت</button><button ${m('endRound()')}>إنهاء الجولة</button><button class="d" ${m('endAll()')}>إنهاء المسابقة</button></div>`:''}
+ ${S.sh?'':'<button class="g" onclick="showQ()">إظهار السؤال</button>'}
+ <button class="${S.run?'d':'g'}" onclick="tglT()">${S.run?'⏸ إيقاف المؤقت':'▶ تشغيل المؤقت'}</button>
+ <button onclick="S.rv=1;save();render()" ${S.sh?'':'disabled'}>الإجابة</button><button onclick="S.ex=1;save();render()" ${S.sh?'':'disabled'}>التفسير</button>
+ <button onclick="nx()">التالي ◀</button><button onclick="S.mn=!S.mn;render()">⋯ المزيد</button></div>`;return h}
+function finalV(){const r=rank(),top=Math.max(...T().map(sc)),w=r.filter(t=>sc(t)==top);
+ const tp=TOP.map(t=>{const a=Q.filter(q=>q.t==t&&S.shown[q.id]);const c=a.reduce((s,q)=>s+T().filter(x=>S.aw[q.id]&&S.aw[q.id][x]&&S.aw[q.id][x].c).length,0);return{t,n:a.length,c,m:a.length*S.n}}).filter(x=>x.n>0);
+ return `<div class="card" style="text-align:center"><h1 style="font-size:2.6em">🏆 ${w.length>1?'تعادل بين: '+w.map(t=>esc(nm(t))).join(' و '):'الفائز: '+esc(nm(w[0]))}</h1>${boardT()}</div>
+ <div class="card"><h2>الموضوعات التي ظهر فيها الأداء</h2><table class="r"><tr><th>الموضوع</th><th>أسئلة عُرضت</th><th>إجابات صحيحة (كل الفرق)</th></tr>${tp.map(x=>`<tr><td>${x.t}</td><td>${x.n}</td><td>${x.c}</td></tr>`).join('')}</table>
+ <p style="color:var(--m)">المؤشر مبني على الأسئلة التي عُرضت فعلًا فقط، وهو مؤشر أولي لا يقيس إتقان الموضوع كاملًا.</p></div>
+ <div class="card"><h2>ملخص أهم المفاهيم</h2><ul style="line-height:1.9"><li>المعدن مادة صلبة نقية متكوّنة طبيعيًا من أصل غير عضوي، ذات تركيب كيميائي محدد وبناء ذري داخلي منتظم.</li><li>تتميز المعادن بخصائص فيزيائية: اللون، الحكاكة، البريق، الانفصام، المكسر، والقساوة.</li><li>مقياس موس يرتّب عشرة معادن من التلك (1) إلى الماس (10).</li><li>تُصنَّف المعادن إلى سيليكات وكربونات وأكاسيد وهاليدات وكبريتات وكبريتيدات وفوسفات ومعادن أحادية العنصر بحسب الأيون السالب.</li></ul></div>
+ <div class="row no-print"><button class="g" onclick="csv()">تصدير CSV</button><button onclick="print()">🖨 طباعة</button><button onclick="go2('review')">مراجعة الأسئلة</button><button class="d" onclick="newGame()">مسابقة جديدة</button></div>`}
+render();
+</script></body></html>
