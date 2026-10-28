@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>المياه السطحية — رحلة القطرة | الصف التاسع</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;height:100%}
+body{font-family:Tahoma,Arial,sans-serif;background:linear-gradient(135deg,#14306b,#3a2a85 55%,#1b6b5a);color:#fff;display:flex;flex-direction:column;overflow:hidden}
+header{padding:8px 14px;background:#0d1b45cc;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+h1{font-size:20px;margin:0 6px 0 14px}
+#tabs{display:flex;gap:6px;flex:1;flex-wrap:wrap}
+.tab{font:inherit;background:#ffffff1a;color:#fff;border:2px solid transparent;border-radius:12px;padding:6px 10px;cursor:pointer;font-size:15px;line-height:1.2;text-align:center}
+.tab small{display:block;opacity:.75;font-size:12px}.tab.on{background:#ffd54a;color:#1d1b4f;font-weight:bold}
+.btn{font:inherit;font-size:16px;border:0;border-radius:12px;padding:9px 14px;cursor:pointer;background:#7c5cff;color:#fff}
+.btn:hover,.tab:hover{filter:brightness(1.15)}.btn.g{background:#1f9d6b}.btn.o{background:#e08a1e}.btn.s{background:#ffffff26}
+.btn:focus-visible,.tab:focus-visible,.chip:focus-visible{outline:3px solid #ffd54a}
+#barw{height:8px;background:#ffffff22}#bar{height:100%;width:0;background:linear-gradient(90deg,#4fc3f7,#7c5cff,#2ecc71);transition:width 1s linear}
+main{flex:1;display:flex;gap:12px;padding:12px;min-height:0}
+#stage{flex:1;min-width:0;border-radius:18px;overflow:hidden;box-shadow:0 8px 30px #0008;background:#000;display:flex}
+#sc{width:100%;height:100%;touch-action:none}
+#side{width:380px;background:#ffffff18;border-radius:18px;padding:14px;overflow:auto;display:flex;flex-direction:column;gap:10px}
+#side h2{margin:0;font-size:24px;color:#ffd54a}#ins{margin:0;font-size:18px;line-height:1.6}
+#ctl{display:flex;flex-direction:column;gap:8px}.row{display:flex;flex-wrap:wrap;gap:8px}
+#cap{background:#0d1b45;border-right:6px solid #4fc3f7;border-radius:10px;padding:10px 12px;font-size:20px;line-height:1.6;min-height:84px}
+#tn{background:#fff3c4;color:#3a2f00;border-radius:10px;padding:10px;font-size:16px;line-height:1.6}
+.chip{font:inherit;font-size:18px;background:#fff;color:#1d1b4f;border:3px solid #7c5cff;border-radius:12px;padding:7px 12px;cursor:pointer;touch-action:none;user-select:none}
+.chip.dim{opacity:.25;pointer-events:none}
+input[type=range]{width:100%;height:34px;accent-color:#ffd54a}
+label.k{font-size:18px;display:flex;gap:8px;align-items:center}label.k input{width:22px;height:22px}
+.note{font-size:15px;background:#ffffff1a;border-radius:8px;padding:6px 10px}
+.shake{animation:sh .4s}@keyframes sh{25%{transform:translateX(8px)}75%{transform:translateX(-8px)}}
+.pulse{animation:pl 1.1s ease-in-out infinite;transform-box:fill-box;transform-origin:center}@keyframes pl{50%{transform:scale(1.22)}}
+.hot{cursor:pointer}.rays{animation:rot 40s linear infinite}@keyframes rot{to{transform:rotate(360deg)}}
+.trail{stroke-dasharray:8 6;fill:none;stroke-width:4;stroke-linecap:round}
+#drop{cursor:grab}.cf{position:fixed;top:-20px;width:10px;height:14px;animation:fall 2.8s linear forwards;z-index:9}@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+body.fs header{padding:3px 8px}body.fs h1{display:none}
+.sm{font-size:19px;line-height:1.9}
+@media(max-width:900px){main{flex-direction:column;overflow:auto}#side{width:auto}#stage{min-height:300px}body{overflow:auto}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><h1>💧 المياه السطحية</h1><nav id="tabs"></nav>
+<button class="btn s" id="tm">⏱ 40:00 — ابدأ</button><button class="btn s" id="tg">🧑‍🏫 ملاحظات المعلم</button><button class="btn s" id="fsb">⛶ عرض كامل</button></header>
+<div id="barw"><div id="bar"></div></div>
+<main><div id="stage"><svg id="sc" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid meet"></svg></div>
+<aside id="side"><h2 id="ttl"></h2><p id="ins"></p><div id="ctl"></div><div id="cap"></div><div id="tn" hidden></div></aside></main>
+<script>
+const $=s=>document.querySelector(s),svg=$('#sc'),NS='http://www.w3.org/2000/svg',sleep=ms=>new Promise(r=>setTimeout(r,ms));
+const LP=[[0,300],[80,230],[170,160],[270,250],[380,300],[520,315]];
+const landY=x=>{for(let i=0;i<5;i++){const a=LP[i],b=LP[i+1];if(x<=b[0])return a[1]+(b[1]-a[1])*(x-a[0])/(b[0]-a[0])}return 315};
+const surf=x=>[[x,landY(x)],...LP.filter(p=>p[0]>x),[600,330]],under=x=>[[x,landY(x)],[x,400],[490,405]];
+const R={'تبخر':[650,300],'نتح':[470,262],'تكاثف':[335,85],'هطول':[310,170],'جريان سطحي':[420,300],'جريان جوفي':[300,400]};
+const D={'تبخر':'التبخر: يتبخر الماء من المسطحات المائية بفعل حرارة الشمس.','نتح':'النتح: عملية تحدث من النباتات، وتبدأ بها دورة الماء مع التبخر.','تكاثف':'التكاثف: يتكاثف بخار الماء في طبقات الجو العليا.','هطول':'الهطول: يعود الماء إلى سطح الأرض على شكل ثلوج أو برد أو أمطار.','جريان جوفي':'الجريان الجوفي: يتسرب جزء من الماء إلى داخل الأرض ويُخزَّن مياهًا جوفية تنتقل على شكل جريان جوفي.','جريان سطحي':'الجريان السطحي: الجزء المتبقي يتدفق على سطح الأرض؛ يدخل جزء منه مجاري الأنهار والسيول والبحيرات والأنهار الجليدية، ويتحرك بعضه نحو المحيطات.'};
+const F={sun:'حرارة الشمس تسبّب تبخر الماء من المسطحات المائية.',sea:'المسطحات المائية: يتبخر منها الماء بفعل حرارة الشمس.',cloud:'يتكاثف بخار الماء في طبقات الجو العليا.',tree:'النباتات: يحدث منها النتح ضمن حركة الماء.',land:'على الأرض: يتسرب جزء من الماء إلى الداخل، ويجري الباقي على السطح.'};
+const DEMO={'تبخر':[[650,330],[650,215],[560,130]],'نتح':[[470,275],[470,200],[400,120]],'تكاثف':[[420,118],[340,100],[335,88]],'هطول':[[310,110],[310,landY(310)-6]],'جريان سطحي':surf(300),'جريان جوفي':under(300)};
+let rays='';for(let i=0;i<12;i++)rays+=`<line x1="0" y1="-46" x2="0" y2="-66" stroke="#ffd23f" stroke-width="6" stroke-linecap="round" transform="rotate(${i*30})"/>`;
+const tree=(x,y)=>`<g class="hot" data-f="tree"><rect x="${x-4}" y="${y-26}" width="8" height="28" fill="#6b4a2a"/><circle cx="${x}" cy="${y-38}" r="21" fill="#2f8a3e"/><circle cx="${x-10}" cy="${y-30}" r="14" fill="#3aa04c"/></g>`;
+svg.innerHTML=`<defs><linearGradient id="sk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3d8fdc"/><stop offset="1" stop-color="#d4ebff"/></linearGradient><linearGradient id="se" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2f93e0"/><stop offset="1" stop-color="#0a3f7c"/></linearGradient><linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7a5636"/><stop offset="1" stop-color="#3a281a"/></linearGradient></defs>
+<rect width="800" height="450" fill="url(#sk)"/>
+<g id="sun" class="hot" data-f="sun" transform="translate(700 70)"><circle id="glow" r="64" fill="#fff3a0" opacity=".35"/><g class="rays">${rays}</g><circle r="34" fill="#ffd23f"/></g>
+<polygon class="hot" data-f="land" points="0,450 0,300 80,230 170,160 270,250 380,300 520,315 520,450" fill="url(#gr)"/>
+<polygon points="150,182 170,160 192,184 179,178 168,187 160,179" fill="#fff"/>
+<rect x="0" y="385" width="520" height="45" fill="#2a74c4" opacity=".55"/><text x="20" y="414" fill="#fff" font-size="17">مياه جوفية</text>
+<polyline points="0,300 80,230 170,160 270,250 380,300 520,315" fill="none" stroke="#4c9f46" stroke-width="10" stroke-linejoin="round"/>
+<rect class="hot" data-f="sea" x="520" y="315" width="280" height="135" fill="url(#se)"/><text x="660" y="400" fill="#bfe3ff" font-size="20" text-anchor="middle">مسطح مائي / محيط</text>
+${tree(360,291)}${tree(470,311)}
+<g id="cloud" class="hot" data-f="cloud" fill="#fff"><ellipse cx="300" cy="85" rx="50" ry="24"/><ellipse cx="345" cy="72" rx="48" ry="28"/><ellipse cx="390" cy="88" rx="44" ry="22"/></g>
+<g id="trails"></g><g id="zones"></g><g id="slots"></g><g id="pg"></g><g id="hl" pointer-events="none"></g>
+<g id="drop" style="display:none"><path d="M0,-17 C11,-3 12,6 0,12 C-12,6 -11,-3 0,-17Z" fill="#7fd3ff" stroke="#fff" stroke-width="2.5"/></g>`;
+const dr=$('#drop');let mode=0,tok=0,jid=0,P=[],busy=false,tried={},S={run:false,int:.5,sea:true,pl:true,charge:0,rain:false,a1:0,a2:0,a3:0,s:0,p:0};
+const say=t=>$('#cap').textContent=t,setDrop=(x,y,v=true)=>{dr.setAttribute('transform',`translate(${x} ${y})`);dr.style.display=v?'':'none'};
+const mk=c=>{const e=document.createElementNS(NS,'circle');e.setAttribute('r',4.5);e.setAttribute('fill',c);$('#pg').appendChild(e);return e};
+function go(pts,spd=240){const my=++tok;return new Promise(r=>{let i=1,x=pts[0][0],y=pts[0][1],t0=null;setDrop(x,y);const f=t=>{if(my!==tok)return r(false);if(t0===null)t0=t;const dt=Math.min(.05,(t-t0)/1000);t0=t;if(i>=pts.length)return r(true);const[tx,ty]=pts[i],dx=tx-x,dy=ty-y,d=Math.hypot(dx,dy),s=spd*dt;if(d<=s){x=tx;y=ty;i++}else{x+=dx/d*s;y+=dy/d*s}setDrop(x,y);requestAnimationFrame(f)};requestAnimationFrame(f)})}
+function hl(k){const g=$('#hl');g.innerHTML='';if(!k)return;const[x,y]=R[k];g.innerHTML=`<circle class="pulse" cx="${x}" cy="${y}" r="42" fill="#ffd54a30" stroke="#ffd54a" stroke-width="4"/><rect x="${x-64}" y="${y+46}" width="128" height="30" rx="15" fill="#1d1b4f"/><text x="${x}" y="${y+67}" text-anchor="middle" fill="#ffd54a" font-size="19" font-weight="bold">${k}</text>`;say(D[k])}
+function pulse(el){el.classList.remove('pulse');void el.getBoundingClientRect();el.classList.add('pulse');setTimeout(()=>el.classList.remove('pulse'),2200)}
+function clr(){$('#hl').innerHTML='';$('#trails').innerHTML='';$('#pg').innerHTML='';P=[];S.charge=0;S.rain=false;S.s=S.p=0;cnt()}
+function trail(pts,c){const l=document.createElementNS(NS,'polyline');l.setAttribute('points',pts.map(p=>p.join(',')).join(' '));l.setAttribute('class','trail');l.setAttribute('stroke',c);$('#trails').appendChild(l)}
+function confetti(){const c=['#ffd54a','#7c5cff','#2ecc71','#4fc3f7','#ff7ab6'];for(let i=0;i<50;i++){const d=document.createElement('i');d.className='cf';d.style.left=Math.random()*100+'vw';d.style.background=c[i%5];d.style.animationDelay=Math.random()*.8+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),4000)}}
+const cnt=()=>{if($('#c1'))$('#c1').textContent=S.s;if($('#c2'))$('#c2').textContent=S.p};
+function sun(){const k=S.int;$('#sun').setAttribute('transform',`translate(700 70) scale(${.8+.5*k})`);$('#glow').setAttribute('opacity',.15+.5*k)}
+// ---- simulation
+let last=0;function loop(t){const dt=Math.min(.05,(t-last)/1000||0);last=t;if(S.run&&(mode==2||mode==5))sim(dt);requestAnimationFrame(loop)}
+function sim(dt){const k=S.int;if(S.sea){S.a1+=k*7*dt;while(S.a1>=1){S.a1--;P.push({t:'v',s:1,x:545+Math.random()*235,y:318,e:mk('#eaf7ff')})}}if(S.pl){S.a2+=k*3*dt;while(S.a2>=1){S.a2--;P.push({t:'v',s:2,x:[360,470][Math.random()*2|0]+(Math.random()-.5)*24,y:Math.random()<.5?255:270,e:mk('#d6ffd9')})}}
+if(!S.rain&&S.charge>=18)S.rain=true;if(S.rain){S.charge-=5*dt;S.a3+=16*dt;while(S.a3>=1){S.a3--;P.push({t:'r',x:272+Math.random()*56,y:108,e:mk('#7fd3ff')})}if(S.charge<3)S.rain=false}
+for(const p of P){if(p.t=='v'){p.y-=(35+70*k)*dt;p.x+=(335-p.x)*.5*dt+Math.sin(p.y/9)*.3;if(p.y<108){p.dead=1;S.charge++;S.s+=p.s==1;S.p+=p.s==2}}
+else if(p.t=='r'){p.y+=200*dt;if(p.y>=landY(p.x)-2){const pa=Math.random()<.4?under(p.x):surf(p.x);p.t='f';p.pa=pa;p.i=1;p.sp=pa.length==3?80:110}}
+else{const q=p.pa[p.i];if(!q){p.dead=1}else{const dx=q[0]-p.x,dy=q[1]-p.y,d=Math.hypot(dx,dy),s=p.sp*dt;if(d<=s){p.x=q[0];p.y=q[1];p.i++}else{p.x+=dx/d*s;p.y+=dy/d*s}}}
+p.e.setAttribute('cx',p.x);p.e.setAttribute('cy',p.y)}
+P=P.filter(p=>{if(p.dead)p.e.remove();return!p.dead});if(P.length>260)P.splice(0,40).forEach(p=>p.e.remove());
+const c=Math.min(1,S.charge/20);$('#cloud').style.filter=`brightness(${1-.4*c})`;cnt()}
+// ---- journey (activity 1 & 2)
+let askRes;const ask=()=>new Promise(r=>{askRes=r;$('#pred').innerHTML=`<div class="row"><button class="btn g" data-a="pr" data-v="1">تعود إلى الأرض</button><button class="btn o" data-a="pr" data-v="0">تبقى في الجو</button></div>`});
+async function journey(pause){const my=++jid,ok=async(p,s)=>(await go(p,s))&&my===jid,w=async ms=>{await sleep(ms);return my===jid};clr();setDrop(650,335);
+hl('تبخر');if(!await w(1500))return;if(!await ok([[650,335],[650,215],[540,120]],130))return;
+hl('تكاثف');if(!await ok([[540,120],[340,100]],150))return;if(!await w(1200))return;
+if(pause){hl(null);say('توقّع: ما الذي سيحدث للقطرة بعد أن تجمّعت مع غيرها في السحابة؟');await ask();if(my!==jid)return;await w(1800);}
+hl('هطول');if(!await ok([[340,100],[300,landY(300)-6]],170))return;if(!await w(1500))return;
+hl('جريان سطحي');trail(surf(300),'#4fc3f7');if(!await ok(surf(300),110))return;if(!await w(1300))return;
+setDrop(300,landY(300)-6);hl('جريان جوفي');trail(under(300),'#c9a8ff');if(!await ok(under(300),85))return;if(!await w(1200))return;
+hl(null);say('باستمرار الهطول تتجدد المياه السطحية والجوفية؛ لذلك تُعد مياه الأمطار المصدر الرئيس للمياه العذبة على سطح الأرض.');setDrop(0,0,false);if($('#nx'))$('#nx').hidden=false}
+// ---- activity 3 : drag the drop
+const ST=[300,landY(300)-6];
+function m3init(){tried={};busy=false;$('#zones').innerHTML=`<g class="hot" data-z="U"><rect x="235" y="332" width="170" height="44" rx="10" fill="#c9a8ff33" stroke="#c9a8ff" stroke-width="3" stroke-dasharray="7 5"/><text x="320" y="360" text-anchor="middle" fill="#fff" font-size="17">داخل الأرض</text></g><g class="hot" data-z="S"><ellipse cx="425" cy="295" rx="52" ry="22" fill="#4fc3f733" stroke="#4fc3f7" stroke-width="3" stroke-dasharray="7 5"/><text x="425" y="262" text-anchor="middle" fill="#fff" font-size="17">فوق السطح</text></g>`;setDrop(...ST);m3st()}
+const m3st=()=>{if($('#st3'))$('#st3').textContent=`المسار الجوفي: ${tried.U?'✅':'⬜'}   المسار السطحي: ${tried.S?'✅':'⬜'}`};
+async function runPath(z){if(busy||mode!=3)return;busy=true;const k=z=='U'?'جريان جوفي':'جريان سطحي',p=z=='U'?under(300):surf(300);hl(k);const ok=await go(p,z=='U'?80:110);if(!ok||mode!=3)return;trail(p,z=='U'?'#c9a8ff':'#4fc3f7');tried[z]=1;m3st();say(tried.U&&tried.S?'قارن المسارين: الأول يتسرب إلى باطن الأرض ويُخزَّن مياهًا جوفية، والثاني يتدفق فوق الأرض نحو الأنهار والبحيرات والمحيطات.':D[k]+' — أعد القطرة وجرّب المسار الآخر.');busy=false}
+function svgPt(e){const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;return p.matrixTransform(svg.getScreenCTM().inverse())}
+let dragD=false;dr.addEventListener('pointerdown',e=>{if(mode!=3||busy)return;dragD=true;dr.setPointerCapture(e.pointerId);$('#hl').innerHTML=''});
+dr.addEventListener('pointermove',e=>{if(dragD){const p=svgPt(e);setDrop(p.x,p.y)}});
+dr.addEventListener('pointerup',e=>{if(!dragD)return;dragD=false;const p=svgPt(e);if(p.x>235&&p.x<405&&p.y>320&&p.y<390)runPath('U');else if(Math.hypot(p.x-425,(p.y-295)*2)<80)runPath('S');else{setDrop(...ST);say('أفلت القطرة داخل إحدى المنطقتين المنقّطتين (داخل الأرض أو فوق السطح).')}});
+// ---- activity 4 : rebuild
+const SL={'تبخر':[650,285],'نتح':[470,230],'تكاثف':[340,28],'هطول':[310,160],'جريان سطحي':[290,222],'جريان جوفي':[250,402]};let done4={};
+function m4init(){done4={};$('#slots').innerHTML=Object.keys(SL).map(k=>`<g data-slot="${k}"><rect x="${SL[k][0]-50}" y="${SL[k][1]-16}" width="100" height="32" rx="9" fill="#ffffff44" stroke="#fff" stroke-width="2.5" stroke-dasharray="6 4"/><text x="${SL[k][0]}" y="${SL[k][1]+7}" text-anchor="middle" fill="#fff" font-size="20" pointer-events="none">؟</text></g>`).join('');$('#tray').innerHTML=Object.keys(SL).map(k=>`<button class="chip" data-k="${k}">${k}</button>`).join('');setDrop(0,0,false);m4cnt()}
+const m4cnt=()=>{if($('#c4'))$('#c4').textContent=Object.keys(done4).length+' / 6'};
+document.addEventListener('pointerdown',e=>{const c=e.target.closest('.chip[data-k]');if(!c||mode!=4)return;e.preventDefault();const g=c.cloneNode(true);g.style.cssText='position:fixed;pointer-events:none;z-index:20;transform:translate(-50%,-50%)';document.body.appendChild(g);const mv=ev=>{g.style.left=ev.clientX+'px';g.style.top=ev.clientY+'px'};mv(e);
+const up=async ev=>{removeEventListener('pointermove',mv);removeEventListener('pointerup',up);g.remove();const s=document.elementFromPoint(ev.clientX,ev.clientY)?.closest('[data-slot]');if(!s)return;const k=c.dataset.k;if(s.dataset.slot!==k){s.classList.remove('shake');void s.getBoundingClientRect();s.classList.add('shake');say('ليس هذا موضعها. فكّر: أين تحدث هذه العملية في المشهد؟');return}
+done4[k]=1;c.classList.add('dim');const r=s.querySelector('rect'),t=s.querySelector('text');r.setAttribute('fill','#1f9d6b');r.removeAttribute('stroke-dasharray');t.textContent=k;t.setAttribute('font-size',17);m4cnt();hl(k);const p=DEMO[k];await go(p,k=='تبخر'?120:170);setDrop(0,0,false);if(Object.keys(done4).length==6){hl(null);say('اكتمل المشهد! تنتقل المياه بين غُلُف الأرض المختلفة على شكل دورة مغلقة.');confetti()}};
+addEventListener('pointermove',mv);addEventListener('pointerup',up)});
+// ---- activity 6
+const SEQ=['تبخر','تكاثف','هطول'],LOC=['البحر','طبقات الجو العليا','السحابة','سطح الأرض'];let step=0,miss={};
+function m6init(){step=0;miss={};$('#sum').innerHTML='';setDrop(650,335);hl(null);say('القطرة في البحر. اختر العملية التي ستحدث الآن.');document.querySelectorAll('#ctl .chip').forEach(b=>b.classList.remove('dim'))}
+async function m6act(k){if(busy||step>3)return;const exp=step<3?SEQ[step]:null,okk=step<3?k==exp:(k=='جريان سطحي'||k=='جريان جوفي');
+if(!okk){const key=step<3?exp:'مسار';miss[key]=1;const b=document.querySelector(`#ctl [data-k="${k}"]`);b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');say(`ليست الخطوة المناسبة الآن. فكّر: أين توجد القطرة؟ (${LOC[step]})`);return}
+busy=true;hl(k);const P6=[[[650,335],[650,215],[540,120]],[[540,120],[340,100]],[[340,100],[300,landY(300)-6]]];if(step<3){await go(P6[step],150);step++;if(step<3||true)say(D[k]+(step==3?' — الآن اختر مسار الماء على الأرض.':' — ما الخطوة التالية؟'))}else{const p=k=='جريان سطحي'?surf(300):under(300);await go(p,100);step++;fin6()}busy=false}
+function fin6(){hl(null);setDrop(0,0,false);const items=[['التبخر','تبخر'],['التكاثف','تكاثف'],['الهطول','هطول'],['مسار الماء على الأرض','مسار']];$('#sum').innerHTML=items.map(([a,b])=>`<div class="note">${miss[b]?'🔁 '+a+' — تحتاج إلى إعادة استكشاف':'✅ '+a+' — أتقنتها'}</div>`).join('');say(Object.keys(miss).length?'أحسنت! أكملت الرحلة. أعد النشاط لتتقن ما يحتاج إلى مراجعة.':'ممتاز! أكملت رحلة القطرة دون أخطاء.');if(!Object.keys(miss).length)confetti()}
+// ---- modes
+const chips=Object.keys(D).map(k=>`<button class="chip" data-a="chip" data-k="${k}">${k}</button>`).join('');
+const slider=`<label for="sl" style="font-size:18px">☀️ شدة التسخين الشمسي</label><input id="sl" type="range" min="0" max="1" step=".05" value=".5">`;
+const M=[0,
+{t:'أين تذهب قطرة الماء؟',i:'شاهد القطرة وتوقّع خطوتها التالية، ثم انقر على الشمس والسحابة والنبات والبحر والأرض لتكتشف.',c:`<button class="btn g" data-a="j1">↺ أعد المشهد</button><div id="pred"></div><button class="btn" id="nx" data-a="next" hidden>النشاط التالي ◀</button>`,n:'اترك الطلاب يتوقعون قبل ظهور التفسير. اسأل: لماذا لا يختفي الماء من الجو؟ ركّز على أن الدورة مغلقة.',s:()=>journey(true)},
+{t:'محاكاة دورة الماء',i:'حرّك الشمس بالمنزلق وراقب البخار والسحابة والهطول. انقر مرحلة لتبرز وتتوقف الحركة.',c:`<div class="row"><button class="btn" data-a="tog" id="tg2">⏸ إيقاف</button><button class="btn s" data-a="rst">↺ من البداية</button><button class="btn g" data-a="full">▶ شاهد الرحلة كاملة</button></div>${slider}<div class="row">${chips}</div>`,n:'أوقف الحركة عند كل مرحلة واطلب من طالب أن يصفها بكلماته. المرحلتان: تبخر ونتح تبدآن الدورة، ثم تكاثف، ثم هطول.',s:()=>{S.run=true;say('البخار يصعد من البحر والنباتات إلى السحابة، ثم يهطل الماء ويتفرع إلى جريان سطحي وجريان جوفي.')}},
+{t:'أنت قطرة الماء',i:'وصلتَ إلى سطح الأرض بعد الهطول. اسحب القطرة إلى أحد المسارين (أو انقر المنطقة) وشاهد الفرق.',c:`<div class="row"><button class="btn g" data-a="m3r">↺ أعد القطرة</button><button class="btn s" data-a="m3c">امسح الآثار</button></div><div class="note" id="st3"></div><div class="note">نموذج توضيحي نوعي وليس محاكاة كمية.</div>`,n:'قارن المسارين: الجريان السطحي نحو الأنهار والمحيطات، والجريان الجوفي يُخزَّن مياهًا جوفية. اسأل: ما الذي يجدّد المياه التي يستخدمها الإنسان؟',s:m3init},
+{t:'أعد بناء المشهد',i:'اسحب اسم كل عملية إلى موضعها في المشهد. عند النجاح تتحرك القطرة لتُظهر العملية.',c:`<div class="row" id="tray"></div><div class="note">أكملت: <b id="c4">0 / 6</b></div><button class="btn s" data-a="m4r">↺ إعادة</button>`,n:'اطلب من الطلاب التنبؤ بالموضع قبل السحب. الأخطاء الشائعة: خلط التبخر بالنتح، وخلط الجريان السطحي بالجوفي.',s:m4init},
+{t:'غيّر الظروف ولاحظ',i:'غيّر شدة التسخين وفعّل أو عطّل مصدر البخار (المسطح المائي / النباتات) ثم لاحظ.',c:`${slider}<label class="k"><input type="checkbox" id="ck1" checked> تبخر من المسطح المائي</label><label class="k"><input type="checkbox" id="ck2" checked> نتح من النباتات</label><div class="note">بخار من المسطح: <b id="c1">0</b> — من النباتات: <b id="c2">0</b></div><button class="btn s" data-a="rst5">↺ إعادة الضبط</button><div class="note">⚠️ نموذج نوعي للتعلم، وليس مقياسًا حقيقيًا لمعدلات التبخر.</div>`,n:'اربط الملاحظة بالكتاب: يبدأ انتقال الماء بتبخر الماء من المسطحات المائية بفعل حرارة الشمس وبالنتح من النباتات. لا تذكر معدلات رقمية.',s:()=>{S.run=true;S.int=.5;S.sea=S.pl=true;say('غيّر الشمس أو أوقف أحد المصدرين وراقب ما يصل إلى السحابة.')}},
+{t:'أكمل رحلة القطرة',i:'أنت تقود القطرة: اختر العملية المناسبة في كل لحظة حتى تكمل الرحلة.',c:`<div class="row">${['تبخر','نتح','تكاثف','هطول','جريان سطحي','جريان جوفي'].map(k=>`<button class="chip" data-a="p6" data-k="${k}">${k}</button>`).join('')}</div><div id="sum"></div><button class="btn s" data-a="m6r">↺ ابدأ من جديد</button>`,n:'استخدم الملخص البصري لتحديد ما يحتاج إلى إعادة. ختام: لماذا تُعد مياه الأمطار المصدر الرئيس للمياه العذبة؟',s:m6init}];
+const TT=[[0,4],[4,11],[11,21],[21,29],[29,35],[35,40]],NM=['الافتتاحية','دورة الماء','أنت قطرة','أعد البناء','غيّر الظروف','رحلة القطرة'];
+$('#tabs').innerHTML=NM.map((n,i)=>`<button class="tab" data-m="${i+1}">${i+1}. ${n}<small>${TT[i][0]}–${TT[i][1]} د</small></button>`).join('');
+function setMode(m){mode=m;tok++;jid++;busy=false;dragD=false;S.run=false;clr();$('#zones').innerHTML='';$('#slots').innerHTML='';setDrop(0,0,false);const o=M[m];$('#ttl').textContent=`${m}. ${o.t}`;$('#ins').textContent=o.i;$('#ctl').innerHTML=o.c;$('#tn').textContent='💡 '+o.n;say('');
+document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('on',b.dataset.m==m));$('#stage').appendChild(svg);
+const sl=$('#sl');if(sl){sl.value=S.int=.5;sl.oninput=()=>{S.int=+sl.value;sun()}}sun();
+if($('#ck1')){$('#ck1').onchange=e=>S.sea=e.target.checked;$('#ck2').onchange=e=>S.pl=e.target.checked}o.s()}
+const ACT={j1:()=>journey(true),next:()=>setMode(2),tog:()=>{S.run=!S.run;$('#tg2').textContent=S.run?'⏸ إيقاف':'▶ تشغيل'},
+rst:()=>{clr();S.run=true;$('#tg2').textContent='⏸ إيقاف'},full:()=>{S.run=true;journey(false)},
+chip:a=>{jid++;tok++;S.run=false;$('#tg2').textContent='▶ تشغيل';hl(a.dataset.k)},
+pr:a=>{$('#pred').innerHTML='';say(a.dataset.v=='1'?'توقّع صحيح! يعود الماء إلى الأرض بالهطول. لنشاهد.':'ليس تمامًا — يعود الماء إلى سطح الأرض بالهطول. لنشاهد.');askRes()},
+m3r:()=>{if(busy)return;tok++;setDrop(...ST);$('#hl').innerHTML='';say('اسحب القطرة إلى المسار الآخر.')},m3c:()=>{if(busy)return;$('#trails').innerHTML='';tried={};m3st();setDrop(...ST)},
+m4r:()=>{tok++;m4init();$('#hl').innerHTML='';say('')},rst5:()=>{clr();const s=$('#sl');s.value=S.int=.5;sun();S.sea=S.pl=true;$('#ck1').checked=$('#ck2').checked=true;S.run=true},
+p6:a=>m6act(a.dataset.k),m6r:()=>{tok++;busy=false;m6init()}};
+document.addEventListener('click',e=>{const t=e.target.closest('.tab');if(t)return setMode(+t.dataset.m);const a=e.target.closest('[data-a]');if(a)return ACT[a.dataset.a](a);
+const z=e.target.closest('[data-z]');if(z&&mode==3)return runPath(z.dataset.z);const f=e.target.closest('[data-f]');if(f&&(mode==1||mode==2||mode==5)){pulse(f);say(F[f.dataset.f])}});
+$('#tg').onclick=()=>{$('#tn').hidden=!$('#tn').hidden};$('#tn').hidden=true;
+$('#fsb').onclick=()=>{const d=document,el=d.documentElement;if(d.fullscreenElement)d.exitFullscreen();else if(el.requestFullscreen)el.requestFullscreen().catch(()=>d.body.classList.toggle('fs'));else d.body.classList.toggle('fs')};
+let sec=0,iv=null;$('#tm').onclick=()=>{if(iv){clearInterval(iv);iv=null;$('#tm').textContent='▶ متابعة المؤقت';return}iv=setInterval(()=>{sec++;const r=Math.max(0,2400-sec);$('#tm').textContent=`⏱ ${String(r/60|0).padStart(2,'0')}:${String(r%60).padStart(2,'0')}`;$('#bar').style.width=Math.min(100,sec/24)+'%'},1000)};
+requestAnimationFrame(loop);setMode(1);
+</script></body></html>
