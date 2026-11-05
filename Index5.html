@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>رحلة قطرة الماء 💧</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Tahoma,Arial,sans-serif;background:linear-gradient(180deg,#d6f2ff,#f2fff6);color:#12354a;min-height:100vh}
+header{display:flex;align-items:center;gap:10px;padding:10px 14px;background:linear-gradient(90deg,#0a6ea8,#1aa6a6);color:#fff;position:sticky;top:0;z-index:20}
+header h1{font-size:clamp(16px,3vw,24px);margin:0;flex:1}
+#prog{display:flex;gap:4px;padding:8px 14px;background:#fff;position:sticky;top:60px;z-index:19;box-shadow:0 2px 6px #0001}
+#prog div{flex:1;text-align:center;font-size:clamp(10px,1.7vw,13px);padding-top:6px;border-top:5px solid #cfe3ec;color:#6b8797;transition:.4s}
+#prog div.d{border-color:#2e9e5b;color:#2e9e5b}#prog div.a{border-color:#0a6ea8;color:#0a6ea8;font-weight:bold}
+main{max-width:1000px;margin:auto;padding:12px 14px 100px}
+.sc{display:none}.sc.on{display:block;animation:in .6s}
+@keyframes in{from{opacity:0;transform:translateY(20px)}}
+h2{margin:6px 0;color:#0a6ea8;font-size:clamp(20px,3.5vw,30px)}
+.card{background:#fff;border-radius:18px;box-shadow:0 6px 20px #0a6ea822;padding:14px;margin:10px 0}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:center}
+button{font:inherit;font-size:clamp(15px,2.2vw,19px);padding:12px 20px;border:0;border-radius:14px;background:#0a6ea8;color:#fff;cursor:pointer;min-height:48px;box-shadow:0 4px 0 #064a73}
+button:active{transform:translateY(3px);box-shadow:none}
+button.g{background:#2e9e5b;box-shadow:0 4px 0 #1d6e3d}button.r{background:#d9822b;box-shadow:0 4px 0 #9a5a17}
+button.w{background:#fff;color:#0a6ea8;box-shadow:none;border:2px solid #0a6ea8}
+button:focus-visible,input:focus-visible,[tabindex]:focus-visible{outline:3px solid #f5b700}
+nav{position:fixed;bottom:0;left:0;right:0;display:flex;justify-content:space-between;padding:10px 14px;background:#ffffffee;z-index:20}
+.note{background:#e6f9ef;border-right:5px solid #2e9e5b;border-radius:10px;padding:10px 14px;margin:8px 0;line-height:1.8}
+.bad{background:#fff0e0;border-color:#d9822b}
+.sky{position:relative;height:100px;overflow:hidden;border-radius:14px;background:linear-gradient(#a9dcf3,#e6f8ff);width:100%}
+.cl{position:absolute;top:8px;width:90px;height:32px;background:#fff;border-radius:40px;box-shadow:28px -12px 0 4px #fff,56px 0 0 0 #fff;animation:drift 14s linear infinite alternate}
+@keyframes drift{from{transform:translateX(-20px)}to{transform:translateX(60px)}}
+.dr{position:absolute;width:3px;height:14px;background:#2ec4e6;border-radius:3px;animation:fall linear infinite;top:-20px;pointer-events:none}
+@keyframes fall{to{transform:translate(var(--dx,0),var(--h,200px));opacity:.2}}
+.fl{stroke-dasharray:10 8;animation:dash 1s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-18}}
+.ov{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.wrap{position:relative}
+svg text{font-family:Tahoma,Arial}
+.chip{display:inline-block;background:#e8f6ff;border:2px solid #0a6ea8;border-radius:12px;padding:8px 12px;margin:4px;cursor:grab;user-select:none}
+.chip.sel{background:#fff3c4;border-color:#f5b700}
+.zone{min-height:70px;border:3px dashed #7fb4cc;border-radius:14px;padding:6px;flex:1;min-width:200px;background:#f7fcff}
+.zone b{display:block;color:#0a6ea8}
+.sh{animation:sh .4s}@keyframes sh{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.cf{position:fixed;top:-10px;width:10px;height:14px;z-index:50;animation:cf 1.6s ease-in forwards}
+@keyframes cf{to{transform:translate(var(--x),100vh) rotate(720deg);opacity:.3}}
+input[type=range]{width:100%;accent-color:#0a6ea8}
+input[type=number]{width:90px;font:inherit;padding:8px;border-radius:10px;border:2px solid #0a6ea8}
+.pill{display:inline-block;padding:4px 10px;border-radius:20px;background:#e3eef3;margin:3px}.pill.ok{background:#bdf0cf}
+.big{font-size:clamp(18px,3vw,26px);text-align:center}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+</style></head><body>
+<header><h1>💧 رحلة قطرة الماء — من المطر إلى الأحواض المائية السطحية</h1><button class="w" onclick="location.reload()">↻ إعادة التجربة</button></header>
+<div id="prog"></div>
+<main>
+<section class="sc on"><h2>🌧️ ١. كيف نقيس المطر؟</h2>
+<div class="card"><div class="sky" id="sky1"><div class="cl"></div><div class="cl" style="left:50%;animation-delay:-6s"></div></div>
+<div class="row"><div id="g1box" role="button" tabindex="0" aria-label="مقياس المطر، اضغط لمعرفة المزيد" style="cursor:pointer"></div>
+<div style="flex:1;min-width:230px"><div class="big">الهاطل الآن: <b id="c1">0</b> mm</div><div class="note" id="inf1">👆 اضغط على مقياس المطر لتعرف وظيفته.</div></div></div></div>
+<div class="card"><b>⚖️ كمية الهطل ليست كثافة الهطل!</b> في المقياسين نفس الكمية (24 mm) — شغّل المقارنة وراقب الفرق:
+<div class="row"><div class="big">A<div id="ga"></div><span id="ta">0</span> h</div><div class="big">B<div id="gb"></div><span id="tb">0</span> h</div></div>
+<div class="row"><button onclick="cmp()">▶ قارِن</button></div><div class="note" id="cmpn" style="display:none"></div></div></section>
+
+<section class="sc"><h2>🧮 ٢. احسب كثافة الهطل</h2>
+<div class="card row"><div id="g2box"></div>
+<svg viewBox="0 0 120 120" width="120" aria-hidden="true"><circle cx="60" cy="60" r="52" fill="#fff" stroke="#0a6ea8" stroke-width="5"/><g stroke="#0a6ea8">
+<line x1="60" y1="12" x2="60" y2="22"/><line x1="60" y1="98" x2="60" y2="108"/><line x1="12" y1="60" x2="22" y2="60"/><line x1="98" y1="60" x2="108" y2="60"/></g>
+<line id="hand" x1="60" y1="60" x2="60" y2="22" stroke="#d9822b" stroke-width="5" stroke-linecap="round" style="transform-origin:60px 60px;transition:transform .7s"/><circle cx="60" cy="60" r="5" fill="#0a6ea8"/></svg>
+<div style="flex:1;min-width:240px"><label>كمية الأمطار T: <b id="tv">30</b> mm</label><input type="range" id="T" min="5" max="50" step="5" value="30">
+<label>عدد ساعات الهطل n: <b id="nv">3</b> h</label><input type="range" id="n" min="1" max="10" value="3">
+<div class="note big" dir="ltr">P = T ÷ n = <span id="pf"></span> = <b id="pr"></b> mm/h</div>
+<button onclick="run2()">▶ شغّل الهطل</button> <span>الساعة <b id="hr">0</b></span></div></div>
+<div class="card"><b>🎯 تحدٍّ:</b> إذا هطلت 60 mm خلال 5 ساعات، فما كثافة الهطل؟
+<div class="row"><input id="a2" type="number" step="any" inputmode="decimal" aria-label="الإجابة"> mm/h <button class="g" onclick="ck2()">تحقق</button><button class="w" id="rv2" style="display:none" onclick="rv2()">اكشف الحل</button></div><div id="fb2"></div></div></section>
+
+<section class="sc"><h2>🏞️ ٣. البحيرة والموازنة المائية</h2>
+<div class="card"><svg viewBox="0 0 640 340" style="width:100%;background:linear-gradient(#bfe8fb,#effaff);border-radius:14px" role="img" aria-label="بحيرة تدخلها المياه من الهطل والجريان السطحي والجوفي وتخرج بالتبخر والجريان الجوفي">
+<defs><marker id="mi" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#0a6ea8"/></marker><marker id="mo" markerWidth="8" markerHeight="8" refX="5" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#d9822b"/></marker><clipPath id="bc"><path d="M150 190L190 280H450L490 190Z"/></clipPath></defs>
+<path d="M0 190H150L190 280H450L490 190H640V340H0Z" fill="#a98467"/><rect y="298" width="640" height="42" fill="#8d6e4f"/><text x="320" y="325" fill="#fff" font-size="13" text-anchor="middle">طبقات جوفية</text>
+<g clip-path="url(#bc)"><rect id="lw" x="140" y="200" width="360" height="90" fill="#2ec4e6" opacity=".9"/></g>
+<ellipse cx="250" cy="40" rx="60" ry="22" fill="#fff"/><ellipse cx="290" cy="50" rx="50" ry="20" fill="#fff"/><ellipse cx="560" cy="45" rx="50" ry="20" fill="#fff" opacity=".8"/>
+<path id="ar1" class="fl" d="M250 70V150" stroke="#0a6ea8" fill="none" marker-end="url(#mi)"/><path id="ar2" class="fl" d="M30 160C90 168 120 185 170 205" stroke="#0a6ea8" fill="none" marker-end="url(#mi)"/><path id="ar3" class="fl" d="M20 318L185 296" stroke="#0a6ea8" fill="none" marker-end="url(#mi)"/>
+<path id="ar4" class="fl" d="M430 175C440 120 490 90 530 70" stroke="#d9822b" fill="none" marker-end="url(#mo)"/><path id="ar5" class="fl" d="M455 296L620 318" stroke="#d9822b" fill="none" marker-end="url(#mo)"/>
+<g font-size="14" font-weight="bold"><text x="262" y="110" fill="#0a6ea8">الهطل</text><text x="20" y="150" fill="#0a6ea8">جريان سطحي إلى البحيرة</text><text x="20" y="292" fill="#fff">جريان جوفي إلى البحيرة</text><text x="440" y="120" fill="#d9822b">تبخر</text><text x="470" y="290" fill="#fff">جريان جوفي من البحيرة</text></g></svg>
+<div class="row"><button onclick="ch(1,'I')">⬆ زيادة المدخلات</button><button class="w" onclick="ch(-1,'I')">⬇ تقليل المدخلات</button><button class="r" onclick="ch(1,'O')">⬆ زيادة المخرجات</button><button class="w" onclick="ch(-1,'O')">⬇ تقليل المخرجات</button></div>
+<div class="big" dir="ltr">I = <b id="vi"></b> &nbsp; O = <b id="vo"></b> &nbsp; C = I − O = <b id="vc"></b> <small>(×10⁶ m³)</small></div>
+<div class="note" id="st3"></div>
+<div>اكتشف الحالات الثلاث: <span class="pill" id="p1">المدخلات أكبر من المخرجات</span><span class="pill" id="p2">المخرجات أكبر من المدخلات</span><span class="pill" id="p3">المدخلات = المخرجات</span></div></div></section>
+
+<section class="sc"><h2>🌊 ٤. كيف تتشكل الأنهار والسيول؟</h2>
+<div class="card wrap"><svg id="sv4" viewBox="0 0 600 340" style="width:100%;border-radius:14px;background:linear-gradient(#a9dcf3,#e6f8ff);display:block" role="img" aria-label="مياه المطر تجري على منحدر وتتجمع في قنوات وجداول ثم نهر">
+<polygon points="0,340 0,250 120,200 260,70 330,40 420,90 520,190 600,230 600,340" fill="#a98467"/><rect y="305" width="600" height="35" fill="#6dbb7a"/>
+<g id="er" fill="none" stroke="#6b4a31" stroke-linecap="round"><path class="e" d="M360 70C350 110 330 140 320 185"/><path class="e" d="M290 95C300 130 310 160 320 185"/><path class="e" d="M440 100C420 140 380 170 340 195"/><path class="e" id="es" d="M320 185C320 220 340 240 350 265"/><path class="e" id="erv" d="M350 265C370 290 330 310 380 340"/></g>
+<g fill="none" stroke="#2ec4e6" stroke-linecap="round"><path class="f4 fl w4" d="M360 70C350 110 330 140 320 185"/><path class="f4 fl w4" d="M290 95C300 130 310 160 320 185"/><path class="f4 fl w4" d="M440 100C420 140 380 170 340 195"/><path class="f4 fl w4" id="ws" d="M320 185C320 220 340 240 350 265"/><path class="f4 fl w4" id="wr" d="M350 265C370 290 330 310 380 340"/></g>
+<path id="rp" d="M350 265C370 290 330 310 380 340" fill="none"/><g id="rocks" style="display:none" fill="#6b4a31"><circle r="4"><animateMotion dur="3s" repeatCount="indefinite"><mpath href="#rp"/></animateMotion></circle><circle r="3"><animateMotion dur="3s" begin="-1s" repeatCount="indefinite"><mpath href="#rp"/></animateMotion></circle><circle r="5"><animateMotion dur="3s" begin="-2s" repeatCount="indefinite"><mpath href="#rp"/></animateMotion></circle></g></svg>
+<div class="ov" id="ov4"></div></div>
+<div class="card"><label>🌧️ سرعة المطر: <b id="rv">3</b></label><input type="range" id="R" min="1" max="5" value="3">
+<div class="row"><button class="r" id="eb" onclick="ero()">🪨 أظهر أثر الحت والتعرية</button><button class="w" onclick="acc=0">↺ ابدأ من جديد</button></div><div class="note" id="st4"></div></div></section>
+
+<section class="sc"><h2>🗺️ ٥. اكتشف الحوض المائي</h2>
+<div class="card wrap" id="bw5"></div>
+<div class="card"><div class="row"><button class="w" onclick="mode5=0;m5('اضغط على أحد الحوضين لتعرف عنه.')">ℹ️ معلومات الحوضين</button><button class="r" onclick="mode5=1;m5('🎯 اضغط على الرسم عند خط تقسيم المياه.')">🎯 حدّد خط تقسيم المياه</button></div>
+<div class="note" id="n5">اضغط على أحد الحوضين لتعرف عنه.</div>
+<b>العوامل المؤثرة في شكل الحوض:</b><div id="fc"></div></div></section>
+
+<section class="sc"><h2>🔎 ٦. تحدي المستكشف</h2><div class="card" id="ch"></div></section>
+
+<section class="sc"><div class="card big"><h2>🏅 نهاية الرحلة</h2><div id="res"></div><button class="g" onclick="location.reload()">↻ ابدأ رحلة جديدة</button></div></section>
+</main>
+<nav><button id="pv" class="w" onclick="go(cur-1)">➜ السابق</button><button id="nx" onclick="go(cur+1)">التالي ⬅</button></nav>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
+let cur=0,fin=false,sc=0;const names=['المطر','الكثافة','البحيرة','الأنهار','الحوض','التحدي','النتيجة'];
+$('#prog').innerHTML=names.map(n=>'<div>'+n+'</div>').join('');
+function go(i){cur=Math.max(0,Math.min(6,i));$$('.sc').forEach((s,k)=>s.classList.toggle('on',k==cur));$$('#prog div').forEach((d,k)=>d.className=k<cur?'d':k==cur?'a':'');
+$('#pv').style.visibility=cur?'visible':'hidden';$('#nx').style.visibility=(cur==6||(cur==5&&!fin))?'hidden':'visible';scrollTo(0,0);if(cur==6)res()}
+function rain(el,n,dur,h,dx){el.querySelectorAll('.dr').forEach(d=>d.remove());for(let i=0;i<n;i++){const d=document.createElement('i');d.className='dr';d.style.left=Math.random()*100+'%';d.style.animationDuration=dur*(.7+Math.random()*.6)+'s';d.style.animationDelay=-Math.random()*dur+'s';d.style.setProperty('--h',h+'px');d.style.setProperty('--dx',dx+'px');el.appendChild(d)}}
+function conf(){const c=['#2ec4e6','#2e9e5b','#f5b700','#0a6ea8','#fff'];for(let i=0;i<36;i++){const d=document.createElement('i');d.className='cf';d.style.left=Math.random()*100+'vw';d.style.background=c[i%5];d.style.setProperty('--x',(Math.random()*200-100)+'px');d.style.animationDelay=Math.random()*.4+'s';document.body.appendChild(d);setTimeout(()=>d.remove(),2300)}}
+function shake(el){el.classList.remove('sh');void el.offsetWidth;el.classList.add('sh')}
+const gauge=id=>`<svg viewBox="0 0 140 250" id="${id}" style="width:130px;height:auto" aria-hidden="true"><path d="M20 20H120L82 60H58Z" fill="#d9f3fc" stroke="#0a6ea8" stroke-width="3"/><rect x="58" y="60" width="24" height="170" rx="5" fill="#fff" stroke="#0a6ea8" stroke-width="3"/><rect class="w" x="60" y="62" width="20" height="166" fill="#2ec4e6" style="transform-box:fill-box;transform-origin:bottom;transform:scaleY(0);transition:transform 1s linear"/>${[0,1,2,3,4,5].map(i=>`<line x1="82" x2="94" y1="${228-i*33.2}" y2="${228-i*33.2}" stroke="#0a6ea8" stroke-width="2"/><text x="100" y="${232-i*33.2}" font-size="12" fill="#0a6ea8">${i*10}</text>`).join('')}<text x="100" y="12" font-size="11" fill="#0a6ea8">mm</text></svg>`;
+function setG(id,mm,d){const w=$('#'+id+' .w');w.style.transitionDuration=d+'s';w.style.transform='scaleY('+Math.min(1,mm/50)+')'}
+/* مشهد 1 */
+$('#g1box').innerHTML=gauge('g1');$('#ga').innerHTML=gauge('ga');$('#gb').innerHTML=gauge('gb');rain($('#sky1'),40,.9,120,0);
+let m=0;setInterval(()=>{if(cur)return;m=(m+2)%46;setG('g1',m,.9);$('#c1').textContent=m},1000);
+const gb=$('#g1box');function inf1(){$('#inf1').innerHTML='📏 <b>مقياس المطر (Rain Gauge)</b>: جهاز تقاس به كمية الأمطار الهاطلة في منطقة ما خلال زمن معين، ويشير التدريج داخل الأنبوب إلى الكمية بالمليمتر (mm).'}
+gb.onclick=inf1;gb.onkeydown=e=>{if(e.key=='Enter'||e.key==' ')inf1()};
+function cmp(){setG('ga',0,0);setG('gb',0,0);$('#cmpn').style.display='none';
+setTimeout(()=>{setG('ga',24,6);setG('gb',24,1);tm('ta',12,6000);tm('tb',2,1000);setTimeout(()=>{const n=$('#cmpn');n.style.display='block';n.innerHTML='✔ الكمية متساوية: 24 mm.<br>✔ لكن الكثافة مختلفة: A = 24 ÷ 12 = <b>2 mm/h</b> ، B = 24 ÷ 2 = <b>12 mm/h</b>.<br>كمية الهطل = ما تجمّع في المقياس، وكثافة الهطل = الكمية ÷ عدد ساعات الهطل.'},6200)},120)}
+function tm(id,H,ms){const t0=performance.now();(function f(t){const k=Math.min(1,(t-t0)/ms);$('#'+id).textContent=Math.round(k*H);if(k<1)requestAnimationFrame(f)})(t0)}
+/* مشهد 2 */
+$('#g2box').innerHTML=gauge('g2');let iv2;
+function up2(){const T=+$('#T').value,n=+$('#n').value;$('#tv').textContent=T;$('#nv').textContent=n;$('#pf').textContent=T+' ÷ '+n;$('#pr').textContent=+(T/n).toFixed(2);setG('g2',T,.5)}
+$('#T').oninput=$('#n').oninput=up2;up2();
+function run2(){clearInterval(iv2);const T=+$('#T').value,n=+$('#n').value;let k=0;setG('g2',0,.1);$('#hand').style.transition='none';$('#hand').style.transform='rotate(0)';$('#hr').textContent=0;
+setTimeout(()=>{$('#hand').style.transition='transform .7s';iv2=setInterval(()=>{k++;setG('g2',T/n*k,.6);$('#hand').style.transform='rotate('+k*360+'deg)';$('#hr').textContent=k+' / '+n;if(k>=n)clearInterval(iv2)},800)},150)}
+let at2=0,ok2=false;
+function ck2(){const v=parseFloat($('#a2').value),f=$('#fb2');if(isNaN(v)){f.innerHTML='<div class="note bad">اكتب إجابتك أولًا.</div>';return}
+at2++;$('#rv2').style.display='inline-block';if(Math.abs(v-12)<1e-6){f.innerHTML='<div class="note">🎉 أحسنت! عوّضت في العلاقة بشكل صحيح.</div>';conf()}else{f.innerHTML='<div class="note bad">فكّر مجددًا 🤔 تذكّر العلاقة: P = T ÷ n، والوحدة mm/h.</div>';shake(f)}}
+function rv2(){$('#fb2').innerHTML='<div class="note" dir="ltr">P = T ÷ n = 60 ÷ 5 = 12 mm/h</div>'}
+/* مشهد 3 */
+const I=[2,2,2],O=[2,2];let lv=.5;
+function ch(d,k){const a=k=='I'?I:O;for(let i=0;i<a.length;i++)a[i]=Math.max(0,Math.min(6,a[i]+d))}
+function ar(id,v){const p=$('#'+id);p.style.strokeWidth=2+v*3;p.style.animationDuration=1.6/(1+v*.35)+'s';p.style.opacity=v?1:.15}
+const seen={};
+setInterval(()=>{const i=I[0]+I[1]+I[2],o=O[0]+O[1],c=i-o;['ar1','ar2','ar3'].forEach((a,k)=>ar(a,I[k]));['ar4','ar5'].forEach((a,k)=>ar(a,O[k]));
+$('#vi').textContent=i;$('#vo').textContent=o;$('#vc').textContent=(c>0?'+':'')+c;lv=Math.max(0,Math.min(1,lv+c*.004));const y=280-(30+lv*60);$('#lw').setAttribute('y',y);$('#lw').setAttribute('height',300-y);
+const s=c>0?['p1','⬆ المدخلات أكبر من المخرجات: التغير موجب، فيرتفع مستوى البحيرة.']:c<0?['p2','⬇ المخرجات أكبر من المدخلات: التغير سالب، فينخفض مستوى البحيرة.']:['p3','⏸ المدخلات = المخرجات: لا يتغير مستوى البحيرة (C = 0).'];
+$('#st3').textContent=s[1];if(cur==2){seen[s[0]]=1;$('#'+s[0]).classList.add('ok')}},100);
+/* مشهد 4 */
+const ov4=$('#ov4');let acc=0,ero_=false;
+function ero(){ero_=!ero_;$('#rocks').style.display=ero_?'inline':'none';$('#eb').textContent=ero_?'🪨 أخفِ أثر الحت':'🪨 أظهر أثر الحت والتعرية'}
+function setR(){const r=+$('#R').value;$('#rv').textContent=r;rain(ov4,r*8,1.1-r*.1,260,-10);$('#sv4').style.setProperty('--sp',1.8/r+'s');$$('.f4').forEach(p=>p.style.animationDuration=1.8/r+'s');$$('#rocks animateMotion').forEach(a=>a.setAttribute('dur',6/r+'s'))}
+$('#R').oninput=setR;setR();
+const ms=['تسقط قطرات المطر على الأرض المرتفعة وتبدأ بالتحرك على المنحدرات…','تجري المياه وتتجمع في مسارات صغيرة، فتحت الصخور وتعريها.','بتكرار العملية مع الزمن تتشكل القنوات والجداول.','🌊 تجمّعت المياه وتكوّن النهر! والحت والتعرية يعيدان تشكيل الأرض مع الزمن.'];
+setInterval(()=>{if(cur!=3)return;acc=Math.min(100,acc+(+$('#R').value)*.5);const s=acc<5?0:acc<30?1:acc<60?2:3;
+const ws=$$('.w4'),es=$$('.e');ws.forEach((p,k)=>{const lvl=k<3?1:k==3?2:3;p.style.opacity=s>=lvl?1:0;p.style.strokeWidth=(k<3?1+acc*.04:k==3?2+acc*.07:3+acc*.1)});
+es.forEach((p,k)=>{const lvl=k<3?1:k==3?2:3;p.style.opacity=s>=lvl?.8:0;p.style.strokeWidth=(k<3?3+acc*.04:k==3?4+acc*.07:5+acc*.1)+(ero_?acc*.08:0)});$('#st4').textContent=ms[s]},250);
+/* مشهد 5 */
+const basin=id=>`<svg id="${id}" viewBox="0 0 600 300" style="width:100%;background:linear-gradient(#bfe6f7,#effaff);border-radius:14px;display:block;cursor:pointer" role="img" aria-label="حوضان مائيان سطحيان يفصل بينهما مرتفع"><path d="M0 140L110 250L300 80V300H0Z" fill="#8fd19e"/><path d="M300 80L490 250L600 140V300H300Z" fill="#7bc8c8"/>
+<path d="M0 140L110 250L300 80L490 250L600 140" fill="none" stroke="#6b4a31" stroke-width="5"/>
+<text x="130" y="285" font-size="18" fill="#12354a" text-anchor="middle">حوض مائي سطحي 1</text><text x="470" y="285" font-size="18" fill="#12354a" text-anchor="middle">حوض مائي سطحي 2</text>
+<path class="fl" d="M285 100L120 240" stroke="#0a6ea8" stroke-width="4" fill="none"/><path class="fl" d="M315 100L480 240" stroke="#0a6ea8" stroke-width="4" fill="none"/>
+<g fill="#2e7d32"><path d="M40 170l10-24 10 24zM190 170l10-24 10 24zM70 200l10-24 10 24z"/></g><g fill="#8a8a8a"><circle cx="420" cy="215" r="7"/><circle cx="510" cy="190" r="6"/><circle cx="450" cy="240" r="5"/></g>
+<path class="dv" d="M300 62V300" stroke="#f5b700" stroke-width="5" fill="none" style="display:none;stroke-dasharray:12 8"/></svg>`;
+$('#bw5').innerHTML=basin('b5')+'<div class="ov" id="ov5"></div>';
+(function(){const o=$('#ov5');for(let i=0;i<26;i++){const d=document.createElement('i');d.className='dr';const L=25+Math.random()*50;d.style.left=L+'%';d.style.top=Math.random()*12+'%';d.style.animationDuration=1.6+Math.random()+'s';d.style.animationDelay=-Math.random()*2+'s';d.style.setProperty('--h','110px');d.style.setProperty('--dx',(L<50?-1:1)*(40+Math.random()*60)+'px');o.appendChild(d)}})();
+const fcs={'كمية الأمطار':'☔','نوع الصخور':'🪨','الغطاء النباتي':'🌿','التراكيب الجيولوجية (الصدوع والطيّات)':'⛰️'};
+$('#fc').innerHTML=Object.keys(fcs).map(k=>`<span class="pill">${fcs[k]} ${k}</span>`).join('');
+let mode5=0;function m5(t){$('#n5').className='note';$('#n5').innerHTML=t}
+function px(svg,e){const r=svg.getBoundingClientRect();return (e.clientX-r.left)/r.width*600}
+$('#b5').onclick=e=>{const x=px($('#b5'),e);
+if(mode5){if(Math.abs(x-300)<45){document.querySelector('#b5 .dv').style.display='';document.querySelector('#b5 .dv').classList.add('fl');mode5=0;m5('🎉 صحيح! <b>خط تقسيم المياه</b> هو الفاصل المرتفع الذي يجاور الحوض ويفصل بين كل حوض مائي والحوض الذي يجاوره.');conf()}else{$('#n5').className='note bad';$('#n5').textContent='ليس هنا 🤔 ابحث عن الفاصل المرتفع بين الحوضين.';shake($('#n5'))}}
+else m5('<b>حوض مائي سطحي '+(x<300?1:2)+'</b>: المساحة من الأرض التي تتجمع فيها المياه الناتجة عن تساقط الأمطار عند نقطة منخفضة الارتفاع (مخرج الحوض)، حيث تلتقي بكتلة مائية أخرى كالنهر أو البحيرة. ويتأثر شكل الحوض بالعوامل المذكورة أدناه.')};
+/* التحدي */
+const T5=[
+{q:'📏 اسحب وظيفة المقياس إلى مقياس المطر (أو اضغط عليها ثم اضغط على المقياس).',h:`<div class="row"><div class="zone" id="z1" style="text-align:center"><b>مقياس المطر</b>${gauge('g6')}</div><div class="zone" id="pool" ><b>الوظائف</b><span class="chip" id="c1a">تقاس به كمية الأمطار الهاطلة بالمليمتر (mm)</span><span class="chip" id="c1b">تقاس به درجة حرارة الجو</span><span class="chip" id="c1c">تقاس به سرعة الرياح</span></div></div>`,
+ ck:()=>{const z=$('#z1').querySelectorAll('.chip');return z.length==1&&z[0].id=='c1a'},hint:'فكّر: ما الذي يشير إليه التدريج داخل الأنبوب؟'},
+{q:'🧮 هطلت أمطار بمقدار 45 mm خلال 3 ساعات. ما كثافة الهطل؟',h:'<div class="row"><input id="a6" type="number" step="any" inputmode="decimal" aria-label="الإجابة"> mm/h</div>',ck:()=>Math.abs(parseFloat($('#a6').value)-15)<1e-6,hint:'استخدم: P = T ÷ n'},
+{q:'↔️ صنّف كل عنصر: هل هو من مدخلات البحيرة أم من مخرجاتها؟',h:`<div id="pool" class="zone"><b>العناصر</b><span class="chip" data-k="i">الهطل</span><span class="chip" data-k="o">التبخر</span><span class="chip" data-k="i">الجريان السطحي إلى البحيرة</span><span class="chip" data-k="o">الجريان الجوفي من البحيرة</span><span class="chip" data-k="i">الجريان الجوفي إلى البحيرة</span></div><div class="row"><div class="zone" id="zi"><b>⬇ المدخلات</b></div><div class="zone" id="zo"><b>⬆ المخرجات</b></div></div>`,
+ ck:()=>$('#pool').querySelectorAll('.chip').length==0&&[...$('#zi').querySelectorAll('.chip')].every(c=>c.dataset.k=='i')&&[...$('#zo').querySelectorAll('.chip')].every(c=>c.dataset.k=='o'),hint:'المدخلات تزيد مياه البحيرة، والمخرجات تنقصها.'},
+{q:'🏞️ مدخلات البحيرة I = 9 (×10⁶ m³). اضبط المخرجات O لتفسّر ثبات مستوى البحيرة.',h:`<div class="row"><div style="width:120px;height:90px;border:3px solid #0a6ea8;border-radius:0 0 20px 20px;position:relative;overflow:hidden"><div id="m4" style="position:absolute;bottom:0;left:0;right:0;background:#2ec4e6;transition:height .4s"></div></div><div style="flex:1;min-width:220px"><label>O = <b id="ov6">4</b></label><input type="range" id="o6" min="0" max="14" value="4"><div class="big" dir="ltr" id="c6"></div></div></div>`,
+ init:()=>{const f=()=>{const o=+$('#o6').value,c=9-o;$('#ov6').textContent=o;$('#c6').textContent='C = 9 − '+o+' = '+c+(c>0?'  ⬆ يرتفع':c<0?'  ⬇ ينخفض':'  ⏸ ثابت');$('#m4').style.height=Math.max(5,Math.min(100,50+c*8))+'%'};$('#o6').oninput=f;f()},
+ ck:()=>+$('#o6').value==9,hint:'يثبت المستوى عندما يكون التغير في كمية المياه المخزنة C = 0.'},
+{q:'🗺️ ضع الدبوس 📍 على خط تقسيم المياه (اسحبه أو اضغطه ثم اضغط على الرسم).',h:`<div class="chip" id="pin">📍 خط تقسيم المياه</div><div class="wrap">${basin('b6')}</div>`,
+ ck:()=>pinx!=null&&Math.abs(pinx-300)<45,hint:'خط تقسيم المياه يفصل بين حوضين متجاورين.'}];
+let step=0,tries=0,pinx=null,selc=null;
+function dd(root){root.querySelectorAll('.chip').forEach(c=>{c.draggable=true;c.ondragstart=e=>{selc=c;e.dataTransfer.setData('t','x')};c.onclick=e=>{e.stopPropagation();root.querySelectorAll('.chip').forEach(x=>x.classList.remove('sel'));selc=c;c.classList.add('sel')}});
+root.querySelectorAll('.zone').forEach(z=>{const put=()=>{if(selc){z.appendChild(selc);selc.classList.remove('sel');selc=null}};z.ondragover=e=>e.preventDefault();z.ondrop=e=>{e.preventDefault();put()};z.onclick=put})}
+function render(){const t=T5[step];selc=null;pinx=null;tries=0;$('#ch').innerHTML=`<div>سؤال ${step+1} من 5 &nbsp; ⭐ ${sc}</div><h3>${t.q}</h3>${t.h}<div class="row" style="margin-top:10px"><button class="g" onclick="chk()">تحقق ✔</button><button id="nxq" style="display:none" onclick="nxq()">${step==4?'عرض النتيجة 🏅':'السؤال التالي ⬅'}</button></div><div id="fq"></div>`;
+dd($('#ch'));if(t.init)t.init();
+if(step==4){const b=$('#b6'),pick=x=>{pinx=x;$('#fq').innerHTML='<div class="note">📍 وُضع الدبوس. اضغط «تحقق».</div>';let p=b.parentNode.querySelector('.pn');if(!p){p=document.createElement('div');p.className='pn';p.textContent='📍';p.style.cssText='position:absolute;top:10%;font-size:28px;transform:translateX(50%);pointer-events:none';b.parentNode.appendChild(p)}p.style.right=(100-x/6)+'%'};
+b.onclick=e=>{if(selc){pick(px(b,e));selc.classList.remove('sel');selc=null}};b.ondragover=e=>e.preventDefault();b.ondrop=e=>{e.preventDefault();pick(px(b,e))}}}
+function chk(){const t=T5[step],f=$('#fq');tries++;if(t.ck()){const p=tries==1?20:10;sc+=p;f.innerHTML=`<div class="note">🎉 صحيح! +${p}</div>`;conf();$('#nxq').style.display='inline-block'}else{f.innerHTML='<div class="note bad">ليست الإجابة الصحيحة بعد. '+t.hint+'</div>';shake(f)}}
+function nxq(){if(step==4){fin=true;go(6)}else{step++;render()}}
+function res(){const t=sc>=80?'مستكشف ماهر 🏆':sc>=50?'مستكشف متقدّم 🥈':'مستكشف مبتدئ 🥉';$('#res').innerHTML=`<p>نتيجتك: <b>${sc} / 100</b></p><p>${t}</p><p>رحلتك: المطر ← الكثافة ← البحيرة ← الأنهار ← الحوض المائي السطحي 💧</p>`;conf()}
+render();go(0);
+</script></body></html>
